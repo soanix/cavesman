@@ -1,4 +1,5 @@
 <?
+
 define("_DEV_MODE_", true);
 
 /** DEFAULTS **/
@@ -30,7 +31,8 @@ define("_LANG_", _ROOT_."/lang");
 //Cache main dir
 define("_CACHE_", _ROOT_."/cache");
 
-define("DEFAULT_THEME", "public");
+require_once(_CONFIG_."/setup.inc.php");
+
 $permisos = array(
 	"admin" => 1,
 	"public" => ""

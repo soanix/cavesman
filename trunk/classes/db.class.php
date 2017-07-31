@@ -59,10 +59,11 @@ class db extends mysqli
 
 	function __construct(){ // Se conecta a mysqli
 		include(_CONFIG_.'/settings.inc.php');
-		parent::__construct( "localhost" ,
-							"cavesman" ,
-							"1234",
-							"cavesman" );
+		parent::__construct( 	DB_HOST ,
+								DB_USER ,
+								DB_PASSWORD,
+								DB_NAME
+							);
 
 	}
   	function create($consulta){ // genera el string de SQL para ser compatible con todas las funciones
