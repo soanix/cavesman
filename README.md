@@ -6,6 +6,8 @@ Version: Alpha 0.1
 
 ## Features
 
+- [x] Multi-Language
+- [x] Translate Support
 - [x] Use multiple templates at same time
 - [x] Administration Panel
 - [x] CMS
