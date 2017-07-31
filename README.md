@@ -22,6 +22,11 @@ PHP modular framework
 ## How to Install
 
 1. Copy this repo to your host
+
+```bash
+git clone --recursive https://github.com/soanix/cavesman.git .
+```
+
 2. Create a new database
 3. Import install.sql in your database
 4. Edit trunk/config/setup.inc.php with correct data
