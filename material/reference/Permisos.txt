@@ -1,5 +1,3 @@
 ## Referencia de Permisos de usuario  ##
 
 1: Acceso a panel de administración
-2: Acceso a pedidos
-3: Acceso a Puntos Calientes
