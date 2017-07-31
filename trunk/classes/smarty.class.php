@@ -11,7 +11,7 @@
  * @link    http://codesamplez.com/
  */
 include_once(_ROOT_."/externals/smarty/libs/Smarty.class.php");
-/*function smartyTranslate($params, &$smarty){
+function smartyTranslate($params, &$smarty){
 	include_once(_CLASSES_."/lang.class.php");
 	$lang = new lang();
 	$s = isset($params['s']) ? $params['s'] : '';
@@ -24,10 +24,7 @@ function smartyMoneyFormat($params, &$smarty){
 	$n = isset($params['n']) ? $params['n'] : 0;
 	$d = isset($params['d']) ? $params['d'] : 2;
 	return $display->format->money($n, $d);
-}*/
-/*function smarty_block_dynamic($param, $content, &$smarty){
-	return $content;
-}*/
+}
 function smartyTranslate($params, &$smarty){
 	$lang = new lang();
 	$s = isset($params['s']) ? $params['s'] : '';
@@ -50,8 +47,7 @@ class SmartyCustom extends Smarty {
 		$this->compile_check = true;
 		$this->debugging = false;
 		$this->registerPlugin("function", "l", 'smartyTranslate'); // Use Smarty 3 API calls, only if PHP version > 5.1.2
-		/*$this->registerPlugin("function", "money", 'smartyMoneyFormat'); // Use Smarty 3 API calls, only if PHP version > 5.1.2
-		$this->register_block("dynamic", "smarty_block_dynamic", false); // Use Smarty 3 API calls, only if PHP version > 5.1.2*/
+		$this->registerPlugin("function", "money", 'smartyMoneyFormat'); // Use Smarty 3 API calls, only if PHP version > 5.1.2
 	}
 	function __install(){
 		if(!is_dir(_CACHE_."/views"))
