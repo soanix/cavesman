@@ -176,7 +176,6 @@ class db extends mysqli
 			$consulta = $this->query($this->sql);
 			if($this->error)
 				$this->log_error();
-			//$GLOBALS['SQL_TIME'] = $GLOBALS['SQL_TIME']+((microtime(true)-$actual)/60);
 			if($consulta){
 				while($linea = $consulta->fetch_array($type)){
 					$array[] = $linea;

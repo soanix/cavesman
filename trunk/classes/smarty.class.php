@@ -10,7 +10,7 @@
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
-include_once(_CLASSES_."/smarty/Smarty.class.php");
+include_once(_ROOT_."/externals/smarty/libs/Smarty.class.php");
 /*function smartyTranslate($params, &$smarty){
 	include_once(_CLASSES_."/lang.class.php");
 	$lang = new lang();
