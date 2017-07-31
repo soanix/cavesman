@@ -1,3 +1,5 @@
+![Alt text](/trunk/cdn/img/cavesman.jpg?raw=true "Title")
+
 # Cave's Man
 
 PHP modular framework
