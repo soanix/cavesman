@@ -44,3 +44,11 @@ define("DB_PASSWORD", "#edit#"); 	// DataBase Password
 define("DB_NAME", "#edit#"); 		// Datebase Name
 ```
 5. Test your setup
+
+## Default data
+
+**Super admin**
+
+User: admin
+
+Password: 1234
