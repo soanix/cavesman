@@ -21,8 +21,8 @@ Version: Alpha 0.1
 ## Requeriments
 
 - Web Server
-- PHP <= 5.6
-- MYSQL <= 5.5
+- PHP >= 5.6
+- MYSQL >= 5.5
 - PHP Imagick
 
 ## How to Install
