@@ -52,3 +52,69 @@ define("DB_NAME", "#edit#"); 		// Datebase Name
 User: admin
 
 Password: 1234
+
+
+## DOCUMENTATION
+
+**SQL**
+
+CM use Easy MYSQLi library. You can get all documentation in https://github.com/soanix/Easy-MySQLi
+
+**HOW TO CREATE MODULE**
+
+1. Create a folder in /modules/yourmodule
+2. Create php /modules/yourmodule/yourmodule.php
+3. Start your file with: 
+
+```php
+
+<?php
+class yourmodule extends modules{
+    function __construct(){
+        $this->db = new db();
+        $this->config = array(
+            "active" => 1,
+            "name" => "yourmodule",
+            "directory" => dirname(__FILE__)."/tpl",
+            "title" => "Your Module",
+            "description" => "Module description"
+        );
+        self::install();
+        parent::loadSmarty();
+    }
+    function install(){
+        /* Something to do on module load */
+    }
+    public function foo(){
+      $var = "Hello World!";
+      return $var;
+    }
+}
+?>
+```
+
+5. Now you can test your module
+```php
+  $this->modules->yourmodule->foo();
+  //returns "Hello World!"
+```
+
+**HOW TO CREATE TEMPLATE**
+
+1. Create folder /themes/yourtheme
+2. Create file /themes/yourtheme/index.php
+3. Create file and folder /themes/yourtheme/**tpl**/filename.tpl
+4. Add this line to index.php: 
+
+```php
+<?php
+$this->smarty->display("filename.tpl");
+?>
+
+```
+5. Change default theme in /config/setup.inc.php
+
+```php
+define("DEFAULT_THEME", "yourtheme");
+```
+5. Now you can add html content to filename.tpl
