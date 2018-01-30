@@ -11,13 +11,6 @@
  * @link    http://codesamplez.com/
  */
 include_once(_ROOT_."/externals/smarty/libs/Smarty.class.php");
-function smartyTranslate($params, &$smarty){
-	include_once(_CLASSES_."/lang.class.php");
-	$lang = new lang();
-	$s = isset($params['s']) ? $params['s'] : '';
-	$r = isset($params['r']) ? $params['r'] : array();
-	return $s ? $lang->l($s, $r) : '';
-}
 function smartyMoneyFormat($params, &$smarty){
 	include_once(_CLASSES_."/display.class.php");
 	$display = new display();
