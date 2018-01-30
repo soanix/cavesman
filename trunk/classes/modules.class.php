@@ -3,8 +3,6 @@
 class modules {
     public $list = array();
     function __construct(){
-        $this->db = new db();
-		$this->lang = new lang();
         $this->loadModules();
 		if(!is_dir(_ROOT_."/img/m"))
             mkdir(_ROOT_."/img/m");

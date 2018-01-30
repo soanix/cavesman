@@ -4,3 +4,6 @@
 [submodule "trunk/externals/smarty"]
 	path = trunk/externals/smarty
 	url = https://github.com/smarty-php/smarty.git
+[submodule "trunk/externals/parsedown"]
+	path = trunk/externals/parsedown
+	url = https://github.com/erusev/parsedown.git

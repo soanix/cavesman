@@ -48,13 +48,6 @@ if($controller == 'ajax'){
     require _THEMES_."/static/".$controller.".php";
     $display->smarty->display($controller.".tpl");
     exit();
-}elseif($display->verifyPage($controller)){
-
-    $page = $display->getPage($controller);
-    $display->smarty->assign("page", $page);
-    $display->smarty->template_dir = _ROOT_."/cdn/tpl/";
-    $display->smarty->display("page-ajax.tpl");
-    exit();
 }
 
 $display->theme();

@@ -22,8 +22,6 @@ Version: Alpha 0.1
 
 - Web Server
 - PHP >= 5.6
-- MYSQL >= 5.5
-- PHP Imagick
 
 ## How to Install
 
@@ -64,7 +62,7 @@ CM use Easy MYSQLi library. You can get all documentation in https://github.com/
 
 1. Create a folder in /modules/yourmodule
 2. Create php /modules/yourmodule/yourmodule.php
-3. Start your file with: 
+3. Start your file with:
 
 ```php
 
@@ -104,7 +102,7 @@ class yourmodule extends modules{
 1. Create folder /themes/yourtheme
 2. Create file /themes/yourtheme/index.php
 3. Create file and folder /themes/yourtheme/**tpl**/filename.tpl
-4. Add this line to index.php: 
+4. Add this line to index.php:
 
 ```php
 <?php

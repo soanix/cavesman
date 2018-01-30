@@ -136,21 +136,6 @@ INSERT INTO `settings` (`setting_id`, `name`, `value`) VALUES
 	(1, 'logo_header', '/uploads/logo.png');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 
--- Volcando estructura para tabla cavesman.themes
-CREATE TABLE IF NOT EXISTS `themes` (
-  `theme_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` char(50) NOT NULL,
-  `description` char(50) NOT NULL,
-  `active` char(50) NOT NULL,
-  `date_installed` datetime NOT NULL,
-  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`theme_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Volcando datos para la tabla cavesman.themes: ~0 rows (aproximadamente)
-/*!40000 ALTER TABLE `themes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `themes` ENABLE KEYS */;
-
 -- Volcando estructura para tabla cavesman.translates
 CREATE TABLE IF NOT EXISTS `translates` (
   `translate_id` int(11) unsigned NOT NULL AUTO_INCREMENT,

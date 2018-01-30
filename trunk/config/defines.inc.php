@@ -38,15 +38,7 @@ $permisos = array(
 	"public" => ""
 );
 $theme = isset($_GET['theme']) ? $_GET['theme'] : (isset($_SESSION['theme']) ? $_SESSION['theme'] : DEFAULT_THEME);
-include_once(_CLASSES_."/users.class.php");
 include_once(_CLASSES_."/db.class.php");
-$users = new users();
-if(isLogged && in_array($permisos[$theme], $users->getPermisos()))
-	$_SESSION['theme'] = $theme;
-else {
-	$theme = "public";
-	$_SESSION['theme'] = $theme;
-}
 define("_THEME_NAME_", $theme);
 
 

@@ -1,6 +1,6 @@
 <?
-$permisos = isLogged ? $this->users->getPermisos() : array();
-$this->smarty->assign("permisos", $permisos);
-$this->smarty->assign("is_logged", isLogged);
-$this->smarty->display("index.tpl");
+include_once(_ROOT_."/externals/parsedown/Parsedown.php");
+$Parsedown = new Parsedown();
+
+echo $Parsedown->text(file_get_contents(_ROOT_."/../README.md")); # prints: <p>Hello <em>Parsedown</em>!</p>
 ?>
