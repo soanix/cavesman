@@ -1,3 +1,0 @@
-## Referencia de Permisos de usuario  ##
-
-1: Acceso a panel de administración
