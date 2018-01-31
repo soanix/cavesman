@@ -1,4 +1,4 @@
-![Alt text](/trunk/cdn/img/cavesman.jpg?raw=true "Title")
+![Alt text](cavesman.jpg?raw=true "Title")
 
 # Cave's Man
 
