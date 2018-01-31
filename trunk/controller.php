@@ -10,17 +10,19 @@ if($access){
 
 $display->startTheme();
 
-if($controller == 'ajax'){
+if($controller == 'ajax' || $controller == 'page'){
+	$action = "action".ucfirst($action);
     if(file_exists(_CONTROLLERS_."/".$section.".controller.php"))
         require_once _CONTROLLERS_."/".$section.".controller.php";
     $$section = new $section();
     if(file_exists(_CONTROLLERS_."/".$section.".controller.php") && method_exists($$section, $action)){
-
         $result = $$section->$action();
     }elseif(file_exists(_MODULES_."/".$section."/".$section.".php") && method_exists($display->modules->$section, $action)){
         $result = $display->modules->$section->$action();
     }
-    echo json_encode($result);
+
+    echo $controller == "ajax" ? json_encode($result) : $result;
+
     exit();
 }elseif(file_exists(_CONTROLLERS_."/".$controller.".controller.php")){
 

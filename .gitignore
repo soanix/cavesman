@@ -1,4 +1,3 @@
 material/log/*.log
-trunk/cache/views/smarty/compile/*.php
-trunk/export/*.xls
-trunk/export/*
+trunk/cache
+trunk/modules

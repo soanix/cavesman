@@ -11,19 +11,17 @@ class modules {
         $this->smarty = new SmartyCustom();
         $this->smarty->template_dir =  _THEMES_."/"._THEME_NAME_."/tpl";
     }
-	function l($string, $binds = array()){
-		$this->lang = new lang();
-		return $this->lang->l($string, $binds);
-	}
     function loadModules(){
         $this->loadSmarty();
         $directories = scandir(_MODULES_);
         foreach($directories as $directory){
             $module = str_replace('directory/', '', $directory);
             if($module !== '.' && $module != '..'){
-                include_once(_MODULES_."/".$directory."/".$module.".php");
-                $this->$module = new $module();
-                $this->list[$module] = $this->$module->config;
+				$config = json_decode(file_get_contents(_MODULES_."/".$directory."/config.json"), true);
+				if($config['active']){
+                	include_once(_MODULES_."/".$directory."/".$module.".php");
+					$this->$module = new $module();
+				}
             }
         }
     }
