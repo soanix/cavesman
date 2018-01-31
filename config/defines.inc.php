@@ -19,7 +19,7 @@ define("_MODULES_", _APP_."/modules");
 //Language main dir
 define("_LANG_", _ROOT_."/lang");
 //Cache main dir
-define("_CACHE_", _ROOT_."/cache");
+define("_CACHE_", _APP_."/cache");
 
 
 
