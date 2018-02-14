@@ -2,61 +2,29 @@
 
 # Cave's Man
 
-PHP modular framework
+Framework modular para PHP
 
-Version: Alpha 0.1
+Versión: Alpha 0.2
 
 ## Features
 
-- [x] Multi-Language
-- [x] Translate Support
-- [x] Use multiple templates at same time
-- [x] Administration Panel
-- [x] CMS
-- [x] URL Friendly
+- [x] Multi-template
 - [x] Modular
-- [ ] Module Hook in templates
-- [ ] GeoIP
-
-## Requeriments
-
-- Web Server
-- PHP >= 5.6
+- [x] Hooks en Modulos
+- [x] Soporte multi-idioma
 
 ## How to Install
 
-1. Copy this repo to your host
+1. Clonar repositorio de cavesman en el directorio elegido
 
 ```bash
 git clone --recursive https://github.com/soanix/cavesman.git .
 ```
 
-2. Create a new database
-3. Import install.sql in your database
-4. Edit trunk/config/setup.inc.php with correct data
-
-```php
-define("DB_HOST", "#edit#"); 		// Datebase Host
-define("DB_USER", "#edit#"); 		// Database User
-define("DB_PASSWORD", "#edit#"); 	// DataBase Password
-define("DB_NAME", "#edit#"); 		// Datebase Name
-```
-5. Test your setup
-
-## Default data
-
-**Super admin**
-
-User: admin
-
-Password: 1234
+2. Script de instalación en proceso
 
 
 ## DOCUMENTATION
-
-**SQL**
-
-CM use Easy MYSQLi library. You can get all documentation in https://github.com/soanix/Easy-MySQLi
 
 **HOW TO CREATE MODULE**
 
@@ -67,42 +35,70 @@ CM use Easy MYSQLi library. You can get all documentation in https://github.com/
 ```php
 
 <?php
-class yourmodule extends modules{
+class test extends modules{
     function __construct(){
-        $this->db = new db();
-        $this->config = array(
-            "active" => 1,
-            "name" => "yourmodule",
-            "directory" => dirname(__FILE__)."/tpl",
-            "title" => "Your Module",
-            "description" => "Module description"
-        );
         self::install();
         parent::loadSmarty();
     }
-    function install(){
+
+	/**
+	 * Used to do before use module like create directories or db tables
+	 */
+
+    private function install(){
         /* Something to do on module load */
     }
-    public function foo(){
-      $var = "Hello World!";
-      return $var;
+
+	/**
+	 *
+	 * Route url method to call function
+	 *
+	 * Like /test/foo
+	 *
+	 * @return  array
+	 *
+	 */
+
+    public function actionFoo(){
+     	return "Hello World!";
     }
+
+	/**
+	 *
+	 * Static method to use in framework
+	 *
+	 * Like Test::HellowWorld();
+	 *
+	 * @return  array
+	 *
+	 */
+	public static function HelloWorld(){
+		return "Hello World!";
+	}
+
+    /*
+    * HOOK HEADER
+    */
+    public function hookTest(){
+        return $this->smarty->fetch(dirname(__FILE__)."/tpl/header.tpl");
+    }
+
 }
 ?>
 ```
 
 5. Now you can test your module
 ```php
-  $this->modules->yourmodule->foo();
+  echo $this->modules->test->HelloWorld();
   //returns "Hello World!"
 ```
 
 **HOW TO CREATE TEMPLATE**
 
-1. Create folder /themes/yourtheme
-2. Create file /themes/yourtheme/index.php
-3. Create file and folder /themes/yourtheme/**tpl**/filename.tpl
-4. Add this line to index.php:
+1. Create folder app/themes/yourtheme
+2. Create file app/themes/yourtheme/index.php
+3. Create file and folder app/themes/yourtheme/**tpl**/filename.tpl
+4. Add this line to app/themes/yourtheme/index.php:
 
 ```php
 <?php
@@ -110,7 +106,7 @@ $this->smarty->display("filename.tpl");
 ?>
 
 ```
-5. Change default theme in /config/setup.inc.php
+5. Change default theme in app/config/settings.inc.php
 
 ```php
 define("DEFAULT_THEME", "yourtheme");
