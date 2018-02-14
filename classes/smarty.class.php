@@ -10,9 +10,12 @@
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
-include_once(_ROOT_."/externals/smarty/libs/Smarty.class.php");
+ if(file_exists(_ROOT_."/externals/smarty/libs/Smarty.class.php"))
+	include_once(_ROOT_."/externals/smarty/libs/Smarty.class.php");
+else
+	throw new Exception('External/Smarty not loaded');
 
-function smartyFile($params, &$smarty){
+function smartyFile($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
 	include_once(_CLASSES_."/modules.class.php");
 	$modules = new modules();
@@ -22,21 +25,20 @@ function smartyFile($params, &$smarty){
 	else
 		return $smarty->fetch($name);
 }
-function smartyHook($params, &$smarty){
+function smartyHook($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
 	include_once(_CLASSES_."/modules.class.php");
 	$modules = new modules();
 	return $modules->hooks($name);
 }
-function smartyCss($params, &$smarty){
-	$lang = new lang();
+function smartyCss($params, $smarty){
 	$file = isset($params['file']) ? $params['file'] : '';
 	if(strpos($file, "/") !== 0){
 		$css = _TEMPLATES_."/"._THEME_NAME_."/css/".$file;
-		$time = filemtime(_ROOT_."/".$css);
+		$time = filemtime(_APP_."/".$css);
 	}else{
 		$css = $file;
-		$time = filemtime(_ROOT_.$css);
+		$time = filemtime(_APP_.$css);
 	}
 
 
@@ -44,21 +46,34 @@ function smartyCss($params, &$smarty){
 		return '<link rel="stylesheet" type="text/css" href="'.$css.'?'.$time.'">';
 	return '';
 }
-function smartyJs($params, &$smarty){
-	$lang = new lang();
+function smartyJs($params, $smarty){
+
 	$file = isset($params['file']) ? $params['file'] : '';
 	if(strpos($file, "/") !== 0){
 		$js = _TEMPLATES_."/"._THEME_NAME_."/js/".$file;
-		$time = filemtime(_ROOT_."/".$js);
+		$time = filemtime(_APP_."/".$js);
 	}else{
 		$js = $file;
-		$time = filemtime(_ROOT_.$js);
+		$time = filemtime(_APP_.$js);
 	}
 	if($file)
 		return '<script src="'.$js.'?'.$time.'"></script>';
 	return "";
 }
+function smartyImgUrl($params, $smarty){
 
+	$file = isset($params['file']) ? $params['file'] : '';
+	if(strpos($file, "/") !== 0){
+		$url = _TEMPLATES_."/"._THEME_NAME_."/img/".$file;
+		$time = filemtime(_APP_."/".$url);
+	}else{
+		$url = $file;
+		$time = filemtime(_APP_.$url);
+	}
+	if($file)
+		return $url.'?'.$time;
+	return "";
+}
 class SmartyCustom extends Smarty {
     /**
      * constructor
@@ -70,14 +85,15 @@ class SmartyCustom extends Smarty {
         $this->config_dir = _CONFIG_."/";
         $this->compile_dir = _CACHE_."/views/smarty/compile/";
 		$this->cache_dir = _CACHE_."/views/smarty/cache/";
-		$this->caching = true;
-		$this->force_compile = false;
+		$this->caching = false;
+		$this->force_compile = true;
 		$this->compile_check = true;
 		$this->debugging = false;
-        
+
 		$this->registerPlugin("function", "hook", 'smartyHook');
 		$this->registerPlugin("function", "file", 'smartyFile');
 		$this->registerPlugin("function", "css", 'smartyCss');
+		$this->registerPlugin("function", "img", 'smartyImgUrl');
 		$this->registerPlugin("function", "js", 'smartyJs');
 	}
 	function __install(){
