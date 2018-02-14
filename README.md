@@ -12,6 +12,8 @@ Versión: Alpha 0.2
 - [x] Modular
 - [x] Hooks en Modulos
 - [x] Soporte multi-idioma
+- [ ] Soporte multi-site
+- [ ] Router
 
 ## How to Install
 
