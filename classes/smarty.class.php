@@ -10,10 +10,6 @@
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
- if(file_exists(_ROOT_."/externals/smarty/libs/Smarty.class.php"))
-	include_once(_ROOT_."/externals/smarty/libs/Smarty.class.php");
-else
-	throw new Exception('External/Smarty not loaded');
 
 function smartyFile($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
