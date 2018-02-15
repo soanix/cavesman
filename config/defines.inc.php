@@ -8,8 +8,6 @@ define("_CONFIG_", _ROOT_."/config");
 define("_CLASSES_", _ROOT_."/classes");
 //Controllers main dir
 define("_CONTROLLERS_", _ROOT_."/controllers");
-//APP main dir
-define("_APP_", _ROOT_."/../app");
 //Themes main dir
 define("_THEMES_", _APP_."/themes");
 //Tools main dir
@@ -30,7 +28,8 @@ $permisos = array(
 	"public" => ""
 );
 $theme = isset($_GET['theme']) ? $_GET['theme'] : (isset($_SESSION['theme']) ? $_SESSION['theme'] : DEFAULT_THEME);
-include_once(_CLASSES_."/db.class.php");
+
+
 define("_THEME_NAME_", $theme);
 
 

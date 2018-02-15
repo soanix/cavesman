@@ -54,6 +54,9 @@ class Display extends modules{
         $this->smarty->assign("img", _TEMPLATES_."/"._THEME_NAME_."/img");
         if(file_exists(_APP_."/routes.php"))
             include_once(_APP_."/routes.php");
+        else
+            throw new \Exception("No se ha encontrado el archivo routes");
+
         if(file_exists(_THEMES_."/"._THEME_NAME_."/index.php"))
             include_once(_THEMES_."/"._THEME_NAME_."/index.php");
 
