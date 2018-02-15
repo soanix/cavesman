@@ -2,6 +2,7 @@
 
 class modules {
     public $list = array();
+    public $router;
     function __construct(){
         $this->loadModules();
 		if(!is_dir(_APP_."/img/m"))
@@ -10,9 +11,11 @@ class modules {
     function loadSmarty(){
         $this->smarty = new SmartyCustom();
         $this->smarty->template_dir =  _THEMES_."/"._THEME_NAME_."/tpl";
+
     }
     function loadModules(){
         $this->loadSmarty();
+        $this->router = new \Bramus\Router\Router();
         $directories = scandir(_MODULES_);
         foreach($directories as $directory){
             $module = str_replace('directory/', '', $directory);
@@ -22,6 +25,8 @@ class modules {
                     $this->list[] = $config;
                 	include_once(_MODULES_."/".$directory."/".$module.".php");
 					$this->$module = new $module();
+                    if(method_exists($module, "loadRoutes"))
+                        $this->router = $this->$module->loadRoutes($this->router);
 				}
             }
         }

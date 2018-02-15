@@ -2,15 +2,14 @@
 /**
  * This class acts as an example on where to position a DocBlock.
  */
-class Display {
-
+class Display extends modules{
     /**
      * Init function to load Smarty
      */
     function init(){
         $this->smarty = new SmartyCustom();
         $this->smarty->template_dir =  _THEMES_."/"._THEME_NAME_."/tpl";
-        $this->router = new Router\Router(_PATH_);
+
     }
 
     /**
