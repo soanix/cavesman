@@ -25,6 +25,15 @@ class modules {
                     $this->list[] = $config;
                 	include_once(_MODULES_."/".$directory."/".$module.".php");
 					$this->$module = new $module();
+                    $this->router->mount("/".$module, function() use ($module){
+                        $this->router->get("/(\w+)", function($fn) use ($module){
+                            $fn = "action".$fn;
+                            if(method_exists($module, $fn)){
+                                echo json_encode($this->$module->$fn());
+                                exit();
+                            }
+                        });
+                    });
                     if(method_exists($module, "loadRoutes"))
                         $this->router = $this->$module->loadRoutes($this->router);
 				}
