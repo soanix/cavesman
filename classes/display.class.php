@@ -10,6 +10,7 @@ class Display {
     function init(){
         $this->smarty = new SmartyCustom();
         $this->smarty->template_dir =  _THEMES_."/"._THEME_NAME_."/tpl";
+        $this->router = new Router\Router(_PATH_);
     }
 
     /**

@@ -39,7 +39,6 @@ define("_THEME_NAME_", $theme);
 define("_DOMAIN_", $_SERVER['SERVER_NAME']);
 
 // Browser path for media
-define("_PATH_", "/");
 define("_TEMPLATES_", _PATH_."themes");
 
 

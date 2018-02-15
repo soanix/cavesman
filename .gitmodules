@@ -1,3 +1,0 @@
-[submodule "externals/smarty"]
-	path = externals/smarty
-	url = https://github.com/smarty-php/smarty.git
