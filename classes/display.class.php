@@ -3,6 +3,7 @@
  * This class acts as an example on where to position a DocBlock.
  */
 class Display extends modules{
+
     /**
      * Init function to load Smarty
      */
@@ -51,7 +52,11 @@ class Display extends modules{
         $this->smarty->assign("css", _TEMPLATES_."/"._THEME_NAME_."/css");
         $this->smarty->assign("js", _TEMPLATES_."/"._THEME_NAME_."/js");
         $this->smarty->assign("img", _TEMPLATES_."/"._THEME_NAME_."/img");
-        include_once(_THEMES_."/"._THEME_NAME_."/index.php");
+        if(file_exists(_APP_."/routes.php"))
+            include_once(_APP_."/routes.php");
+        if(file_exists(_THEMES_."/"._THEME_NAME_."/index.php"))
+            include_once(_THEMES_."/"._THEME_NAME_."/index.php");
+
     }
 }
 ?>
