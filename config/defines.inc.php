@@ -20,17 +20,10 @@ define("_LANG_", _ROOT_."/lang");
 define("_CACHE_", _APP_."/cache");
 
 
-
 require_once(_CONFIG_."/setup.inc.php");
 
-$permisos = array(
-	"admin" => 1,
-	"public" => ""
-);
-$theme = isset($_GET['theme']) ? $_GET['theme'] : (isset($_SESSION['theme']) ? $_SESSION['theme'] : DEFAULT_THEME);
 
-
-define("_THEME_NAME_", $theme);
+define("_THEME_NAME_", DEFAULT_THEME);
 
 
 /** RELATIVE PATHS**/

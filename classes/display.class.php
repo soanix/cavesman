@@ -48,7 +48,8 @@ class Display extends modules{
      * Load smarty base vars and start gui
      */
     public function theme(){
-        $this->smarty->assign("base", _PATH_);
+        if(defined("_PATH_"))
+            $this->smarty->assign("base", _PATH_);
         $this->smarty->assign("css", _TEMPLATES_."/"._THEME_NAME_."/css");
         $this->smarty->assign("js", _TEMPLATES_."/"._THEME_NAME_."/js");
         $this->smarty->assign("img", _TEMPLATES_."/"._THEME_NAME_."/img");

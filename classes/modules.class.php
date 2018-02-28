@@ -5,8 +5,12 @@ class modules {
     public $router;
     function __construct(){
         $this->loadModules();
-		if(!is_dir(_APP_."/img/m"))
-            mkdir(_APP_."/img/m");
+        if(defined("_APP_")){
+            if(!is_dir(_APP_."/img"))
+                mkdir(_APP_."/img/");
+    		if(!is_dir(_APP_."/img/m"))
+                mkdir(_APP_."/img/m");
+        }
     }
     function loadSmarty(){
         $this->smarty = new SmartyCustom();
@@ -16,27 +20,29 @@ class modules {
     function loadModules(){
         $this->loadSmarty();
         $this->router = new \Bramus\Router\Router();
-        $directories = scandir(_MODULES_);
-        foreach($directories as $directory){
-            $module = str_replace('directory/', '', $directory);
-            if($module !== '.' && $module != '..'){
-				$config = json_decode(file_get_contents(_MODULES_."/".$directory."/config.json"), true);
-				if($config['active']){
-                    $this->list[] = $config;
-                	include_once(_MODULES_."/".$directory."/".$module.".php");
-					$this->$module = new $module();
-                    $this->router->mount("/".$module, function() use ($module){
-                        $this->router->get("/(\w+)", function($fn) use ($module){
-                            $fn = "action".$fn;
-                            if(method_exists($module, $fn)){
-                                echo json_encode($this->$module->$fn());
-                                exit();
-                            }
+        if(is_dir(_MODULES_)){
+            $directories = scandir(_MODULES_);
+            foreach($directories as $directory){
+                $module = str_replace('directory/', '', $directory);
+                if($module !== '.' && $module != '..'){
+    				$config = json_decode(file_get_contents(_MODULES_."/".$directory."/config.json"), true);
+    				if($config['active']){
+                        $this->list[] = $config;
+                    	include_once(_MODULES_."/".$directory."/".$module.".php");
+    					$this->$module = new $module();
+                        $this->router->mount("/".$module, function() use ($module){
+                            $this->router->get("/(\w+)", function($fn) use ($module){
+                                $fn = "action".$fn;
+                                if(method_exists($module, $fn)){
+                                    echo json_encode($this->$module->$fn());
+                                    exit();
+                                }
+                            });
                         });
-                    });
-                    if(method_exists($module, "loadRoutes"))
-                        $this->router = $this->$module->loadRoutes($this->router);
-				}
+                        if(method_exists($module, "loadRoutes"))
+                            $this->router = $this->$module->loadRoutes($this->router);
+    				}
+                }
             }
         }
     }
