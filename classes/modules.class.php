@@ -1,4 +1,5 @@
 <?
+namespace Cavesman;
 
 class modules {
     public $list = array();
@@ -13,7 +14,7 @@ class modules {
         }
     }
     function loadSmarty(){
-        $this->smarty = new SmartyCustom();
+        $this->smarty = new \SmartyCustom();
         $this->smarty->template_dir =  _THEMES_."/"._THEME_NAME_."/tpl";
 
     }
@@ -28,14 +29,14 @@ class modules {
     				$config = json_decode(file_get_contents(_MODULES_."/".$directory."/config.json"), true);
     				if($config['active']){
                         $this->list[] = $config;
-                    	include_once(_MODULES_."/".$directory."/".$module.".php");
-    					$this->$module = new $module();
+                    	require_once _MODULES_."/".$directory."/".$module.".php";
+                        $namespace = 'Cavesman\\Modules\\'.$module;
+    					$this->$module = new $namespace();
                         $this->router->mount("/".$module, function() use ($module){
                             $this->router->get("/(\w+)", function($fn) use ($module){
                                 $fn = "action".$fn;
                                 if(method_exists($module, $fn)){
-                                    echo json_encode($this->$module->$fn());
-                                    exit();
+                                    Display::response($this->$module->$fn(), "json");
                                 }
                             });
                         });

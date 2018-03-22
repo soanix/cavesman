@@ -70,6 +70,7 @@ function smartyImgUrl($params, $smarty){
 		return $url.'?'.$time;
 	return "";
 }
+
 class SmartyCustom extends Smarty {
     /**
      * constructor

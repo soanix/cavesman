@@ -10,5 +10,5 @@ if(_DEV_MODE_){
 	error_reporting(E_ALL | E_WARNING);
 }
 require_once(_CONFIG_."/includes.inc.php");
-$display = new Display();
+$display = new Cavesman\Display();
 ?>
