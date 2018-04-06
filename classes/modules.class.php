@@ -39,6 +39,12 @@ class modules {
                                     Display::response($this->$module->$fn(), "json");
                                 }
                             });
+                            $this->router->post("/(\w+)", function($fn) use ($module){
+                                $fn = "action".$fn;
+                                if(method_exists($this->$module, $fn)){
+                                    Display::response($this->$module->$fn(), "json");
+                                }
+                            });
                         });
                         if(method_exists($module, "loadRoutes"))
                             $this->router = $this->$module->loadRoutes($this->router);
