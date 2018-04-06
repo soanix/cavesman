@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Cavesman;
 
 class modules {
