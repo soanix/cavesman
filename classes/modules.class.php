@@ -35,7 +35,7 @@ class modules {
                         $this->router->mount("/".$module, function() use ($module){
                             $this->router->get("/(\w+)", function($fn) use ($module){
                                 $fn = "action".$fn;
-                                if(method_exists($module, $fn)){
+                                if(method_exists($this->$module, $fn)){
                                     Display::response($this->$module->$fn(), "json");
                                 }
                             });
