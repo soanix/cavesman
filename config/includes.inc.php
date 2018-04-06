@@ -8,6 +8,9 @@ else
 //add security file
 include_once(_CONFIG_."/security.inc.php");
 
+//add DB Class
+include_once(_CLASSES_."/db.class.php");
+
 //add smarty custom class
 include_once(_CLASSES_."/smarty.class.php");
 
