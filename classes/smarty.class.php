@@ -1,5 +1,5 @@
 <?php
-
+use Cavesman;
 /**
  * Smarty Class
  *
@@ -14,7 +14,7 @@
 function smartyFile($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
 	include_once(_CLASSES_."/modules.class.php");
-	$modules = new modules();
+	$modules = new \Cavesman\modules();
 	$plugin_info = $modules->list[str_replace(".tpl", "", $name)];
 	if(file_exists($plugin_info['directory']."/".$name))
 		return $smarty->fetch($plugin_info['directory']."/".$name);
@@ -23,8 +23,7 @@ function smartyFile($params, $smarty){
 }
 function smartyHook($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
-	include_once(_CLASSES_."/modules.class.php");
-	$modules = new modules();
+	$modules = new \Cavesman\modules();
 	return $modules->hooks($name);
 }
 function smartyCss($params, $smarty){
