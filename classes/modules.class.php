@@ -27,7 +27,8 @@ class modules {
                 $module = str_replace('directory/', '', $directory);
                 if($module !== '.' && $module != '..'){
     				$config = json_decode(file_get_contents(_MODULES_."/".$directory."/config.json"), true);
-    				if($config['active']){
+					$config['module'] = $directory;
+					if($config['active']){
                         $this->list[] = $config;
                     	require_once _MODULES_."/".$directory."/".$module.".php";
                         $namespace = 'Cavesman\\Modules\\'.$module;
@@ -46,7 +47,7 @@ class modules {
                                 }
                             });
                         });
-                        if(method_exists($module, "loadRoutes"))
+                        if(method_exists($namespace, "loadRoutes"))
                             $this->router = $this->$module->loadRoutes($this->router);
     				}
                 }
@@ -57,8 +58,9 @@ class modules {
         $html = '';
         if($hook){
             foreach($this->list as $module){
-                $module_name = $module['name'];
-                $this->$module_name = new $module_name();
+                $module_name = $module['module'];
+				$namespace = 'Cavesman\\Modules\\'.$module_name;
+                $this->$module_name = new $namespace();
                 $hook_name = "hook".$hook;
                 if(method_exists($this->$module_name, $hook_name) && $module['active'])
                     $html .= $this->$module_name->$hook_name();
