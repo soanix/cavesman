@@ -23,6 +23,16 @@ class modules {
         $this->router = new \Bramus\Router\Router();
         if(is_dir(_MODULES_)){
             $directories = scandir(_MODULES_);
+			foreach($directories as $directory){
+                $module = str_replace('directory/', '', $directory);
+                if($module !== '.' && $module != '..'){
+    				$config = json_decode(file_get_contents(_MODULES_."/".$directory."/config.json"), true);
+					$config['module'] = $directory;
+					if($config['active']){
+						require_once _MODULES_."/".$directory."/".$module.".php";
+					}
+				}
+			}
             foreach($directories as $directory){
                 $module = str_replace('directory/', '', $directory);
                 if($module !== '.' && $module != '..'){
@@ -30,7 +40,6 @@ class modules {
 					$config['module'] = $directory;
 					if($config['active']){
                         $this->list[] = $config;
-                    	require_once _MODULES_."/".$directory."/".$module.".php";
                         $namespace = 'Cavesman\\Modules\\'.$module;
     					$this->$module = new $namespace();
                         $this->router->mount("/".$module, function() use ($module){
