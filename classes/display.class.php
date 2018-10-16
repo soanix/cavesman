@@ -93,10 +93,10 @@ class Display extends Modules {
                 exit('Unknown http status code "' . htmlentities($code) . '"');
             break;
         }
-        header($_SERVER['SERVER_PROTOCOL'] . ' '.$code.' '.$text);
+        $msg = $msg ?? $text;
         if($type == "json"){
             header('Content-Type: application/json; Charset=UTF-8');
-            echo json_encode($msg);
+            self::json($msg);
         }else{
             echo $msg;
         }
