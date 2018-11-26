@@ -114,6 +114,12 @@ class Display extends Modules {
         $this->smarty->assign("css", _TEMPLATES_."/"._THEME_NAME_."/css");
         $this->smarty->assign("js", _TEMPLATES_."/"._THEME_NAME_."/js");
         $this->smarty->assign("img", _TEMPLATES_."/"._THEME_NAME_."/img");
+        foreach($this->list as $module){
+            if(method_exists("\\Cavesman\\Modules\\".$module['name'], "Smarty")){
+                $module = "\\Cavesman\\Modules\\".$module['name'];
+                $this->smarty = $module::Smarty($this->smarty);
+            }
+        }
         if(file_exists(_APP_."/routes.php"))
             include_once(_APP_."/routes.php");
         else
