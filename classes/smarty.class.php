@@ -9,11 +9,12 @@
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
+use Cavesman\modules;
 
 function smartyFile($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
 	include_once(_CLASSES_."/modules.class.php");
-	$modules = new \Cavesman\modules();
+	$modules = new modules();
 	$plugin_info = $modules->list[str_replace(".tpl", "", $name)];
 	if(file_exists($plugin_info['directory']."/".$name))
 		return $smarty->fetch($plugin_info['directory']."/".$name);
@@ -22,7 +23,7 @@ function smartyFile($params, $smarty){
 }
 function smartyHook($params, $smarty){
 	$name = isset($params['name']) ? $params['name'] : '';
-	$modules = new \Cavesman\modules();
+	$modules = new modules();
 	return $modules->hooks($name);
 }
 function smartyCss($params, $smarty){
@@ -39,6 +40,9 @@ function smartyCss($params, $smarty){
 	if($file)
 		return '<link rel="stylesheet" type="text/css" href="'.$css.'?'.$time.'">';
 	return '';
+}
+function smartyModifierStrSplit($string, $insert_char=''){
+	return preg_split('/' . $insert_char . '/', $string, -1, PREG_SPLIT_NO_EMPTY);
 }
 function smartyJs($params, $smarty){
 
@@ -68,7 +72,6 @@ function smartyImgUrl($params, $smarty){
 		return $url.'?'.$time;
 	return "";
 }
-
 class SmartyCustom extends Smarty {
     /**
      * constructor
@@ -84,12 +87,13 @@ class SmartyCustom extends Smarty {
 		$this->force_compile = true;
 		$this->compile_check = true;
 		$this->debugging = false;
-
+		$this->registerPlugin("function", "gen_url", 'Cavesman\modules::genUrl');
 		$this->registerPlugin("function", "hook", 'smartyHook');
 		$this->registerPlugin("function", "file", 'smartyFile');
 		$this->registerPlugin("function", "css", 'smartyCss');
 		$this->registerPlugin("function", "img", 'smartyImgUrl');
 		$this->registerPlugin("function", "js", 'smartyJs');
+		$this->registerPlugin("modifier", "str_split", 'smartyModifierStrSplit');
 	}
 	function __install(){
 		if(!is_dir(_CACHE_."/views"))

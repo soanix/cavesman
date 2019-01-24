@@ -13,12 +13,12 @@ class modules {
                 mkdir(_APP_."/img/m");
         }
     }
-    function loadSmarty(){
+    public function loadSmarty(){
         $this->smarty = new \SmartyCustom();
         $this->smarty->template_dir =  _THEMES_."/"._THEME_NAME_."/tpl";
 
     }
-    function loadModules(){
+    private function loadModules(){
         $this->loadSmarty();
         $this->router = new \Bramus\Router\Router();
         if(is_dir(_MODULES_)){
@@ -63,7 +63,14 @@ class modules {
             }
         }
     }
-    function hooks($hook = false){
+    public static function genUrl($params){
+        $namespace = 'Cavesman\\Modules\\'.$params['m'];
+        $function = "get".ucfirst($params['t'])."Url";
+        if(method_exists($namespace, $function))
+            return $namespace::$function($params);
+        return "";
+    }
+    public function hooks($hook = false){
         $html = '';
         if($hook){
             foreach($this->list as $module){
@@ -77,10 +84,10 @@ class modules {
         }
         return $html;
     }
-	function p($value = '', $default = ''){
+	public function p($value = '', $default = ''){
         return isset($_POST[$value]) ? $_POST[$value] : $default;
     }
-    function g($value = '', $default = ''){
+    public function g($value = '', $default = ''){
         return isset($_GET[$value]) ? $_GET[$value] : $default;
     }
 }
