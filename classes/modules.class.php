@@ -30,7 +30,7 @@ class modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         require_once _MODULES_ . "/" . $directory . "/" . $module . ".php";
-                        foreach (glob(_MODULES_ . "/" . $directory . "/*Entity.php") as $filename) {
+                        foreach (glob(_MODULES_ . "/" . $directory . "/entity/*.php") as $filename) {
                             include_once $filename;
                         }
                     }

@@ -30,11 +30,11 @@ class DB extends \PDO
                 $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                 if ($config['active']) {
                     if(is_dir(_MODULES_ . "/" . $directory . "/entity"))
-                        $directoryEntity[] = _MODULES_ . "/" . $directory . "/entity";
+                        array_push($directoryEntity, _MODULES_ . "/" . $directory . "/entity");
                 }
             }
         }
-        $config = Setup::createAnnotationMetadataConfiguration(array(_APP_."/modules/"), true);
+        $config = Setup::createAnnotationMetadataConfiguration($directoryEntity, true, null, null, false);
         $connectionParams = array(
             'dbname' => DB_NAME,
             'user' => DB_USER,
