@@ -66,15 +66,18 @@ if(!file_exists(_APP_."/routes.php")){
     fwrite($fp, $routesphp);
     fclose($fp);
 }
-
-$fp = fopen(_APP_."/index.php", "w+");
-$routesphp = '<?php'.PHP_EOL
-    .'if(file_exists("config/settings.inc.php"))'.PHP_EOL
-	.'   include_once "config/settings.inc.php";'.PHP_EOL
-	.'include_once _ROOT_."/load.php";'.PHP_EOL
-.'?>';
-fwrite($fp, $routesphp);
-fclose($fp);
+if(!file_exists(_APP_."/index.php")){
+    $fp = fopen(_APP_."/index.php", "w+");
+    $routesphp = '<?php'.PHP_EOL
+        .'if(file_exists("config/settings.dev.inc.php"))'.PHP_EOL
+        .'   include_once "config/settings.dev.inc.php'.PHP_EOL
+        .'if(file_exists("config/settings.inc.php"))'.PHP_EOL
+    	.'   include_once "config/settings.inc.php";'.PHP_EOL
+    	.'include_once _ROOT_."/load.php";'.PHP_EOL
+    .'?>';
+    fwrite($fp, $routesphp);
+    fclose($fp);
+}
 
 if(!file_exists(_THEMES_."/default/tpl/index.tpl")){
     $fp = fopen(_THEMES_."/default/tpl/index.tpl", "w+");

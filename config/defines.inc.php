@@ -1,4 +1,4 @@
-<?
+<?php
 
 define("_DEV_MODE_", true);
 
@@ -15,7 +15,7 @@ define("_TOOLS_", _ROOT_."/tools");
 //Modules main dir
 define("_MODULES_", _APP_."/modules");
 //Language main dir
-define("_LANG_", _ROOT_."/lang");
+define("_LANG_", _APP_."/lang");
 //Cache main dir
 define("_CACHE_", _APP_."/cache");
 
@@ -23,12 +23,12 @@ define("_CACHE_", _APP_."/cache");
 require_once(_CONFIG_."/setup.inc.php");
 
 
-define("_THEME_NAME_", DEFAULT_THEME);
+define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
 
 
 /** RELATIVE PATHS**/
 
-define("_DOMAIN_", $_SERVER['SERVER_NAME']);
+define("_DOMAIN_", isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : "NONE");
 
 // Browser path for media
 define("_TEMPLATES_", _PATH_."themes");

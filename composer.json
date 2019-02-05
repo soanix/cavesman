@@ -13,6 +13,7 @@
         "smarty/smarty": "~3.1",
         "bramus/router": "~1.3",
         "mike182uk/cart": "^3.0",
-        "sobstel/sesshin": "^1.2"
+        "sobstel/sesshin": "^1.2",
+        "doctrine/orm": "^2.5"
     }
 }
