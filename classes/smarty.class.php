@@ -97,6 +97,7 @@ class Smarty extends \Smarty {
     		return '<script src="'.$js.'?'.$time.'"></script>';
     	return "";
     }
+
     public static function smartyImgUrl($params, $smarty){
 
     	$file = isset($params['file']) ? $params['file'] : '';

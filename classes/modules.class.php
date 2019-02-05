@@ -75,7 +75,7 @@ class modules extends Display
             }
         }
     }
-
+    
     function hooks($hook = false)
     {
         $html = '';
