@@ -18,6 +18,7 @@ class modules extends Display
         }
     }
 
+
     public static function loadModules()
     {
         $router = self::getInstance("\Cavesman\Router");
@@ -74,6 +75,7 @@ class modules extends Display
             }
         }
     }
+
     function hooks($hook = false)
     {
         $html = '';

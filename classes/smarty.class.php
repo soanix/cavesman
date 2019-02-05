@@ -13,6 +13,8 @@ namespace Cavesman;
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
+use Cavesman\modules;
+
 
 
 class Smarty extends \Smarty {
@@ -31,7 +33,6 @@ class Smarty extends \Smarty {
 		$this->force_compile = true;
 		$this->compile_check = true;
 		$this->debugging = false;
-
 		$this->registerPlugin("function", "hook", '\Cavesman\Smarty::smartyHook');
 		$this->registerPlugin("function", "file", '\Cavesman\Smarty::smartyFile');
 		$this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');
