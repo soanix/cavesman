@@ -1,23 +1,22 @@
 <?php
 
-define("_DEV_MODE_", true);
 
 //config dir of app
-define("_CONFIG_", _ROOT_."/config");
+define("_CONFIG_", _ROOT_."/Config");
 //Classes main dir
-define("_CLASSES_", _ROOT_."/classes");
+define("_CLASSES_", _ROOT_."/Classes");
 //Controllers main dir
-define("_CONTROLLERS_", _ROOT_."/controllers");
+define("_CONTROLLERS_", _ROOT_."/Controllers");
 //Themes main dir
-define("_THEMES_", _APP_."/themes");
+define("_THEMES_", _APP_."/Themes");
 //Tools main dir
-define("_TOOLS_", _ROOT_."/tools");
+define("_TOOLS_", _ROOT_."/Tools");
 //Modules main dir
-define("_MODULES_", _APP_."/modules");
+define("_MODULES_", _APP_."/Modules");
 //Language main dir
-define("_LANG_", _APP_."/lang");
+define("_LANG_", _APP_."/Lang");
 //Cache main dir
-define("_CACHE_", _APP_."/cache");
+define("_CACHE_", _APP_."/Cache");
 
 
 require_once(_CONFIG_."/setup.inc.php");
@@ -31,7 +30,7 @@ define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSI
 define("_DOMAIN_", isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : "NONE");
 
 // Browser path for media
-define("_TEMPLATES_", _PATH_."themes");
+define("_TEMPLATES_", _PATH_."Themes");
 
 
 ?>

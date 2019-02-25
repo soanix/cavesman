@@ -29,8 +29,8 @@ class DB extends \PDO
             if ($module !== '.' && $module != '..') {
                 $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                 if ($config['active']) {
-                    if(is_dir(_MODULES_ . "/" . $directory . "/entity"))
-                        array_push($directoryEntity, _MODULES_ . "/" . $directory . "/entity");
+                    if(is_dir(_MODULES_ . "/" . $directory . "/Entity"))
+                        array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
                 }
             }
         }
@@ -41,6 +41,7 @@ class DB extends \PDO
             'password' => DB_PASSWORD,
             'host' => DB_SERVER,
             'driver' => 'pdo_mysql',
+            'charset' => "UTF8"
         );
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
         return EntityManager::create($conn, $config);

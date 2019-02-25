@@ -1,12 +1,12 @@
 <?php
 namespace Cavesman;
 
-use \Bramus\Router\Router as Bramus;
+use Bramus\Router\Router as Bramus;
 
 class Router extends Bramus{
 
     public static $instance;
-    
+
     function __construct(){ // Se conecta a mysqli
 
     }

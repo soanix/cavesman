@@ -13,9 +13,8 @@ namespace Cavesman;
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
-use Cavesman\modules;
-
-
+use Cavesman\FrontEnd;
+use Cavesman\Modules;
 
 class Smarty extends \Smarty {
     /**
@@ -51,7 +50,7 @@ class Smarty extends \Smarty {
     public static function smartyFile($params, $smarty){
     	$name = isset($params['name']) ? $params['name'] : '';
     	include_once(_CLASSES_."/modules.class.php");
-    	$modules = new \Cavesman\modules();
+    	$modules = FrontEnd::getInstance(Modules::class);
     	$plugin_info = $modules->list[str_replace(".tpl", "", $name)];
     	if(file_exists($plugin_info['directory']."/".$name))
     		return $smarty->fetch($plugin_info['directory']."/".$name);
@@ -60,41 +59,41 @@ class Smarty extends \Smarty {
     }
     public static function smartyHook($params, $smarty){
     	$name = isset($params['name']) ? $params['name'] : '';
-    	return FrontEnd::getInstance("Cavesman\modules")->hooks($name);
+    	return FrontEnd::getInstance(Modules::class)->hooks($name);
     }
     public static function smartyCss($params, $smarty){
     	$file = isset($params['file']) ? $params['file'] : '';
-    	if(strpos($file, "/") !== 0){
+    	if(stripos($file, "/") !== 0 && stripos($file, "http") === false ){
             if(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/css/".$file))
                 $css = _TEMPLATES_."/"._THEME_NAME_."/css/".$file;
             elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
                 $css = _TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file;
     		$time = filemtime(_APP_."/".$css);
+
     	}else{
     		$css = $file;
-    		$time = filemtime(_APP_.$css);
+    		$time = false;
     	}
-
-
-    	if($file)
-    		return '<link rel="stylesheet" type="text/css" href="'.$css.'?'.$time.'">';
+        if($file)
+    		return '<link rel="stylesheet" type="text/css" href="'.$css.($time ? '?'.$time : '').'">';
     	return '';
     }
     public static function smartyJs($params, $smarty){
 
     	$file = isset($params['file']) ? $params['file'] : '';
-        if(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
-            $js = _TEMPLATES_."/"._THEME_NAME_."/js/".$file;
-        elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
-            $js = _TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file;
-    	if(strpos($file, "/") !== 0){
+
+    	if(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
+            if(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
+                $js = _TEMPLATES_."/"._THEME_NAME_."/js/".$file;
+            elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
+                $js = _TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file;
     		$time = filemtime(_APP_."/".$js);
     	}else{
     		$js = $file;
-    		$time = filemtime(_APP_.$js);
+    		$time = false;
     	}
     	if($file)
-    		return '<script src="'.$js.'?'.$time.'"></script>';
+    		return '<script src="'.$js.($time ? '?'.$time : '').'"></script>';
     	return "";
     }
 

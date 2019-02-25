@@ -2,15 +2,15 @@
 
 namespace Cavesman;
 
-use \Cavesman\Router;
-use \Cavesman\SmartyCustom;
+use Cavesman\Router;
+use Cavesman\SmartyCustom;
 
 class FrontEnd {
     public $router;
     public $smarty;
     function __construct(){
-        $this->router = self::getInstance("Cavesman\Router");
-        $this->smarty = self::getInstance("Cavesman\Smarty");
+        $this->router = self::getInstance(Router::class);
+        $this->smarty = self::getInstance(Smarty::class);
     }
     public static function getInstance($module)
     {

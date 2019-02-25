@@ -2,6 +2,7 @@
 namespace Cavesman;
 
 use Cavesman\FrontEnd;
+use Cavesman\Modules;
 
 class Display extends FrontEnd
 {
@@ -18,7 +19,7 @@ class Display extends FrontEnd
         $tmpl                       = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
         $this->smarty->template_dir = $tmpl;
         $this->smarty->assign("tmpl", $tmpl);
-        \Cavesman\Modules::loadModules();
+        Modules::loadModules();
     }
 
     /**
@@ -180,7 +181,7 @@ class Display extends FrontEnd
                 break;
         }
         $msg = $msg ? $msg : $text;
-        if ($type == "json") {
+        if (strtolower($type) == "json") {
             header('Content-Type: application/json; Charset=UTF-8');
             self::json($msg);
         } else {

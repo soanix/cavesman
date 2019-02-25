@@ -1,9 +1,9 @@
 <?php
 namespace Cavesman;
 
-use \Cavesman\Router;
+use Cavesman\Router;
 
-class modules extends Display
+class Modules extends Display
 {
     public static $instance;
     public $list = array();
@@ -21,7 +21,7 @@ class modules extends Display
 
     public static function loadModules()
     {
-        $router = self::getInstance("\Cavesman\Router");
+        $router = self::getInstance(Router::class);
         if (is_dir(_MODULES_)) {
             $directories = scandir(_MODULES_);
             foreach ($directories as $directory) {
@@ -31,39 +31,39 @@ class modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         require_once _MODULES_ . "/" . $directory . "/" . $module . ".php";
-                        foreach (glob(_MODULES_ . "/" . $directory . "/entity/*.php") as $filename) {
-                            include_once $filename;
+                        foreach (glob(_MODULES_ . "/" . $directory . "/Entity/*.php") as $filename) {
+                            require_once $filename;
                         }
                     }
                 }
             }
             foreach ($directories as $directory) {
-                $modules = self::getInstance("\Cavesman\Modules");
+                $modules = self::getInstance(self::class);
                 $module  = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
                     $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     $config['module'] = $directory;
                     if ($config['active']) {
                         $modules->list[]  = $config;
-                        $namespace        = 'Cavesman\\Modules\\' . $module;
+                        $namespace        = 'app\\Modules\\' . $module;
                         $modules->$module = self::getInstance($namespace);
-                        if (method_exists("\\Cavesman\\Modules\\" . $module, "Smarty")) {
+                        if (method_exists($namespace, "Smarty")) {
                             $namespace::Smarty();
                         }
-                        $router->mount("/" . $module, function() use ($router, $module, $namespace)
+                        $router->mount("/" . strtolower($module), function() use ($router, $module, $namespace)
                         {
                             $router->get("/(\w+)", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "Action";
                                 if (method_exists($namespace, $fn)) {
-                                    Display::response($namespace::$fn(), "json");
+                                    self::response($namespace::$fn(), "json");
                                 }
                             });
                             $router->post("/(\w+)", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "Action";
                                 if (method_exists($namespace, $fn)) {
-                                    Display::response($namespace::$fn(), "json");
+                                    self::response($namespace::$fn(), "json");
                                 }
                             });
                         });
@@ -75,7 +75,7 @@ class modules extends Display
             }
         }
     }
-    
+
     function hooks($hook = false)
     {
         $html = '';
