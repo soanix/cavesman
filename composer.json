@@ -14,6 +14,7 @@
         "bramus/router": "~1.3",
         "mike182uk/cart": "^3.0",
         "sobstel/sesshin": "^1.2",
-        "doctrine/orm": "^2.5"
+        "doctrine/orm": "^2.5",
+        "lcobucci/jwt": "^3.2"
     }
 }

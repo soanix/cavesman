@@ -185,6 +185,7 @@ class Display extends FrontEnd
             header('Content-Type: application/json; Charset=UTF-8');
             self::json($msg);
         } else {
+            header('X-PHP-Response-Code: '.$code, true, $code);
             echo $msg;
         }
         exit();

@@ -9,6 +9,7 @@ define("_CLASSES_", _ROOT_."/Classes");
 define("_CONTROLLERS_", _ROOT_."/Controllers");
 //Themes main dir
 define("_THEMES_", _APP_."/Themes");
+
 //Tools main dir
 define("_TOOLS_", _ROOT_."/Tools");
 //Modules main dir
@@ -24,6 +25,7 @@ require_once(_CONFIG_."/setup.inc.php");
 
 define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
 
+define("_THEME_", _THEMES_."/"._THEME_NAME_);
 
 /** RELATIVE PATHS**/
 
