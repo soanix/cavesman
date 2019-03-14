@@ -54,7 +54,7 @@ class Modules extends Display
                         {
                             $router->get("/(\w+)", function($fn) use ($module, $namespace)
                             {
-                                $fn = $fn . "Action";
+                                $fn = $fn . "ViewAction";
                                 if (method_exists($namespace, $fn)) {
                                     self::response($namespace::$fn(), "json");
                                 }
@@ -68,7 +68,7 @@ class Modules extends Display
                             });
                         });
                         if (method_exists($namespace, "loadRoutes"))
-                            $modules->$module->loadRoutes();
+                            $namespace::loadRoutes();
 
                     }
                 }

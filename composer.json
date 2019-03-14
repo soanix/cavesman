@@ -15,6 +15,11 @@
         "mike182uk/cart": "^3.0",
         "sobstel/sesshin": "^1.2",
         "doctrine/orm": "^2.5",
-        "lcobucci/jwt": "^3.2"
+        "lcobucci/jwt": "^3.2",
+        "workerman/workerman": "^3.5",
+        "workerman/phpsocket.io": "^1.1",
+        "wisembly/elephant.io": "^3.3",
+        "workerman/phpsocket.io-emitter": "^1.0",
+        "rase/socket.io-emitter": "^0.7.0"
     }
 }
