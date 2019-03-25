@@ -3,6 +3,7 @@ namespace Cavesman;
 
 use Cavesman\FrontEnd;
 use Cavesman\Modules;
+use Cavesman\Smarty;
 
 class Display extends FrontEnd
 {
@@ -184,16 +185,28 @@ class Display extends FrontEnd
         if (strtolower($type) == "json") {
             header('Content-Type: application/json; Charset=UTF-8');
             self::json($msg);
+
         } elseif(strtolower($type == 'xlsx')){
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; Charset=UTF-8');
             echo $msg;
+        } elseif (strtolower($type) == "html") {
+            if(file_exists(_THEME_."/tpl/error/".$code.".tpl")){
+                header('X-PHP-Response-Code: '.$code, true, $code);
+                if($_SERVER['REQUEST_METHOD'] == "GET")
+                    self::getInstance(Smarty::class)->display("error/".$code.".tpl");
+                if($_SERVER['REQUEST_METHOD'] == "POST")
+                    self::response(array("error" => $msg), "json", $code);
+            }else{
+                header('X-PHP-Response-Code: '.$code, true, $code);
+                    echo $msg;
+            }
         } else {
             header('X-PHP-Response-Code: '.$code, true, $code);
             echo $msg;
         }
         exit();
     }
-    static function json($array)
+    private static function json($array)
     {
         echo json_encode($array);
     }
