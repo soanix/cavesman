@@ -184,6 +184,9 @@ class Display extends FrontEnd
         if (strtolower($type) == "json") {
             header('Content-Type: application/json; Charset=UTF-8');
             self::json($msg);
+        } elseif(strtolower($type == 'xlsx')){
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; Charset=UTF-8');
+            echo $msg;
         } else {
             header('X-PHP-Response-Code: '.$code, true, $code);
             echo $msg;
@@ -204,6 +207,7 @@ class Display extends FrontEnd
         $this->smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
         $this->smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
         $this->smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
+        $this->smarty->assign("template", _THEME_ );
 
         if (file_exists(_APP_ . "/routes.php"))
             include_once(_APP_ . "/routes.php");
