@@ -1,4 +1,4 @@
-<?
+<?php
 if($access){
     $display->theme = _THEME_NAME_;
 }else
