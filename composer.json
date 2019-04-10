@@ -20,6 +20,7 @@
         "workerman/phpsocket.io": "^1.1",
         "wisembly/elephant.io": "^3.3",
         "workerman/phpsocket.io-emitter": "^1.0",
-        "rase/socket.io-emitter": "^0.7.0"
+        "rase/socket.io-emitter": "^0.7.0",
+        "phpoffice/phpspreadsheet": "^1.6"
     }
 }

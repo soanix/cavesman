@@ -81,12 +81,10 @@ class Modules extends Display
         $html = '';
         if ($hook) {
             foreach ($this->list as $module) {
-                $module_name        = $module['module'];
-                $namespace          = 'Cavesman\\Modules\\' . $module_name;
-                $this->$module_name = new $namespace();
-                $hook_name          = "hook" . $hook;
-                if (method_exists($this->$module_name, $hook_name) && $module['active'])
-                    $html .= $this->$module_name->$hook_name();
+                $namespace          = 'app\\Modules\\' . $module['module'];
+                $hook_name          = "hook" . str_replace(" ", "", ucwords(str_replace("_", " ", $hook)));
+                if (method_exists($namespace, $hook_name) && $module['active'])
+                    $html .= $namespace::$hook_name();
             }
         }
         return $html;
