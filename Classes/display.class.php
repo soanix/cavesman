@@ -189,6 +189,9 @@ class Display extends FrontEnd
         } elseif(strtolower($type == 'xlsx')){
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; Charset=UTF-8');
             echo $msg;
+        }elseif(strtolower($type == 'js')){
+            header('Content-Type: application/javascript; Charset=UTF-8');
+            echo $msg;
         } elseif (strtolower($type) == "html") {
             if(file_exists(_THEME_."/tpl/error/".$code.".tpl")){
                 header('X-PHP-Response-Code: '.$code, true, $code);
