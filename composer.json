@@ -21,7 +21,7 @@
         "wisembly/elephant.io": "^3.3",
         "workerman/phpsocket.io-emitter": "^1.0",
         "rase/socket.io-emitter": "^0.7.0",
-        "phpoffice/phpspreadsheet": "^1.6",
+        "phpoffice/phpspreadsheet": "^1.8",
         "spipu/html2pdf": "^5.2"
     }
 }
