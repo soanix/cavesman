@@ -1,27 +1,30 @@
 {
-    "name": "cavesman/cavesman",
-    "description": "Open source PHP modular Framework. Built on PHP. Easy and powerful.",
-    "license": "LGPL-3.0",
+    "name": "soanix/cavesman",
+    "description": "A lightweight and simple object oriented PHP Framework",
+    "keywords": ["php", "framework", "slim", "modular", "orm"],
+    "homepage": "https://github.com/soanix/cavesman",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
-            "name": "Pedro Oliver",
-            "email": "soanix91@gmail.com"
+            "name": "Pedro (Soanix) Oliver",
+            "email": "soanix91@gmail.com",
+            "homepage": "http://www.spworks.es"
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "smarty/smarty": "~3.1",
-        "bramus/router": "~1.3",
-        "mike182uk/cart": "^3.0",
-        "sobstel/sesshin": "^1.2",
-        "doctrine/orm": "^2.5",
-        "lcobucci/jwt": "^3.2",
-        "workerman/workerman": "^3.5",
-        "workerman/phpsocket.io": "^1.1",
-        "wisembly/elephant.io": "^3.3",
-        "workerman/phpsocket.io-emitter": "^1.0",
-        "rase/socket.io-emitter": "^0.7.0",
-        "phpoffice/phpspreadsheet": "^1.6",
-        "spipu/html2pdf": "^5.2"
+        "doctrine/orm": "^2.6"
+    },
+    "require-dev": {
+        "bramus/router": "^1.4",
+        "smarty/smarty": "^3.1"
+    },
+    "autoload": {
+        "psr-0": {"Soanix": "src/"}
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit --colors=always",
+        "lint": "php-cs-fixer fix --diff --dry-run",
+        "fix": "php-cs-fixer fix"
     }
 }
