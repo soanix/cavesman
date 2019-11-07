@@ -7,6 +7,7 @@
             "email": "soanix91@gmail.com"
         }
     ],
+    "license": "MIT",
     "minimum-stability": "",
     "require": {},
     "require": {
@@ -16,8 +17,13 @@
         "doctrine/orm": "^2.5"
     },
     "autoload": {
-        "psr-0": {
-            "HelloWorld": "src/"
-        }
-    }
+        "classmap": [
+            "Cavesman/Classes/db.class.php",
+            "Cavesman/Classes/display.class.php",
+            "Cavesman/Classes/frontend.class.php",
+            "Cavesman/Classes/modules.class.php",
+            "Cavesman/Classes/router.class.php",
+            "Cavesman/Classes/smarty.class.php"
+        ]
+    },
 }
