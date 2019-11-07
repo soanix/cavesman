@@ -7,8 +7,8 @@
             "email": "soanix91@gmail.com"
         }
     ],
+    "minimum-stability": "dev-master",
     "license": "MIT",
-    "minimum-stability": "",
     "require": {},
     "require": {
         "php": ">=7.0",
@@ -17,13 +17,8 @@
         "doctrine/orm": "^2.5"
     },
     "autoload": {
-        "classmap": [
-            "Cavesman/Classes/db.class.php",
-            "Cavesman/Classes/display.class.php",
-            "Cavesman/Classes/frontend.class.php",
-            "Cavesman/Classes/modules.class.php",
-            "Cavesman/Classes/router.class.php",
-            "Cavesman/Classes/smarty.class.php"
-        ]
-    },
+        "psr-0": {
+            "Cavesman\\": "src/Cavesman/Classes"
+        }
+    }
 }
