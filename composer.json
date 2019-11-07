@@ -1,31 +1,20 @@
 {
     "name": "soanix/cavesman",
-    "description": "A lightweight and simple object oriented PHP Framework",
-    "keywords": ["php", "framework", "slim", "modular", "orm"],
-    "homepage": "https://github.com/soanix/cavesman",
-    "type": "library",
-    "license": "MIT",
+    "description": "PHP Framework",
     "authors": [
         {
-            "name": "Pedro (Soanix) Oliver",
-            "email": "soanix91@gmail.com",
-            "homepage": "http://www.spworks.es"
+            "name": "Soanix",
+            "email": "soanix91@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
+    "require": {},
     "require": {
-
-        "doctrine/orm": "^2.6"
-    },
-    "require-dev": {
-        "bramus/router": "^1.4",
-        "smarty/smarty": "^3.1"
+        "php": ">=7.0"
     },
     "autoload": {
-        "psr-0": {"Soanix": "src/"}
-    },
-    "scripts": {
-        "test": "./vendor/bin/phpunit --colors=always",
-        "lint": "php-cs-fixer fix --diff --dry-run",
-        "fix": "php-cs-fixer fix"
+        "psr-0": {
+            "HelloWorld": "src/"
+        }
     }
 }
