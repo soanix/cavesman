@@ -6,6 +6,12 @@ define("_ROOT_", $projectRootPath);
 
 define("_APP_", _ROOT_."/src");
 
+define("DEFAULT_THEME", "public");
+
+define("_PATH_", "/");
+
+define("_DEV_MODE_", true);
+
 //config dir of app
 define("_CONFIG_", _ROOT_."/Config");
 //Classes main dir
