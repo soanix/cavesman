@@ -18,8 +18,8 @@
     },
     "autoload": {
         "files": [
-            "src/Config/config.inc.php",
-            "src/Config/defines.inc.php"
+            "src/Cavesman/Config/config.inc.php",
+            "src/Cavesman/Config/defines.inc.php"
         ],
         "psr-4": {
             "Cavesman\\": "src/Cavesman/Classes"
