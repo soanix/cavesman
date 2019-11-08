@@ -18,6 +18,9 @@
     },
     "autoload": {
         "psr-4": {
+            "files": [
+                "src/Config"
+            ],
             "Cavesman\\": "src/Cavesman/Classes"
         }
     }
