@@ -10,5 +10,4 @@ if(_DEV_MODE_){
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL | E_WARNING);
 }
-require_once(_CONFIG_."/includes.inc.php");
 ?>
