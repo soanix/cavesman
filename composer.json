@@ -17,10 +17,10 @@
         "doctrine/orm": "^2.5"
     },
     "autoload": {
+        "files": [
+            "src/Config"
+        ],
         "psr-4": {
-            "files": [
-                "src/Config"
-            ],
             "Cavesman\\": "src/Cavesman/Classes"
         }
     }
