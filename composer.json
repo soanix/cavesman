@@ -17,8 +17,8 @@
         "doctrine/orm": "^2.5"
     },
     "autoload": {
-        "classmap": [
+        "psr-4": {
             "Cavesman\\": "src/Cavesman/Classes"
-         ]
+        }
     }
 }
