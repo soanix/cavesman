@@ -23,6 +23,7 @@
         ],
         "psr-4": {
             "Cavesman\\": "src/Cavesman/Classes"
+            "Cavesman\\": "src/Cavesman/Cavesman.php"
         }
     }
 }
