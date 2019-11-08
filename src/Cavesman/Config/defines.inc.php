@@ -25,9 +25,6 @@ define("_LANG_", _APP_."/Lang");
 define("_CACHE_", _APP_."/Cache");
 
 
-require_once(_CONFIG_."/setup.inc.php");
-
-
 define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
 
 define("_THEME_", _THEMES_."/"._THEME_NAME_);
