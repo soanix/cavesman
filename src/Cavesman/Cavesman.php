@@ -1,7 +1,5 @@
 <?php
 
-namespace Cavesman;
-
 class Cavesman {
 
     public static $env = 'dev';
