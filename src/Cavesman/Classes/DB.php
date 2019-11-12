@@ -17,7 +17,7 @@ class DB extends \PDO
     public static function getInstance()
     {
         if ((self::$oConnection instanceof parent) === false) {
-            self::$oConnection = new parent('mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME . ';charset=utf8', DB_USER, DB_PASSWORD);
+            self::$oConnection = new parent('mysql:host=' . \Cavesman\Config::get("db")['host'] . ';dbname=' . \Cavesman\Config::get("db")['database'] . ';charset=utf8', \Cavesman\Config::get("db")['user'], \Cavesman\Config::get("db")['password']);
         }
         return self::$oConnection;
     }
@@ -36,10 +36,10 @@ class DB extends \PDO
         }
         $config = Setup::createAnnotationMetadataConfiguration($directoryEntity, true, null, null, false);
         $connectionParams = array(
-            'dbname' => DB_NAME,
-            'user' => DB_USER,
-            'password' => DB_PASSWORD,
-            'host' => DB_SERVER,
+            'dbname' => \Cavesman\Config::get("db")['database'],
+            'user' => \Cavesman\Config::get("db")['user'],
+            'password' => \Cavesman\Config::get("db")['password'],
+            'host' => \Cavesman\Config::get("db")['host'],
             'driver' => 'pdo_mysql',
             'charset' => "utf8mb4"
         );
