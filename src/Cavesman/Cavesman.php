@@ -1,13 +1,12 @@
 <?php
 
-namespace Cavesman;
-
 class Cavesman {
-    public function run($env = 'dev') {
-        exit("WORKS!");
-        /*require_once dirname(__FILE__) . '/Config/config.inc.php';
-        require_once _ROOT_ . '/install.php';
-        require_once _ROOT_ . '/controller.php';*/
+
+    public static $env = 'dev';
+
+    public static function run($env = 'dev') {
+        self::$env = $env;
+        echo "RUNS ". self::$env;
     }
 }
 ?>

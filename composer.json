@@ -8,13 +8,22 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "license": "MIT",
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "composer/composer": ">=1.9",
+        "smarty/smarty": "~3.1",
+        "bramus/router": "~1.3",
+        "doctrine/orm": "^2.5"
     },
     "autoload": {
-        "psr-0": {
-            "HelloWorld": "src/"
+        "files": [
+            "src/Cavesman/Config/defines.inc.php",
+            "src/Cavesman/Config/config.inc.php",
+            "src/Cavesman/Cavesman.php"
+        ],
+        "psr-4": {
+            "Cavesman\\": "src/Cavesman/Classes"
         }
     }
 }
