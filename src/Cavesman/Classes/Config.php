@@ -5,8 +5,9 @@ namespace Cavesman;
 class Config {
 
     public static function get($config = NULL) {
-        if(file_exists(_APP_."/config/" . $config  . ".json")){
-            return json_decode($config, false);
+        $file = _APP_."/config/" . $config  . ".json";
+        if(file_exists($file)){
+            return json_decode(file_get_contents($file), true);
         }
         return null;
     }
