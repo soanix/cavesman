@@ -26,7 +26,4 @@
             "Cavesman\\": "src/Cavesman/Classes"
         }
     },
-    "config": {
-        "bin-dir": "bin"
-    }
 }
