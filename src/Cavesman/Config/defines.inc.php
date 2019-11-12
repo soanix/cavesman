@@ -1,7 +1,7 @@
 <?php
 //config dir of app
 
-define("_APP_", _ROOT_."/src");
+define("_APP_", _ROOT_."/app");
 
 define("DEFAULT_THEME", "public");
 
