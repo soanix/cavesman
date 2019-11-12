@@ -1,8 +1,5 @@
 <?php
 //config dir of app
-$projectRootPath = dirname(\Composer\Factory::getComposerFile());
-
-define("_ROOT_", $projectRootPath);
 
 define("_APP_", _ROOT_."/src");
 
