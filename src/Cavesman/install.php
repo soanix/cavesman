@@ -92,7 +92,7 @@ if(!file_exists(_THEMES_."/public/tpl/index.tpl")){
     .'			<img src="https://github.com/soanix/cavesman/raw/master/cavesman.jpg?raw=true">'.PHP_EOL
     .'			<h1>Cave\'s Man</h1>'.PHP_EOL
     .'			<p>PHP modular framework</p>'.PHP_EOL
-    .'			<p>Version: Alpha 0.2</p>'.PHP_EOL
+    .'			<p>Version: v0.1.5-alpha</p>'.PHP_EOL
     .'		</div>'.PHP_EOL
     .'	</div>'.PHP_EOL
     .'</div>';
