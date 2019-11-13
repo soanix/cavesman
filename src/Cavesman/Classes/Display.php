@@ -1,11 +1,10 @@
 <?php
 namespace Cavesman;
 
-use Cavesman\FrontEnd;
 use Cavesman\Modules;
 use Cavesman\Smarty;
 
-class Display extends FrontEnd
+class Display extends Cavesman
 {
     public static $instance;
 
