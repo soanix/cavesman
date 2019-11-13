@@ -15,8 +15,8 @@ if(!is_dir(_APP_."/cache"))
     mkdir(_APP_."/cache");
 if(!is_dir(_APP_."/config"))
     mkdir(_APP_."/config");
-if(!is_dir(_SRC_."/Modules"))
-    mkdir(_SRC_."/Modules");
+if(!is_dir(_SRC_."/modules"))
+    mkdir(_SRC_."/modules");
 if(!file_exists(_WEB_."/.htaccess")){
     $fp = fopen(_WEB_."/.htaccess", "w+");
     $htaccess = 'RewriteEngine On'.PHP_EOL
@@ -100,11 +100,11 @@ if(!is_dir(_THEMES_."/default"))
     throw new \Exception("Imposible crear el directorio de temas default", 1);
 if(!is_dir(_THEMES_."/default/tpl"))
     throw new \Exception("Imposible crear el directorio de temas tpl", 1);
-if(!is_dir(_APP_."/Cache"))
+if(!is_dir(_APP_."/cache"))
     throw new \Exception("Imposible crear el directorio cache", 1);
-if(!is_dir(_APP_."/Config"))
+if(!is_dir(_APP_."/config"))
     throw new \Exception("Imposible crear el directorio de configuracion", 1);
-if(!is_dir(_APP_."/Modules"))
+if(!is_dir(_APP_."/modules"))
     throw new \Exception("Imposible crear el directorio de modulos", 1);
 
 if($install){
