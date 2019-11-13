@@ -4,7 +4,7 @@ namespace Cavesman;
 use Cavesman\Modules;
 use Cavesman\Smarty;
 
-class Display extends Cavesman
+class Display extends \Cavesman
 {
     public static $instance;
 
