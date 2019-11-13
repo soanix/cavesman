@@ -20,6 +20,7 @@
         "files": [
             "src/Cavesman/Config/defines.inc.php",
             "src/Cavesman/Config/config.inc.php",
+            "src/Cavesman/install.php",
             "src/Cavesman/Cavesman.php"
         ],
         "psr-4": {

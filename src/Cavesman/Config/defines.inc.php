@@ -12,6 +12,8 @@ define("_APP_", _ROOT_."/app");
 
 define("_SRC_", _ROOT_."/src");
 
+define("_WEB_", _ROOT_."/web");
+
 define("DEFAULT_THEME", "public");
 
 define("_PATH_", "/");

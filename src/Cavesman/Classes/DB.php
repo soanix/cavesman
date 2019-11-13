@@ -22,15 +22,20 @@ class DB extends \PDO
         return self::$oConnection;
     }
     public static function getManager() {
+
+
+
         $directories = scandir(_MODULES_);
         $directoryEntity = array();
-        foreach ($directories as $directory) {
-            $module = str_replace('directory/', '', $directory);
-            if ($module !== '.' && $module != '..') {
-                $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
-                if ($config['active']) {
-                    if(is_dir(_MODULES_ . "/" . $directory . "/Entity"))
-                        array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
+        if(is_dir(_MODULES_)){
+            foreach ($directories as $directory) {
+                $module = str_replace('directory/', '', $directory);
+                if ($module !== '.' && $module != '..') {
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    if ($config['active']) {
+                        if(is_dir(_MODULES_ . "/" . $directory . "/Entity"))
+                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
+                    }
                 }
             }
         }
