@@ -1,4 +1,5 @@
 <?php
+namespace Cavesman;
 
 class Cavesman {
 
