@@ -23,20 +23,20 @@ define("_DEV_MODE_", true);
 //config dir of app
 define("_CONFIG_", _ROOT_."/Config");
 //Classes main dir
-define("_CLASSES_", _SRC_."/Classes");
+define("_CLASSES_", _SRC_."/classes");
 //Controllers main dir
-define("_CONTROLLERS_", _SRC_."/Controllers");
+define("_CONTROLLERS_", _SRC_."/controllers");
 //Themes main dir
-define("_THEMES_", _SRC_."/Themes");
+define("_THEMES_", _SRC_."/themes");
 
 //Tools main dir
-define("_TOOLS_", _ROOT_."/Tools");
+define("_TOOLS_", _ROOT_."/tools");
 //Modules main dir
-define("_MODULES_", _SRC_."/Modules");
+define("_MODULES_", _SRC_."/modules");
 //Language main dir
-define("_LANG_", _APP_."/Lang");
+define("_LANG_", _APP_."/lang");
 //Cache main dir
-define("_CACHE_", _APP_."/Cache");
+define("_CACHE_", _APP_."/cache");
 
 
 define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
@@ -48,7 +48,7 @@ define("_THEME_", _THEMES_."/"._THEME_NAME_);
 define("_DOMAIN_", isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : "NONE");
 
 // Browser path for media
-define("_TEMPLATES_", _PATH_."Themes");
+define("_TEMPLATES_", _PATH_."themes");
 
 
 ?>
