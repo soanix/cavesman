@@ -14,10 +14,11 @@ class Display extends Cavesman
      */
     function init()
     {
-        $tmpl                       = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
+        $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
         $this->smarty->template_dir = $tmpl;
         $this->smarty->assign("tmpl", $tmpl);
         Modules::loadModules();
+
     }
 
     /**
@@ -52,6 +53,8 @@ class Display extends Cavesman
     public function startTheme()
     {
         self::init();
+
+        return $this;
     }
     /**
      * Return error
@@ -226,9 +229,9 @@ class Display extends Cavesman
             include_once(_APP_ . "/routes.php");
         else
             Display::response("No se ha encontrado el archivo routes.php", "json", 500);
-
-        if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php"))
+        if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php")){
             include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
-
+        }
+        return $this;
     }
 }

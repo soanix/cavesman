@@ -5,12 +5,16 @@ if(!file_exists(_APP_."/Config/settings.inc.php"))
     $install = true;
 if(!is_dir(_SRC_))
     mkdir(_SRC_);
+if(!is_dir(_APP_))
+    mkdir(_APP_);
+if(!is_dir(_WEB_))
+    mkdir(_WEB_);
 if(!is_dir(_SRC_."/themes"))
     mkdir(_SRC_."/themes");
-if(!is_dir(_SRC_."/themes/default"))
-    mkdir(_SRC_."/themes/default");
-if(!is_dir(_SRC_."/themes/default/tpl"))
-    mkdir(_SRC_."/themes/default/tpl");
+if(!is_dir(_SRC_."/themes/public"))
+    mkdir(_SRC_."/themes/public");
+if(!is_dir(_SRC_."/themes/public/tpl"))
+    mkdir(_SRC_."/themes/public/tpl");
 if(!is_dir(_APP_."/cache"))
     mkdir(_APP_."/cache");
 if(!is_dir(_APP_."/config"))
@@ -30,7 +34,7 @@ if(!file_exists(_APP_."/config/settings.inc.php")){
     $fp = fopen(_APP_."/config/settings.inc.php", "w+");
     $settings = '<?php'.PHP_EOL
     .'// TEMPLATE'.PHP_EOL
-    .'define("DEFAULT_THEME", "default"); 	// Default Template'.PHP_EOL
+    .'define("DEFAULT_THEME", "public"); 	// Default Template'.PHP_EOL
     .''.PHP_EOL
     .'//APP ROOT'.PHP_EOL
     .'define("_APP_", dirname(__FILE__)."/..");'.PHP_EOL
@@ -43,8 +47,8 @@ if(!file_exists(_APP_."/config/settings.inc.php")){
     fwrite($fp, $settings);
     fclose($fp);
 }
-if(!file_exists(_THEMES_."/default/index.php")){
-    $fp = fopen(_THEMES_."/default/index.php", "w+");
+if(!file_exists(_THEMES_."/public/index.php")){
+    $fp = fopen(_THEMES_."/public/index.php", "w+");
     $indexphp = '<?php'.PHP_EOL
     .'require _THEMES_."/"._THEME_NAME_."/routes.php";'.PHP_EOL
     .'$this->router->run(function(){'.PHP_EOL
@@ -53,8 +57,8 @@ if(!file_exists(_THEMES_."/default/index.php")){
     fwrite($fp, $indexphp);
     fclose($fp);
 }
-if(!file_exists(_THEMES_."/default/routes.php")){
-    $fp = fopen(_THEMES_."/default/routes.php", "w+");
+if(!file_exists(_THEMES_."/public/routes.php")){
+    $fp = fopen(_THEMES_."/public/routes.php", "w+");
     $routesphp = '<?php'.PHP_EOL;
     fwrite($fp, $routesphp);
     fclose($fp);
@@ -72,14 +76,15 @@ if(!file_exists(_APP_."/routes.php")){
 if(!file_exists(_WEB_."/index.php")){
     $fp = fopen(_WEB_."/index.php", "w+");
     $routesphp = '<?php'.PHP_EOL
-        .'require \'../vendor/autoload.php\''.PHP_EOL
+        .'require \'../vendor/autoload.php\';'.PHP_EOL
+        .'Cavesman\Cavesman::getInstance(Cavesman\Display::class)->startTheme()->theme();'.PHP_EOL
     .'?>';
     fwrite($fp, $routesphp);
     fclose($fp);
 }
 
-if(!file_exists(_THEMES_."/default/tpl/index.tpl")){
-    $fp = fopen(_THEMES_."/default/tpl/index.tpl", "w+");
+if(!file_exists(_THEMES_."/public/tpl/index.tpl")){
+    $fp = fopen(_THEMES_."/public/tpl/index.tpl", "w+");
     $indextpl = '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">'.PHP_EOL
     .'<div class="container">'.PHP_EOL
     .'	<div class="row">'.PHP_EOL
@@ -96,9 +101,9 @@ if(!file_exists(_THEMES_."/default/tpl/index.tpl")){
 }
 if(!is_dir(_THEMES_))
     throw new \Exception("Imposible crear el directorio de temas", 1);
-if(!is_dir(_THEMES_."/default"))
+if(!is_dir(_THEMES_."/public"))
     throw new \Exception("Imposible crear el directorio de temas default", 1);
-if(!is_dir(_THEMES_."/default/tpl"))
+if(!is_dir(_THEMES_."/public/tpl"))
     throw new \Exception("Imposible crear el directorio de temas tpl", 1);
 if(!is_dir(_APP_."/cache"))
     throw new \Exception("Imposible crear el directorio cache", 1);

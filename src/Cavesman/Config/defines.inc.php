@@ -1,13 +1,10 @@
 <?php
 //config dir of app
 
-$dir = dirname(__FILE__);
-
-// Find root directory
-do {$dir = $dir."/..";}while(!is_dir($dir."/vendor"));
-
-define("_ROOT_", $dir);
-
+if(is_dir($_SERVER['DOCUMENT_ROOT']."/../vendor"))
+    define("_ROOT_", $_SERVER['DOCUMENT_ROOT']."/..");
+elseif(is_dir($_SERVER['DOCUMENT_ROOT']."/vendor"))
+    define("_ROOT_", $_SERVER['DOCUMENT_ROOT']);
 define("_APP_", _ROOT_."/app");
 
 define("_SRC_", _ROOT_."/src");
