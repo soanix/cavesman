@@ -7,6 +7,7 @@ use Cavesman\Smarty;
 
 class Display extends FrontEnd
 {
+    public static $instance;
 
     function __construct()
     {
