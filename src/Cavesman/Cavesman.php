@@ -6,7 +6,14 @@ class Cavesman {
 
     public static function run($env = 'dev') {
         self::$env = $env;
-        echo "RUNS ". self::$env;
+    }
+    public static function getInstance($module)
+    {
+        if(($module::$instance instanceof $module) === false)
+        {
+            $module::$instance = new $module();
+        }
+        return $module::$instance;
     }
 }
 ?>
