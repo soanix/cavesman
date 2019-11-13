@@ -104,7 +104,7 @@ if(!is_dir(_APP_."/cache"))
     throw new \Exception("Imposible crear el directorio cache", 1);
 if(!is_dir(_APP_."/config"))
     throw new \Exception("Imposible crear el directorio de configuracion", 1);
-if(!is_dir(_APP_."/modules"))
+if(!is_dir(_SRC_."/modules"))
     throw new \Exception("Imposible crear el directorio de modulos", 1);
 
 if($install){
