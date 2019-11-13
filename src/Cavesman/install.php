@@ -3,6 +3,8 @@
 $install = false;
 if(!file_exists(_APP_."/Config/settings.inc.php"))
     $install = true;
+if(!is_dir(_SRC_))
+    mkdir(_SRC_);
 if(!is_dir(_SRC_."/themes"))
     mkdir(_SRC_."/themes");
 if(!is_dir(_SRC_."/themes/default"))
