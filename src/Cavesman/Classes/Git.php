@@ -5,7 +5,7 @@ namespace Cavesman;
 class Git {
 
     public static function version($params, $smarty) {
-        return "0.1.0-dev";
+        return "0.1.1-dev";
     }
 
 }
