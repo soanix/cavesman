@@ -6,24 +6,20 @@ use Doctrine\ORM\EntityManager;
 
 class DB extends \PDO
 {
+    protected static $oConnection = false;
 
-    function __construct() // Se conecta a mysqli
-    {
-        if (!defined("DB_SERVER"))
-            throw new \Exception("Define primero los DB_SERVER, DB_NAME, DB_USER y DB_PASSWORD en el archovo settings.inc.php", 1);
-    }
-    protected static $oConnection;
-
-    public static function getInstance()
-    {
-        if ((self::$oConnection instanceof parent) === false) {
-            self::$oConnection = new parent('mysql:host=' . \Cavesman\Config::get("db")['host'] . ';dbname=' . \Cavesman\Config::get("db")['database'] . ';charset=utf8', \Cavesman\Config::get("db")['user'], \Cavesman\Config::get("db")['password']);
-        }
-        return self::$oConnection;
-    }
     public static function getManager() {
-
-
+        if(self::$oConnection instanceof EntityManager !== false){
+            return self::$oConnection;
+        }
+        if (
+            !isset(Config::get("db")['host'])
+            || !isset(Config::get("db")['user'])
+            || !isset(Config::get("db")['password'])
+            || !isset(Config::get("db")['database'])
+        ){
+            throw new \Exception("El archivo config/db.json no existe o no esta correctamente configurado", 1);
+        }
 
         $directories = scandir(_MODULES_);
         $directoryEntity = array();
@@ -40,15 +36,10 @@ class DB extends \PDO
             }
         }
         $config = Setup::createAnnotationMetadataConfiguration($directoryEntity, true, null, null, false);
-        $connectionParams = array(
-            'dbname' => \Cavesman\Config::get("db")['database'],
-            'user' => \Cavesman\Config::get("db")['user'],
-            'password' => \Cavesman\Config::get("db")['password'],
-            'host' => \Cavesman\Config::get("db")['host'],
-            'driver' => 'pdo_mysql',
-            'charset' => "utf8mb4"
-        );
+        $connectionParams = Config::get("db");
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-        return EntityManager::create($conn, $config);
+        self::$oConnection =  EntityManager::create($conn, $config);
+
+        return self::$oConnection;
     }
 }
