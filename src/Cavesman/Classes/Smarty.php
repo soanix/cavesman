@@ -59,8 +59,10 @@ class Smarty extends \Smarty {
     		return $smarty->fetch($name);
     }
     public static function smartyHook($params, $smarty){
-    	$name = isset($params['name']) ? $params['name'] : '';
-    	return FrontEnd::getInstance(Modules::class)->hooks($name);
+    	foreach($params as $key => $param){
+            Cavesman::$smarty->assign($key, $param);
+        }
+    	return Cavesman::getInstance(Modules::class)->hooks($params['name']);
     }
     public static function smartyCss($params, $smarty){
     	$file = isset($params['file']) ? $params['file'] : '';

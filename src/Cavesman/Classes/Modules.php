@@ -6,7 +6,7 @@ use Cavesman\Router;
 class Modules extends Display
 {
     public static $instance;
-    public $list = array();
+    public static $list = array();
     function __construct()
     {
         parent::__construct();
@@ -21,13 +21,13 @@ class Modules extends Display
 
     public static function loadModules()
     {
-        $router = self::getInstance(Router::class);
+        $modules = self::getInstance(self::class);
         if (is_dir(_MODULES_)) {
             $directories = scandir(_MODULES_);
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
-                    $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     $config['module'] = $directory;
                     if ($config['active']) {
                         require_once _MODULES_ . "/" . $directory . "/" . $module . ".php";
@@ -38,28 +38,28 @@ class Modules extends Display
                 }
             }
             foreach ($directories as $directory) {
-                $modules = self::getInstance(self::class);
+
                 $module  = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
                     $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     $config['module'] = $directory;
                     if ($config['active']) {
-                        $modules->list[]  = $config;
+                        self::$list[]  = $config;
                         $namespace        = 'app\\Modules\\' . $module;
                         $modules->$module = self::getInstance($namespace);
                         if (method_exists($namespace, "Smarty")) {
                             $namespace::Smarty();
                         }
-                        $router->mount("/" . strtolower($module), function() use ($router, $module, $namespace)
+                        self::$router->mount("/" . strtolower($module), function() use ($module, $namespace)
                         {
-                            $router->get("/(\w+)", function($fn) use ($module, $namespace)
+                            self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "ViewAction";
                                 if (method_exists($namespace, $fn)) {
                                     self::response($namespace::$fn(), "json");
                                 }
                             });
-                            $router->post("/(\w+)", function($fn) use ($module, $namespace)
+                            self::$router->post("/(\w+)", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "Action";
                                 if (method_exists($namespace, $fn)) {
@@ -79,8 +79,9 @@ class Modules extends Display
     function hooks($hook = false)
     {
         $html = '';
+        $modules = self::getInstance(self::class);
         if ($hook) {
-            foreach ($this->list as $module) {
+            foreach (self::$list as $module) {
                 $namespace          = 'app\\Modules\\' . $module['module'];
                 $hook_name          = "hook" . str_replace(" ", "", ucwords(str_replace("_", " ", $hook)));
                 if (method_exists($namespace, $hook_name) && $module['active'])

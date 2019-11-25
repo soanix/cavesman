@@ -4,12 +4,12 @@ namespace Cavesman;
 class Cavesman {
 
     public static $env = 'dev';
-    public $router;
-    public $smarty;
+    public static $router;
+    public static $smarty;
 
     function __construct(){
-        $this->router = self::getInstance(Router::class);
-        $this->smarty = self::getInstance(Smarty::class);
+        self::$router = self::getInstance(Router::class);
+        self::$smarty = self::getInstance(Smarty::class);
     }
 
     public static function run($env = 'dev') {

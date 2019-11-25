@@ -15,8 +15,8 @@ class Display extends Cavesman
     function init()
     {
         $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
-        $this->smarty->template_dir = $tmpl;
-        $this->smarty->assign("tmpl", $tmpl);
+        self::$smarty->template_dir = $tmpl;
+        self::$smarty->assign("tmpl", $tmpl);
         Modules::loadModules();
 
     }
@@ -219,11 +219,11 @@ class Display extends Cavesman
     public function theme()
     {
         if (defined("_PATH_"))
-            $this->smarty->assign("base", _PATH_);
-        $this->smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
-        $this->smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
-        $this->smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
-        $this->smarty->assign("template", _THEME_ );
+            self::$smarty->assign("base", _PATH_);
+        self::$smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
+        self::$smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
+        self::$smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
+        self::$smarty->assign("template", _THEME_ );
 
         if (file_exists(_APP_ . "/routes.php"))
             include_once(_APP_ . "/routes.php");
