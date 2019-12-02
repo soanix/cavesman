@@ -45,7 +45,7 @@ class Modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         self::$list[]  = $config;
-                        $namespace        = 'app\\Modules\\' . $module;
+                        $namespace        = 'app\\Modules\\' . ucfirst($module);
                         $modules->$module = self::getInstance($namespace);
                         if (method_exists($namespace, "Smarty")) {
                             $namespace::Smarty();

@@ -37,6 +37,7 @@ class Smarty extends \Smarty {
 		$this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');
 		$this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
 		$this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
+        $this->registerPlugin("function", "l", '\Cavesman\Smarty::smartyLang');
         $this->registerPlugin("function", "git_version", '\Cavesman\Git::version');
 	}
 	public static function __install(){
@@ -47,7 +48,9 @@ class Smarty extends \Smarty {
 		if(!is_dir(_CACHE_."/views/smarty/compile"))
 			mkdir(_CACHE_."/views/smarty/compile");
 	}
-
+    public static function smartyLang($params, $smarty){
+        return $params['s'];
+    }
     public static function smartyFile($params, $smarty){
     	$name = isset($params['name']) ? $params['name'] : '';
     	include_once(_CLASSES_."/modules.class.php");
@@ -67,11 +70,11 @@ class Smarty extends \Smarty {
     public static function smartyCss($params, $smarty){
     	$file = isset($params['file']) ? $params['file'] : '';
     	if(stripos($file, "/") !== 0 && stripos($file, "http") === false ){
-            if(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/css/".$file))
+            if(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/css/".$file))
                 $css = _TEMPLATES_."/"._THEME_NAME_."/css/".$file;
-            elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
+            elseif(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
                 $css = _TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file;
-    		$time = filemtime(_APP_."/".$css);
+    		$time = filemtime(_WEB_."/".$css);
 
     	}else{
     		$css = $file;
@@ -86,11 +89,11 @@ class Smarty extends \Smarty {
     	$file = isset($params['file']) ? $params['file'] : '';
 
     	if(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
-            if(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
+            if(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
                 $js = _TEMPLATES_."/"._THEME_NAME_."/js/".$file;
-            elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
+            elseif(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
                 $js = _TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file;
-    		$time = filemtime(_APP_."/".$js);
+    		$time = filemtime(_WEB_."/".$js);
     	}else{
     		$js = $file;
     		$time = false;

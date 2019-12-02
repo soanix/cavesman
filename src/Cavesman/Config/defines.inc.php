@@ -35,8 +35,8 @@ define("_LANG_", _APP_."/lang");
 //Cache main dir
 define("_CACHE_", _APP_."/cache");
 
-
-define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
+//define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
+define("_THEME_NAME_", DEFAULT_THEME);
 
 define("_THEME_", _THEMES_."/"._THEME_NAME_);
 
