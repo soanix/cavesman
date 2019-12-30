@@ -1,10 +1,14 @@
 <?php
 //config dir of app
-
-if(is_dir($_SERVER['DOCUMENT_ROOT']."/../vendor"))
+if(!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT']."/../vendor"))
     define("_ROOT_", $_SERVER['DOCUMENT_ROOT']."/..");
-elseif(is_dir($_SERVER['DOCUMENT_ROOT']."/vendor"))
+elseif(!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT']."/vendor"))
     define("_ROOT_", $_SERVER['DOCUMENT_ROOT']);
+elseif(!defined("_ROOT_") && is_dir($_SERVER['PWD']."/../vendor"))
+    define("_ROOT_", $_SERVER['PWD']."/..");
+elseif(!defined("_ROOT_") && is_dir($_SERVER['PWD']."/vendor"))
+    define("_ROOT_", $_SERVER['PWD']);
+    
 define("_APP_", _ROOT_."/app");
 
 define("_SRC_", _ROOT_."/src");

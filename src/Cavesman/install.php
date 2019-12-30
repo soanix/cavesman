@@ -1,5 +1,4 @@
 <?php
-
 $install = false;
 if(!file_exists(_APP_."/Config/settings.inc.php"))
     $install = true;

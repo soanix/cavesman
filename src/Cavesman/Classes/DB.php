@@ -16,7 +16,7 @@ class DB extends \PDO
             !isset(Config::get("db")['host'])
             || !isset(Config::get("db")['user'])
             || !isset(Config::get("db")['password'])
-            || !isset(Config::get("db")['database'])
+            || !isset(Config::get("db")['dbname'])
         ){
             throw new \Exception("El archivo config/db.json no existe o no esta correctamente configurado", 1);
         }
@@ -29,8 +29,8 @@ class DB extends \PDO
                 if ($module !== '.' && $module != '..') {
                     $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     if ($config['active']) {
-                        if(is_dir(_MODULES_ . "/" . $directory . "/Entity"))
-                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
+                        if(is_dir(_MODULES_ . "/" . $directory . "/entity"))
+                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/entity");
                     }
                 }
             }
