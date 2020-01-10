@@ -50,8 +50,8 @@ if(!file_exists(_THEMES_."/public/index.php")){
     $fp = fopen(_THEMES_."/public/index.php", "w+");
     $indexphp = '<?php'.PHP_EOL
     .'require _THEMES_."/"._THEME_NAME_."/routes.php";'.PHP_EOL
-    .'$this->router->run(function(){'.PHP_EOL
-    .'    $this->smarty->display("index.tpl");'.PHP_EOL
+    .'Cavesman\Cavesman::$router->run(function(){'.PHP_EOL
+    .'    Cavesman\Cavesman::$smarty->display("index.tpl");'.PHP_EOL
     .'});';
     fwrite($fp, $indexphp);
     fclose($fp);
@@ -65,7 +65,7 @@ if(!file_exists(_THEMES_."/public/routes.php")){
 if(!file_exists(_APP_."/routes.php")){
     $fp = fopen(_APP_."/routes.php", "w+");
     $routesphp = '<?php'.PHP_EOL
-            .'$this->router->get("/", function(){'.PHP_EOL
+            .'Cavesman\Cavesman::$router->get("/", function(){'.PHP_EOL
             .'  //Something to /'.PHP_EOL
             .'});';
     fwrite($fp, $routesphp);
