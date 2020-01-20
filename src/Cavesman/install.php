@@ -1,6 +1,6 @@
 <?php
 $install = false;
-if(!file_exists(_APP_."/Config/settings.inc.php"))
+if(!file_exists(_APP_."/config/settings.inc.php"))
     $install = true;
 if(!is_dir(_SRC_))
     mkdir(_SRC_);

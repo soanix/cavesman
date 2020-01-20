@@ -1,14 +1,20 @@
 <?php
+echo getcwd();
+exit();
 //config dir of app
 if(!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT']."/../vendor"))
     define("_ROOT_", $_SERVER['DOCUMENT_ROOT']."/..");
 elseif(!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT']."/vendor"))
     define("_ROOT_", $_SERVER['DOCUMENT_ROOT']);
-elseif(!defined("_ROOT_") && is_dir($_SERVER['PWD']."/../vendor"))
+elseif(!defined("_ROOT_") && isset($_SERVER['PWD']) && is_dir($_SERVER['PWD']."/../vendor"))
     define("_ROOT_", $_SERVER['PWD']."/..");
-elseif(!defined("_ROOT_") && is_dir($_SERVER['PWD']."/vendor"))
+elseif(!defined("_ROOT_") && isset($_SERVER['PWD']) &&  is_dir($_SERVER['PWD']."/vendor"))
     define("_ROOT_", $_SERVER['PWD']);
-    
+elseif(!defined("_ROOT_") && is_dir(getcwd()."/../vendor"))
+    define("_ROOT_", getcwd()."/..");
+elseif(!defined("_ROOT_") && is_dir(getcwd()."/vendor"))
+    define("_ROOT_", getcwd());
+
 define("_APP_", _ROOT_."/app");
 
 define("_SRC_", _ROOT_."/src");
