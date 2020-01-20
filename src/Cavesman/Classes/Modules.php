@@ -31,7 +31,7 @@ class Modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         require_once _MODULES_ . "/" . $directory . "/" . $module . ".php";
-                        foreach (glob(_MODULES_ . "/" . $directory . "/Entity/*.php") as $filename) {
+                        foreach (glob(_MODULES_ . "/" . $directory . "/entity/*.php") as $filename) {
                             require_once $filename;
                         }
                     }
@@ -45,7 +45,7 @@ class Modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         self::$list[]  = $config;
-                        $namespace        = 'app\\Modules\\' . ucfirst($module);
+                        $namespace        = 'src\\Modules\\' . ucfirst($module);
                         $modules->$module = self::getInstance($namespace);
                         if (method_exists($namespace, "Smarty")) {
                             $namespace::Smarty();
@@ -82,7 +82,7 @@ class Modules extends Display
         $modules = self::getInstance(self::class);
         if ($hook) {
             foreach (self::$list as $module) {
-                $namespace          = 'app\\Modules\\' . $module['module'];
+                $namespace          = 'src\\Modules\\' . $module['module'];
                 $hook_name          = "hook" . str_replace(" ", "", ucwords(str_replace("_", " ", $hook)));
                 if (method_exists($namespace, $hook_name) && $module['active'])
                     $html .= $namespace::$hook_name();
