@@ -1,6 +1,4 @@
 <?php
-echo getcwd();
-exit();
 //config dir of app
 if(!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT']."/../vendor"))
     define("_ROOT_", $_SERVER['DOCUMENT_ROOT']."/..");
