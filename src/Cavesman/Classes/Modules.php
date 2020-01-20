@@ -11,10 +11,10 @@ class Modules extends Display
     {
         parent::__construct();
         if (defined("_APP_")) {
-            if (!is_dir(_APP_ . "/img"))
-                mkdir(_APP_ . "/img/");
-            if (!is_dir(_APP_ . "/img/m"))
-                mkdir(_APP_ . "/img/m");
+            if (!is_dir(_WEB_ . "/img"))
+                mkdir(_WEB_ . "/img/");
+            if (!is_dir(_WEB_ . "/img/m"))
+                mkdir(_WEB_ . "/img/m");
         }
     }
 
