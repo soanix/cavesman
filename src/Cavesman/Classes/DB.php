@@ -22,7 +22,7 @@ class DB extends \PDO
         }
 
         $directories = scandir(_MODULES_);
-        $directoryEntity = array();
+        $directoryEntity = array(_ROOT_."/src/entity");
         if(is_dir(_MODULES_)){
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
