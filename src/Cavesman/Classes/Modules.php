@@ -59,7 +59,7 @@ class Modules extends Display
                                     self::response($namespace::$fn(), "HTML");
                                 }
                             });
-                            self::$router->get("/js/(\w+).css", function($fn) use ($module, $namespace)
+                            self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "CssViewAction";
                                 if (method_exists($namespace, $fn)) {
