@@ -52,11 +52,25 @@ class Modules extends Display
                         }
                         self::$router->mount("/" . strtolower($module), function() use ($module, $namespace)
                         {
-                            self::$router->get("/", function($fn) use ($module, $namespace)
+                            self::$router->get("/", function() use ($module, $namespace)
                             {
                                 $fn = $module . "Page";
                                 if (method_exists($namespace, $fn)) {
                                     self::response($namespace::$fn(), "HTML");
+                                }
+                            });
+                            self::$router->get("/js/(\w+).css", function($fn) use ($module, $namespace)
+                            {
+                                $fn = $fn . "CssViewAction";
+                                if (method_exists($namespace, $fn)) {
+                                    self::response($namespace::$fn(), "css");
+                                }
+                            });
+                            self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace)
+                            {
+                                $fn = $fn . "JsViewAction";
+                                if (method_exists($namespace, $fn)) {
+                                    self::response($namespace::$fn(), "js");
                                 }
                             });
                             self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
