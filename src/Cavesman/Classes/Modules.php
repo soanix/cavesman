@@ -52,6 +52,13 @@ class Modules extends Display
                         }
                         self::$router->mount("/" . strtolower($module), function() use ($module, $namespace)
                         {
+                            self::$router->get("/", function($fn) use ($module, $namespace)
+                            {
+                                $fn = $module . "Page";
+                                if (method_exists($namespace, $fn)) {
+                                    self::response($namespace::$fn(), "HTML");
+                                }
+                            });
                             self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "ViewAction";
