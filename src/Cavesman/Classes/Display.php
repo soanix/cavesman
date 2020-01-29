@@ -189,6 +189,9 @@ class Display extends Cavesman
         } elseif(strtolower($type == 'xlsx')){
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; Charset=UTF-8');
             echo $msg;
+        }elseif(strtolower($type == 'css')){
+            header('Content-Type: text/css; Charset=UTF-8');
+            echo $msg;
         }elseif(strtolower($type == 'js')){
             header('Content-Type: application/javascript; Charset=UTF-8');
             echo $msg;
