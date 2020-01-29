@@ -50,6 +50,20 @@ class Modules extends Display
                         if (method_exists($namespace, "Smarty")) {
                             $namespace::Smarty();
                         }
+                        self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace)
+                        {
+                            $fn = $fn . "CssViewAction";
+                            if (method_exists($namespace, $fn)) {
+                                self::response($namespace::$fn(), "css");
+                            }
+                        });
+                        self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace)
+                        {
+                            $fn = $fn . "JsViewAction";
+                            if (method_exists($namespace, $fn)) {
+                                self::response($namespace::$fn(), "js");
+                            }
+                        });
                         self::$router->mount("/" . strtolower($module), function() use ($module, $namespace)
                         {
                             self::$router->get("/", function() use ($module, $namespace)
@@ -59,20 +73,7 @@ class Modules extends Display
                                     self::response($namespace::$fn(), "HTML");
                                 }
                             });
-                            self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace)
-                            {
-                                $fn = $fn . "CssViewAction";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "css");
-                                }
-                            });
-                            self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace)
-                            {
-                                $fn = $fn . "JsViewAction";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "js");
-                                }
-                            });
+
                             self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "ViewAction";
