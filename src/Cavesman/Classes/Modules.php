@@ -68,8 +68,9 @@ class Modules extends Display
                         {
                             self::$router->get("/", function() use ($module, $namespace)
                             {
-                                $fn = $module . "Page";
+                                $fn = $module . "ViewPage";
                                 if (method_exists($namespace, $fn)) {
+                                    self::$smarty->assign("page", $module);
                                     self::response($namespace::$fn(), "HTML");
                                 }
                             });
