@@ -71,6 +71,7 @@ class Modules extends Display
                                 $fn = $module . "ViewPage";
                                 if (method_exists($namespace, $fn)) {
                                     self::$smarty->assign("page", $module);
+                                    self::$smarty->assign("module_dir", _MODULES_."/".$module);
                                     self::response($namespace::$fn(), "HTML");
                                 }
                             });
