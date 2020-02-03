@@ -78,14 +78,12 @@ class Smarty extends \Smarty {
             mkdir(_WEB_."/c/js");
     	$file = isset($params['file']) ? $params['file'] : '';
 
-        if(stripos($file, _ROOT_) !== false && file_exists($file)){
+        if(file_exists($file)){
             $name = hash("sha256", $file."-".filemtime($file));
             $new_file = _WEB_."/c/css/".$name.".js";
             $css = _PATH_."c/css/".$name.".js";
             if(!file_exists($new_file)){
-                $fp = fopen($new_file, "w+");
-                fwrite($fp, file_get_contents($file));
-                fclose($fp);
+                copy($file, $new_file);
             }
             $time = "";
     	}elseif(stripos($file, "/") !== 0 && stripos($file, "http") === false ){
@@ -110,14 +108,12 @@ class Smarty extends \Smarty {
             mkdir(_WEB_."/c/js");
     	$file = isset($params['file']) ? $params['file'] : '';
 
-        if(stripos($file, _ROOT_) !== false && file_exists($file)){
+        if(file_exists($file)){
             $name = hash("sha256", $file."-".filemtime($file));
             $new_file = _WEB_."/c/js/".$name.".js";
             $js = _PATH_."c/js/".$name.".js";
             if(!file_exists($new_file)){
-                $fp = fopen($new_file, "w+");
-                fwrite($fp, file_get_contents($file));
-                fclose($fp);
+                copy($file, $new_file);
             }
             $time = "";
     	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
