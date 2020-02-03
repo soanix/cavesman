@@ -49,10 +49,9 @@ class Smarty extends \Smarty {
 			mkdir(_CACHE_."/views/smarty/compile");
 	}
     public static function smartyLang($params, $smarty){
-        if(class_exists(\src\Modules\Lang::class)){
-            return \src\Modules\Lang::smartyTranslate($params, $smarty);
-        }else
-            return $params['s'];
+        $s = isset($params['s']) ? $params['s'] : '';
+    	$r = isset($params['r']) ? $params['r'] : array();
+        return Display::trans($s, $r, $smarty);
     }
     public static function smartyFile($params, $smarty){
     	$name = isset($params['name']) ? $params['name'] : '';
