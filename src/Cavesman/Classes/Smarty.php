@@ -51,9 +51,10 @@ class Smarty extends \Smarty {
     public static function smartyLang($params, $smarty){
         $s = isset($params['s']) ? $params['s'] : '';
     	$r = isset($params['r']) ? $params['r'] : array();
-        return Display::trans($s, $r, $smarty);
+        $d = isset($params['d']) ? $params['d'] : '';
+        return Display::trans($s, $r);
     }
-    public static function smartyFile($params, $smarty){
+    public static function smartyFile($params, $smarty) : string {
     	$name = isset($params['name']) ? $params['name'] : '';
     	include_once(_CLASSES_."/modules.class.php");
     	$modules = FrontEnd::getInstance(Modules::class);

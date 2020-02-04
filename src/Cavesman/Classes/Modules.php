@@ -1,12 +1,12 @@
 <?php
 namespace Cavesman;
 
-use Cavesman\Router;
-
 class Modules extends Display
 {
     public static $instance;
+
     public static $list = array();
+
     function __construct()
     {
         parent::__construct();
@@ -17,7 +17,6 @@ class Modules extends Display
                 mkdir(_WEB_ . "/img/m");
         }
     }
-
 
     public static function loadModules()
     {
@@ -45,8 +44,11 @@ class Modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         self::$list[]  = $config;
-                        $namespace        = 'src\\Modules\\' . ucfirst($module);
-                        $modules->$module = self::getInstance($namespace);
+                        $namespace  = 'src\\Modules\\' . ucfirst($module);
+                        //$modules->$module = self::getInstance($namespace);
+                        $namespace::$config = $config;
+
+
                         if (method_exists($namespace, "Smarty")) {
                             $namespace::Smarty();
                         }
@@ -64,8 +66,23 @@ class Modules extends Display
                                 self::response($namespace::$fn(), "js");
                             }
                         });
-                        self::$router->mount("/" . strtolower($module), function() use ($module, $namespace)
+                        if(method_exists($namespace, "loadRoutes")){
+                            self::$router->mount("/" . $namespace::trans("slug"), function() use ($module, $namespace){
+                                self::$router->before("GET", "*", function() use ($module, $namespace){
+                                    self::$smarty->assign("page", $module);
+                                });
+                            });
+                        }
+                        if (method_exists($namespace, "loadRoutes")){
+                            $namespace::loadRoutes();
+                            self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
+                                self::$smarty->assign("page", $namespace::$config['name']);
+                            });
+                        }
+
+                        self::$router->mount(_PATH_ . $namespace::$config['name'], function() use ($module, $namespace)
                         {
+
                             self::$router->get("/", function() use ($module, $namespace)
                             {
                                 $fn = $module . "ViewPage";
@@ -91,8 +108,7 @@ class Modules extends Display
                                 }
                             });
                         });
-                        if (method_exists($namespace, "loadRoutes"))
-                            $namespace::loadRoutes();
+
 
                     }
                 }
@@ -114,4 +130,19 @@ class Modules extends Display
         }
         return $html;
     }
+
+    public static function trans(string $string = '', array $binds = [], string $modules = '') : string {
+        if(class_exists(\src\Modules\Lang::class)){
+            if(isset(get_called_class()::$config['name']))
+                return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
+            return \src\Modules\Lang::l($string, $binds);
+        } else {
+            $binded = $string;
+			foreach($binds as $key => $value){
+				$binded = str_replace($key, $value, $binded);
+			}
+            return $binded;
+        }
+    }
+
 }

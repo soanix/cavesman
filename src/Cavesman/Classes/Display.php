@@ -21,9 +21,9 @@ class Display extends Cavesman
 
     }
 
-    public static function trans(string $string = '', array $binds = array(), $smarty = null) : string {
+    public static function trans(string $string = '', array $binds = [], string $module = '') : string {
         if(class_exists(\src\Modules\Lang::class)){
-            return \src\Modules\Lang::l($string, $binds);
+            return \src\Modules\Lang::l($string, $binds, $module);
         } else {
             $binded = $string;
 			foreach($binds as $key => $value){
