@@ -70,6 +70,7 @@ class Modules extends Display
                             self::$router->mount("/" . $namespace::trans("slug"), function() use ($module, $namespace){
                                 self::$router->before("GET", "*", function() use ($module, $namespace){
                                     self::$smarty->assign("page", $module);
+                                    self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
                                 });
                             });
                         }
@@ -77,6 +78,7 @@ class Modules extends Display
                             $namespace::loadRoutes();
                             self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
                                 self::$smarty->assign("page", $namespace::$config['name']);
+                                self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
                             });
                         }
 
