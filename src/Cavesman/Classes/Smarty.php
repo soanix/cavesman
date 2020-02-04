@@ -74,14 +74,15 @@ class Smarty extends \Smarty {
     	$file = isset($params['file']) ? $params['file'] : '';
         if(!is_dir(_WEB_."/c"))
             mkdir(_WEB_."/c");
-        if(!is_dir(_WEB_."/c/js"))
-            mkdir(_WEB_."/c/js");
+        if(!is_dir(_WEB_."/c/css"))
+            mkdir(_WEB_."/c/css");
+
     	$file = isset($params['file']) ? $params['file'] : '';
 
         if(file_exists($file)){
             $name = hash("sha256", $file."-".filemtime($file));
-            $new_file = _WEB_."/c/css/".$name.".js";
-            $css = _PATH_."c/css/".$name.".js";
+            $new_file = _WEB_."/c/css/".$name.".css";
+            $css = _PATH_."c/css/".$name.".css";
             if(!file_exists($new_file)){
                 copy($file, $new_file);
             }
