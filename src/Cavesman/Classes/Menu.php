@@ -6,11 +6,11 @@ class Menu {
 
     public static $items = array();
 
-    public static function addItem($item) {
+    public static function addItem(array $item) : void {
         self::$items[] = $item;
     }
 
-    public static function render($params, $smarty) {
+    public static function render(array $params = array(), $smarty = null) : string {
         $template_dir = Cavesman::$smarty->template_dir[0];
         $file = isset($params['file']) ? $params['file'] : false;
         if($file && file_exists($template_dir."/".$file)){

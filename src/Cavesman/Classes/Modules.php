@@ -46,8 +46,7 @@ class Modules extends Display
                         self::$list[]  = $config;
                         $namespace  = 'src\\Modules\\' . ucfirst($module);
                         //$modules->$module = self::getInstance($namespace);
-                        if (method_exists($namespace, "__install"))
-                            $namespace::__install();
+
                         $namespace::$config = $config;
 
 
@@ -76,6 +75,8 @@ class Modules extends Display
                                 });
                             });
                         }
+                        if (method_exists($namespace, "menu"))
+                            Menu::addItem($namespace::menu());
                         if (method_exists($namespace, "loadRoutes")){
                             $namespace::loadRoutes();
                             self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
