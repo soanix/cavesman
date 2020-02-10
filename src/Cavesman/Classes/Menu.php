@@ -19,7 +19,7 @@ class Menu {
             $file = $template_dir."/partial/menu/sidebar-item.tpl";
         }
         if(!$file)
-            throw new \Exception("TEMPLATE FILE NOT DEFINED OR DEFAULT TEMPLATE NOT FOUND (/partial/menu/sidebar-item.tpl)")
+            throw new \Exception("TEMPLATE FILE NOT DEFINED OR DEFAULT TEMPLATE NOT FOUND (/partial/menu/sidebar-item.tpl)");
         usort(self::$items, function($a, $b) {
             return $a['order'] <=> $b['order'];
         });
