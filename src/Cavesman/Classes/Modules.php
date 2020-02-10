@@ -5,6 +5,7 @@ class Modules extends Display
 {
     public static $instance;
 
+    // Define list to put all modules
     public static $list = array();
 
     function __construct()
@@ -17,8 +18,10 @@ class Modules extends Display
                 mkdir(_WEB_ . "/img/m");
         }
     }
-
-    public static function loadModules()
+    /**
+     * Load all modules in src/modules
+     */
+    public static function loadModules() : void
     {
         $modules = self::getInstance(self::class);
         if (is_dir(_MODULES_)) {
@@ -75,8 +78,15 @@ class Modules extends Display
                                 });
                             });
                         }
+                        // INSTALL MODULE INIT OPTIONS
+                        if (method_exists($namespace, "__install"))
+                            $namespace::__install();
+
+                        // MENU INIT OPTIONS
                         if (method_exists($namespace, "menu"))
                             Menu::addItem($namespace::menu());
+
+                        // LOAT ROUTER FUNCTION FROM MODULE
                         if (method_exists($namespace, "loadRoutes")){
                             $namespace::loadRoutes();
                             self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
@@ -121,7 +131,12 @@ class Modules extends Display
         }
     }
 
-    function hooks($hook = false)
+    /**
+     * Smarty load hooks from module functions
+     * @param  boolean $hook name of hook
+     * @return string html content from hook
+     */
+    function hooks($hook = false) : string
     {
         $html = '';
         $modules = self::getInstance(self::class);
@@ -136,7 +151,15 @@ class Modules extends Display
         return $html;
     }
 
-    public static function trans(string $string = '', array $binds = [], string $modules = '') : string {
+    /**
+     * Translate multilanguage support function
+     * @param  string $string  string to translate
+     * @param  array  $binds   array with strings to sustitute
+     * @param  string $modules module from translate comeback
+     * @return string          string translated or parsed
+     */
+    public static function trans(string $string = '', array $binds = [], string $modules = '') : string
+    {
         if(class_exists(\src\Modules\Lang::class)){
             if(isset(get_called_class()::$config['name']))
                 return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
