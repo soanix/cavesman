@@ -46,6 +46,8 @@ class Modules extends Display
                         self::$list[]  = $config;
                         $namespace  = 'src\\Modules\\' . ucfirst($module);
                         //$modules->$module = self::getInstance($namespace);
+                        if (method_exists($namespace, "__install"))
+                            $namespace::__install();
                         $namespace::$config = $config;
 
 
