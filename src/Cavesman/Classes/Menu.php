@@ -4,25 +4,29 @@ namespace Cavesman;
 
 class Menu {
 
-    public static $items;
+    public static $items = array();
 
     public static function addItem($item) {
         self::$items[] = $item;
     }
 
     public static function render($params, $smarty) {
+        $template_dir = Cavesman::$smarty->template_dir[0];
         $file = isset($params['file']) ? $params['file'] : false;
-        if($file && file_exists(self::$smarty->template_dir."/".$file)){
-            $file = self::$smarty->template_dir."/".$file;
-        }elseif(file_exists(self::$smarty->template_dir."/partial/menu/sidebar-item.tpl")){
-            $file = self::$smarty->template_dir."/partial/menu/sidebar-item.tpl";
+        if($file && file_exists($template_dir."/".$file)){
+            $file = $template_dir."/".$file;
+        }elseif(file_exists($template_dir."/partial/menu/sidebar-item.tpl")){
+            $file = $template_dir."/partial/menu/sidebar-item.tpl";
         }
+        if(!$file)
+            throw new \Exception("TEMPLATE FILE NOT DEFINED OR DEFAULT TEMPLATE NOT FOUND (/partial/menu/sidebar-item.tpl)")
         usort(self::$items, function($a, $b) {
             return $a['order'] <=> $b['order'];
         });
+
         $html = '';
         foreach(self::$items as $item){
-            $html .= self::$smarty->fetch($file, array("items" => $item));
+            $html .= Cavesman::$smarty->fetch($file, array("items" => $item));
         }
         return $html;
     }
