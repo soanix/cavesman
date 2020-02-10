@@ -38,6 +38,7 @@ class Smarty extends \Smarty {
 		$this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
 		$this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
         $this->registerPlugin("function", "l", '\Cavesman\Smarty::smartyLang');
+        $this->registerPlugin("function", "menu", '\Cavesman\Menu::render');
         $this->registerPlugin("function", "git_version", '\Cavesman\Git::version');
 	}
 	public static function __install(){
