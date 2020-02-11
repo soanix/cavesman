@@ -8,9 +8,9 @@ class Modules extends Display
     // Define list to put all modules
     public static $list = array();
 
-    function __construct()
+    public static function __install()
     {
-        parent::__construct();
+        parent::__install();
         if (defined("_APP_")) {
             if (!is_dir(_WEB_ . "/img"))
                 mkdir(_WEB_ . "/img/");

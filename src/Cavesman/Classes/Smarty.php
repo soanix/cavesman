@@ -88,12 +88,18 @@ class Smarty extends \Smarty {
                 copy($file, $new_file);
             }
             $time = "";
-    	}elseif(stripos($file, "/") !== 0 && stripos($file, "http") === false ){
-            if(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/css/".$file))
-                $css = _TEMPLATES_."/"._THEME_NAME_."/css/".$file;
-            elseif(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
-                $css = _TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file;
-    		$time = filemtime(_WEB_."/".$css);
+    	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
+            if(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/css/".$file))
+                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/css/".$file;
+            elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
+                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file;
+            $name = hash("sha256", $file."-".filemtime($f));
+            $new_file = _WEB_."/c/css/".$name.".css";
+            $css = _PATH_."c/css/".$name.".css";
+            if(!file_exists($new_file)){
+                copy($f, $new_file);
+            }
+    		$time = "";
 
     	}else{
     		$css = $file;
@@ -119,11 +125,17 @@ class Smarty extends \Smarty {
             }
             $time = "";
     	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
-            if(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
-                $js = _TEMPLATES_."/"._THEME_NAME_."/js/".$file;
-            elseif(file_exists(_WEB_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
-                $js = _TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file;
-    		$time = filemtime(_WEB_."/".$js);
+            if(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
+                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/js/".$file;
+            elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
+                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file;
+            $name = hash("sha256", $file."-".filemtime($f));
+            $new_file = _WEB_."/c/js/".$name.".js";
+            $js = _PATH_."c/js/".$name.".js";
+            if(!file_exists($new_file)){
+                copy($f, $new_file);
+            }
+    		$time = "";
     	}else{
     		$js = $file;
     		$time = false;

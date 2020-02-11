@@ -4,19 +4,15 @@ namespace Cavesman;
 class Display extends Cavesman
 {
     public static $instance;
-
-    function __construct()
-    {
-        parent::__construct();
-    }
     /**
      * Init function to load Smarty
      */
-    function init()
+    private static function init() : void
     {
+        parent::__install();
         $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
         self::$smarty->template_dir = $tmpl;
-        self::$smarty->assign("tmpl", $tmpl);
+        self::$smarty->assign("template", $tmpl);
         Modules::loadModules();
 
     }
@@ -64,11 +60,9 @@ class Display extends Cavesman
     /**
      * Start theme operations
      */
-    public function startTheme()
+    public static function startTheme() : void
     {
         self::init();
-
-        return $this;
     }
     /**
      * Return error
@@ -226,14 +220,14 @@ class Display extends Cavesman
         }
         exit();
     }
-    private static function json($array)
+    private static function json($array, $param = NULL)
     {
-        echo json_encode($array);
+        echo json_encode($array, $param);
     }
     /**
      * Load smarty base vars and start gui
      */
-    public function theme()
+    public static function theme() : void
     {
         if (defined("_PATH_"))
             self::$smarty->assign("base", _PATH_);
@@ -249,6 +243,5 @@ class Display extends Cavesman
         if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php")){
             include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
         }
-        return $this;
     }
 }

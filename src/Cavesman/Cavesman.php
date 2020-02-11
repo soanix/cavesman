@@ -7,13 +7,15 @@ class Cavesman {
     public static $router;
     public static $smarty;
 
-    function __construct(){
+    public static function __install(){
         self::$router = self::getInstance(Router::class);
         self::$smarty = self::getInstance(Smarty::class);
     }
 
     public static function run($env = 'dev') {
         self::$env = $env;
+        Display::startTheme();
+        Display::theme();
     }
     public static function getInstance($module)
     {
