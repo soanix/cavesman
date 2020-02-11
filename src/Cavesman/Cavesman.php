@@ -2,8 +2,6 @@
 namespace Cavesman;
 
 class Cavesman {
-
-    public static $env = 'dev';
     public static $router;
     public static $smarty;
 
@@ -12,12 +10,14 @@ class Cavesman {
         self::$smarty = self::getInstance(Smarty::class);
     }
 
-    public static function run($env = 'dev') {
-        self::$env = $env;
-        Display::startTheme();
-        Display::theme();
+    public static function run(string $env = 'dev') : void
+    {
+        if (PHP_SAPI !== 'cli'){
+            Display::startTheme();
+            Display::theme();
+        }
     }
-    public static function getInstance($module)
+    public static function getInstance($module) : object
     {
         if(($module::$instance instanceof $module) === false)
         {

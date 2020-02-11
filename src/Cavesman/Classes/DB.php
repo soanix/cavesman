@@ -3,7 +3,9 @@ namespace Cavesman;
 
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
-
+use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
+use Symfony\Component\Console\Helper\HelperSet;
 class DB extends \PDO
 {
     protected static $oConnection = false;
@@ -43,5 +45,16 @@ class DB extends \PDO
         self::$oConnection =  EntityManager::create($conn, $config);
 
         return self::$oConnection;
+    }
+    public static function getCli(){
+
+        /* @var $entityManager \Doctrine\ORM\EntityManagerInterface */
+        $entityManager = self::getManager();
+        $connectionHelper = new ConnectionHelper($entityManager->getConnection());
+        return new HelperSet([
+            'em'         => new EntityManagerHelper($entityManager),
+            'db'         => $connectionHelper,
+            'connection' => $connectionHelper,
+        ]);
     }
 }
