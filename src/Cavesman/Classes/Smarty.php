@@ -38,6 +38,7 @@ class Smarty extends \Smarty {
 		$this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
 		$this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
         $this->registerPlugin("function", "l", '\Cavesman\Smarty::smartyLang');
+        $this->registerPlugin("function", "can", '\Cavesman\Smarty::smartyCan');
         $this->registerPlugin("function", "menu", '\Cavesman\Menu::render');
         $this->registerPlugin("function", "git_version", '\Cavesman\Git::version');
 	}
@@ -49,6 +50,15 @@ class Smarty extends \Smarty {
 		if(!is_dir(_CACHE_."/views/smarty/compile"))
 			mkdir(_CACHE_."/views/smarty/compile");
 	}
+    public static function smartyCan($params, $smarty){
+        $name = isset($params['do']) ? $params['do'] : 'general';
+        $group_name = isset($params['group']) ? $params['group'] : '';
+
+        if(class_exists(\src\Modules\user::class))
+            return \src\Modules\User::can($name, $group_name);
+        else
+            return true;
+    }
     public static function smartyLang($params, $smarty){
         $s = isset($params['s']) ? $params['s'] : '';
     	$r = isset($params['r']) ? $params['r'] : array();
