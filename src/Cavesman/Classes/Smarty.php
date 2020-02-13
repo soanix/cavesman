@@ -81,8 +81,18 @@ class Smarty extends \Smarty {
         }
     	return Cavesman::getInstance(Modules::class)->hooks($params['name']);
     }
+
     public static function smartyCss($params, $smarty){
     	$file = isset($params['file']) ? $params['file'] : '';
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        switch($extension){
+            case 'less':
+                $rel = 'stylesheet/less';
+                break;
+            default:
+                $rel = 'stylesheet';
+                break;
+        }
         if(!is_dir(_WEB_."/c"))
             mkdir(_WEB_."/c");
         if(!is_dir(_WEB_."/c/css"))
@@ -92,10 +102,18 @@ class Smarty extends \Smarty {
 
         if(file_exists($file)){
             $name = hash("sha256", $file."-".filemtime($file));
-            $new_file = _WEB_."/c/css/".$name.".css";
-            $css = _PATH_."c/css/".$name.".css";
+            $new_file = _WEB_."/c/css/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
+            $css = _PATH_."c/css/".$name.".".pathinfo($filename, PATHINFO_EXTENSION);
             if(!file_exists($new_file)){
-                copy($file, $new_file);
+                if($extension == 'less'){
+                    $less = new \lessc;
+                    $compiled = $less->compileFile($css);
+                    $fp = fopen($new_file, "w+");
+                    fwrite($fp, $compiled);
+                    fclose($fp);
+                }else{
+                    copy($f, $new_file);
+                }
             }
             $time = "";
     	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
@@ -107,7 +125,15 @@ class Smarty extends \Smarty {
             $new_file = _WEB_."/c/css/".$name.".css";
             $css = _PATH_."c/css/".$name.".css";
             if(!file_exists($new_file)){
-                copy($f, $new_file);
+                if($extension == 'less'){
+                    $less = new \lessc;
+                    $compiled = $less->compileFile($f);
+                    $fp = fopen($new_file, "w+");
+                    fwrite($fp, $compiled);
+                    fclose($fp);
+                }else{
+                    copy($f, $new_file);
+                }
             }
     		$time = "";
 
@@ -115,6 +141,7 @@ class Smarty extends \Smarty {
     		$css = $file;
     		$time = false;
     	}
+
         if($file)
     		return '<link rel="stylesheet" type="text/css" href="'.$css.($time ? '?'.$time : '').'">';
     	return '';
