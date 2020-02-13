@@ -103,7 +103,7 @@ class Smarty extends \Smarty {
         if(file_exists($file)){
             $name = hash("sha256", $file."-".filemtime($file));
             $new_file = _WEB_."/c/css/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
-            $css = _PATH_."c/css/".$name.".".pathinfo($filename, PATHINFO_EXTENSION);
+            $css = _PATH_."c/css/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
             if(!file_exists($new_file)){
                 if($extension == 'less'){
                     $less = new \lessc;
