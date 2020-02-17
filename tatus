@@ -1,0 +1,64 @@
+[1mdiff --git a/composer.json b/composer.json[m
+[1mindex 1ad50d7..304335c 100755[m
+[1m--- a/composer.json[m
+[1m+++ b/composer.json[m
+[36m@@ -14,7 +14,8 @@[m
+         "composer/composer": ">=1.9",[m
+         "smarty/smarty": "~3.1",[m
+         "bramus/router": "~1.3",[m
+[31m-        "doctrine/orm": "^2.5"[m
+[32m+[m[32m        "doctrine/orm": "^2.5",[m
+[32m+[m[32m        "scssphp/scssphp": "dev-master"[m
+     },[m
+     "autoload": {[m
+         "files": [[m
+[1mdiff --git a/src/Cavesman/Classes/Smarty.php b/src/Cavesman/Classes/Smarty.php[m
+[1mindex c768f1f..29cb8a1 100644[m
+[1m--- a/src/Cavesman/Classes/Smarty.php[m
+[1m+++ b/src/Cavesman/Classes/Smarty.php[m
+[36m@@ -1,7 +1,7 @@[m
+ <?php[m
+ [m
+ namespace Cavesman;[m
+[31m-[m
+[32m+[m[32muse ScssPhp\ScssPhp\Compiler;[m
+ [m
+ /**[m
+  * Smarty Class[m
+[36m@@ -85,14 +85,6 @@[m [mclass Smarty extends \Smarty {[m
+     public static function smartyCss($params, $smarty){[m
+     	$file = isset($params['file']) ? $params['file'] : '';[m
+         $extension = pathinfo($file, PATHINFO_EXTENSION);[m
+[31m-        switch($extension){[m
+[31m-            case 'less':[m
+[31m-                $rel = 'stylesheet/less';[m
+[31m-                break;[m
+[31m-            default:[m
+[31m-                $rel = 'stylesheet';[m
+[31m-                break;[m
+[31m-        }[m
+         if(!is_dir(_WEB_."/c"))[m
+             mkdir(_WEB_."/c");[m
+         if(!is_dir(_WEB_."/c/css"))[m
+[36m@@ -124,13 +116,20 @@[m [mclass Smarty extends \Smarty {[m
+             $name = hash("sha256", $file."-".filemtime($f));[m
+             $new_file = _WEB_."/c/css/".$name.".css";[m
+             $css = _PATH_."c/css/".$name.".css";[m
+[31m-            if(!file_exists($new_file)){[m
+[32m+[m[32m            if(!file_exists($new_file) || 1==1){[m
+                 if($extension == 'less'){[m
+                     $less = new \lessc;[m
+                     $compiled = $less->compileFile($f);[m
+                     $fp = fopen($new_file, "w+");[m
+                     fwrite($fp, $compiled);[m
+                     fclose($fp);[m
+[32m+[m[32m                }elseif($extension == 'scss'){[m
+[32m+[m[32m                    $scss = new Compiler();[m
+[32m+[m[32m                    $scss->setImportPaths(dirname($f));[m
+[32m+[m[32m                    $compiled = $scss->compile('@import "'.basename($f).'";');[m
+[32m+[m[32m                    $fp = fopen($new_file, "w+");[m
+[32m+[m[32m                    fwrite($fp, $compiled);[m
+[32m+[m[32m                    fclose($fp);[m
+                 }else{[m
+                     copy($f, $new_file);[m
+                 }[m

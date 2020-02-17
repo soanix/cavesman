@@ -1,7 +1,7 @@
 <?php
 
 namespace Cavesman;
-
+use ScssPhp\ScssPhp\Compiler;
 
 /**
  * Smarty Class
@@ -85,14 +85,6 @@ class Smarty extends \Smarty {
     public static function smartyCss($params, $smarty){
     	$file = isset($params['file']) ? $params['file'] : '';
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        switch($extension){
-            case 'less':
-                $rel = 'stylesheet/less';
-                break;
-            default:
-                $rel = 'stylesheet';
-                break;
-        }
         if(!is_dir(_WEB_."/c"))
             mkdir(_WEB_."/c");
         if(!is_dir(_WEB_."/c/css"))
@@ -128,6 +120,13 @@ class Smarty extends \Smarty {
                 if($extension == 'less'){
                     $less = new \lessc;
                     $compiled = $less->compileFile($f);
+                    $fp = fopen($new_file, "w+");
+                    fwrite($fp, $compiled);
+                    fclose($fp);
+                }elseif($extension == 'scss'){
+                    $scss = new Compiler();
+                    $scss->setImportPaths(dirname($f));
+                    $compiled = $scss->compile('@import "'.basename($f).'";');
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, $compiled);
                     fclose($fp);
