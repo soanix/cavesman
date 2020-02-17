@@ -62,8 +62,8 @@ class Smarty extends \Smarty {
     public static function smartyLang($params, $smarty){
         $s = isset($params['s']) ? $params['s'] : '';
     	$r = isset($params['r']) ? $params['r'] : array();
-        $d = isset($params['d']) ? $params['d'] : '';
-        return Display::trans($s, $r);
+        $m = isset($params['m']) ? $params['m'] : '';
+        return Display::trans($s, $r, $m);
     }
     public static function smartyFile($params, $smarty) : string {
     	$name = isset($params['name']) ? $params['name'] : '';
