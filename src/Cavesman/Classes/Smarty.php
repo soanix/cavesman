@@ -104,7 +104,7 @@ class Smarty extends \Smarty {
                     fwrite($fp, $compiled);
                     fclose($fp);
                 }else{
-                    copy($f, $new_file);
+                    copy($file, $new_file);
                 }
             }
             $time = "";
