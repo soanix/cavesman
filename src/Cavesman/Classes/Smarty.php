@@ -183,24 +183,41 @@ class Smarty extends \Smarty {
 
     public static function smartyImgUrl($params, $smarty){
 
-    	$file = isset($params['file']) ? $params['file'] : '';
-        if(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/img/".$file))
-            $url = _TEMPLATES_."/"._THEME_NAME_."/img/".$file;
-        elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/images/".$file))
-            $url = _TEMPLATES_."/"._THEME_NAME_."/images/".$file;
-        elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file))
-            $url = _TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file;
-        elseif(file_exists(_APP_._TEMPLATES_."/"._THEME_NAME_."/assets/images/".$file))
-            $url = _TEMPLATES_."/"._THEME_NAME_."/assets/images/".$file;
+        $file = isset($params['file']) ? $params['file'] : '';
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        if(!is_dir(_WEB_."/c"))
+            mkdir(_WEB_."/c");
+        if(!is_dir(_WEB_."/c/img"))
+            mkdir(_WEB_."/c/img");
 
-    	if(strpos($file, "/") !== 0){
-    		$time = filemtime(_APP_."/".$url);
+        if(file_exists($file)){
+            $name = hash("sha256", $file."-".filemtime($file));
+            $new_file = _WEB_."/c/img/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
+            $img = _PATH_."c/img/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
+            if(!file_exists($new_file)){
+                copy($file, $new_file);
+            }
+            $time = "";
+    	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
+            if(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/img/".$file))
+                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/img/".$file;
+            elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file))
+                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file;
+            $name = hash("sha256", $file."-".filemtime($f));
+            $new_file = _WEB_."/c/img/".$name.".".$extension;
+            $img = _PATH_."c/img/".$name.".".$extension;
+            if(!file_exists($new_file)){
+                copy($f, $new_file);
+            }
+    		$time = "";
+
     	}else{
-    		$url = $file;
-    		$time = filemtime(_APP_.$url);
+    		$img = $file;
+    		$time = false;
     	}
+
     	if($file)
-    		return $url.'?'.$time;
+    		return $img.'?'.$time;
     	return "";
     }
 }
