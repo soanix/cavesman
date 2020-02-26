@@ -71,7 +71,7 @@ class Modules extends Display
                             }
                         });
                         if(method_exists($namespace, "loadRoutes")){
-                            self::$router->mount("/" . $namespace::trans("slug"), function() use ($module, $namespace){
+                            self::$router->mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
                                 self::$router->before("GET", "*", function() use ($module, $namespace){
                                     self::$smarty->assign("page", $namespace::$config['name']);
                                     self::$smarty->assign("module", $namespace::$config['name']);
