@@ -45,7 +45,7 @@ class Modules extends Display
                 if ($module !== '.' && $module != '..') {
                     $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     $config['module'] = $directory;
-                    $config = array_merge($config, Config::get("params", ["modules", "albaran"]));
+                    $config = array_merge($config, Config::get("params", ["modules", $module]));
                     if ($config['active']) {
                         self::$list[$config['name']]  = $config;
 
