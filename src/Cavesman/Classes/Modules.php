@@ -46,7 +46,8 @@ class Modules extends Display
                     $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     $config['module'] = $directory;
                     if ($config['active']) {
-                        self::$list[]  = $config;
+                        self::$list[$config['name']]  = $config;
+                        self::$list[$config['name']] = array_merge($config, Config::get("params", ["modules", "albaran"]));
                         $namespace  = 'src\\Modules\\' . ucfirst($module);
                         //$modules->$module = self::getInstance($namespace);
 
@@ -76,6 +77,8 @@ class Modules extends Display
                                     self::$smarty->assign("page", $namespace::$config['name']);
                                     self::$smarty->assign("module", $namespace::$config['name']);
                                     self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
+
+                                    /* DEFINIR AQUI */
                                 });
                             });
                         }
@@ -132,6 +135,7 @@ class Modules extends Display
                     }
                 }
             }
+            self::$smarty->assign("modules", self::$list);
         }
     }
 
