@@ -45,13 +45,14 @@ class Modules extends Display
                 if ($module !== '.' && $module != '..') {
                     $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     $config['module'] = $directory;
+                    $config = array_merge($config, Config::get("params", ["modules", "albaran"]))
                     if ($config['active']) {
                         self::$list[$config['name']]  = $config;
-                        self::$list[$config['name']] = array_merge($config, Config::get("params", ["modules", "albaran"]));
+
                         $namespace  = 'src\\Modules\\' . ucfirst($module);
                         //$modules->$module = self::getInstance($namespace);
 
-                        $namespace::$config = $config;
+                        $namespace::$config = self::$list[$config['name']];
 
 
                         if (method_exists($namespace, "Smarty")) {
