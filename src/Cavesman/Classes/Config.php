@@ -12,13 +12,17 @@ class Config {
             return $main['env'];
         return 'dev';
     }
-    public static function get($config = NULL) {
+    public static function get($config = NULL, $params = []) {
         $file = _APP_."/config/" . $config  .".". self::getEnv() .".json";
+        $array = [];
         if(file_exists($file)){
-            return json_decode(file_get_contents($file), true);
+            $array =  json_decode(file_get_contents($file), true);
+            foreach($params as $param){
+                $array = $array[$param] ?? [];
+            }
         }
 
-        return null;
+        return $array;
     }
 
 }
