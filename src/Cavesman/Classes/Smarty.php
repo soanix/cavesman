@@ -41,6 +41,7 @@ class Smarty extends \Smarty {
         $this->registerPlugin("function", "can", '\Cavesman\Smarty::smartyCan');
         $this->registerPlugin("function", "menu", '\Cavesman\Menu::render');
         $this->registerPlugin("function", "git_version", '\Cavesman\Git::version');
+        $this->registerPlugin("function", "config", '\Cavesman\Smarty::smartyConfig');
 	}
 	public static function __install(){
 		if(!is_dir(_CACHE_."/views"))
@@ -219,5 +220,11 @@ class Smarty extends \Smarty {
     	if($file)
     		return $img.'?'.$time;
     	return "";
+    }
+
+    public static function smartyConfig($params, $smarty) {
+        $name = isset($params['get']) ? $params['get'] : '';
+        return \Cavesman\Config::get($name);
+
     }
 }

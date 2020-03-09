@@ -19,7 +19,7 @@ define("_SRC_", _ROOT_."/src");
 
 define("_WEB_", _ROOT_."/web");
 
-define("DEFAULT_THEME", Cavesman\Config::get("params")['theme']);
+define("DEFAULT_THEME", Cavesman\Config::get('params.theme'));
 
 define("_PATH_", "/");
 
