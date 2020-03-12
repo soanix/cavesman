@@ -1,6 +1,6 @@
 <?php
 $install = false;
-if(!file_exists(_APP_."/config/settings.inc.php"))
+if(!file_exists(_APP_."/config/main.json"))
     $install = true;
 if(!is_dir(_SRC_))
     mkdir(_SRC_);
@@ -29,21 +29,9 @@ if(!file_exists(_WEB_."/.htaccess")){
     fwrite($fp, $htaccess);
     fclose($fp);
 }
-if(!file_exists(_APP_."/config/settings.inc.php")){
-    $fp = fopen(_APP_."/config/settings.inc.php", "w+");
-    $settings = '<?php'.PHP_EOL
-    .'// TEMPLATE'.PHP_EOL
-    .'define("DEFAULT_THEME", "public"); 	// Default Template'.PHP_EOL
-    .''.PHP_EOL
-    .'//APP ROOT'.PHP_EOL
-    .'define("_APP_", dirname(__FILE__)."/..");'.PHP_EOL
-    .''.PHP_EOL
-    .'//CAVESMAN  ROOT'.PHP_EOL
-    .'define("_ROOT_", _APP_."/../cavesman");'.PHP_EOL
-    .''.PHP_EOL
-    .'// DEFINE RELATIVE PATH'.PHP_EOL
-    .'define("_PATH_", "/");';
-    fwrite($fp, $settings);
+if(!file_exists(_APP_."/config/main.json")){
+    $fp = fopen(_APP_."/config/main.json", "w+");
+    fwrite($fp, json_encode(["env" => "dev"], JSON_PRETTY_PRINT));
     fclose($fp);
 }
 if(!file_exists(_THEMES_."/public/index.php")){
