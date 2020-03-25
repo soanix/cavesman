@@ -7,12 +7,17 @@ class Menu {
     public static $items = array();
 
     public static function addItem(array $item) : void {
-        self::$items[] = $item;
+        if(isset($item['items']))
+            self::$items[] = $item;
+        else
+            foreach($item as $key => $i)
+                self::$items[] = $i;
     }
 
     public static function render(array $params = array(), $smarty = null) : string {
         $template_dir = Cavesman::$smarty->template_dir[0];
         $file = isset($params['file']) ? $params['file'] : false;
+        $menu = isset($params['name']) ? $params['name'] : false;
         if($file && file_exists($template_dir."/".$file)){
             $file = $template_dir."/".$file;
         }elseif(file_exists($template_dir."/partial/menu/sidebar-item.tpl")){
@@ -26,7 +31,8 @@ class Menu {
 
         $html = '';
         foreach(self::$items as $item){
-            $html .= Cavesman::$smarty->fetch($file, array("items" => $item));
+            if((!isset($item['menu']) && !$menu) ||  $item['menu'] == $menu)
+                $html .= Cavesman::$smarty->fetch($file, array("items" => $item));
         }
         return $html;
     }
