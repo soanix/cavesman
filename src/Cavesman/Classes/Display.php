@@ -244,4 +244,11 @@ class Display extends Cavesman
             include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
         }
     }
+
+    public static function can($name = "general", $group_name = " general"){
+        if(class_exists(\src\Modules\user::class))
+            return \src\Modules\User::can($name, $group_name);
+        else
+            return true;
+    }
 }
