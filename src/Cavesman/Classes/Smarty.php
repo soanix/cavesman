@@ -85,6 +85,7 @@ class Smarty extends \Smarty {
 
     public static function smartyCss($params, $smarty){
     	$file = isset($params['file']) ? $params['file'] : '';
+        $template = isset($params['template']) ? $params['template'] : false;
         $extension = pathinfo($file, PATHINFO_EXTENSION);
         if(!is_dir(_WEB_."/c"))
             mkdir(_WEB_."/c");
@@ -114,6 +115,7 @@ class Smarty extends \Smarty {
                 $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/css/".$file;
             elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
                 $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file;
+
             $name = hash("sha256", $file."-".filemtime($f));
             $new_file = _WEB_."/c/css/".$name.".css";
             $css = _PATH_."c/css/".$name.".css";
@@ -129,6 +131,13 @@ class Smarty extends \Smarty {
                     $scss->setImportPaths(dirname($f));
                     $compiled = $scss->compile('@import "'.basename($f).'";');
                     $fp = fopen($new_file, "w+");
+                    fwrite($fp, $compiled);
+                    fclose($fp);
+                }elseif($template){
+                    $compiled = \Cavesman\Cavesman::$smarty->fetch($f);
+
+                    $fp = fopen($new_file, "w+");
+                    fwrite($fp, "/* File: ".$file."*/\n\n");
                     fwrite($fp, $compiled);
                     fclose($fp);
                 }else{
