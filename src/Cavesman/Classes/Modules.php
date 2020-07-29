@@ -33,8 +33,23 @@ class Modules extends Display
                     $config['module'] = $directory;
                     if ($config['active']) {
                         require_once _MODULES_ . "/" . $directory . "/" . $module . ".php";
-                        foreach (glob(_MODULES_ . "/" . $directory . "/entity/*.php") as $filename) {
-                            require_once $filename;
+
+                        if(is_dir(_MODULES_ . "/" . $directory . "/controller")){
+                            foreach (glob(_MODULES_ . "/" . $directory . "/controller/*.php") as $filename) {
+                                require_once $filename;
+                            }
+                        }
+
+                        if(is_dir(_MODULES_ . "/" . $directory . "/abstract")){
+                            foreach (glob(_MODULES_ . "/" . $directory . "/abstract/*.php") as $filename) {
+                                require_once $filename;
+                            }
+                        }
+
+                        if(is_dir(_MODULES_ . "/" . $directory . "/entity")){
+                            foreach (glob(_MODULES_ . "/" . $directory . "/entity/*.php") as $filename) {
+                                require_once $filename;
+                            }
                         }
                     }
                 }
@@ -48,93 +63,193 @@ class Modules extends Display
                     if(Config::get("params.modules.".$module))
                         $config = array_merge($config, Config::get("params.modules.".$module));
                     if ($config['active']) {
-                        self::$list[$config['name']]  = $config;
+                        if(is_dir(_MODULES_ . "/" . $directory."/controller")){
+                            self::$list[$config['name']]  = $config;
+                            $namespace = [];
+                            foreach (glob(_MODULES_ . "/" . $directory . "/controller/*.php") as $filename) {
+                                $controller = pathinfo($filename);
+                                $c_name = $controller['filename'];
+                                $namespace[$c_name]  = 'src\\Modules\\' . ucfirst($module)."\\Controller\\".ucFirst($c_name);
+                                //$modules->$module = self::getInstance($namespace);
 
-                        $namespace  = 'src\\Modules\\' . ucfirst($module);
-                        //$modules->$module = self::getInstance($namespace);
-
-                        $namespace::$config = self::$list[$config['name']];
+                                $namespace[$c_name]::$config = self::$list[$config['name']];
 
 
-                        if (method_exists($namespace, "Smarty")) {
-                            $namespace::Smarty();
-                        }
-                        self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace)
-                        {
-                            $fn = $fn . "CssViewAction";
-                            if (method_exists($namespace, $fn)) {
-                                self::response($namespace::$fn(), "css");
+                                self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace, $c_name)
+                                {
+                                    $fn = $fn . "CssViewAction";
+                                    if (method_exists($namespace[$c_name], $fn)) {
+                                        self::response($namespace[$c_name]::$fn(), "css");
+                                    }
+                                });
+                                self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace, $c_name)
+                                {
+                                    $fn = $fn . "JsViewAction";
+                                    if (method_exists($namespace[$c_name], $fn)) {
+                                        self::response($namespace[$c_name]::$fn(), "js");
+                                    }
+                                });
+                                if(method_exists($namespace, "loadRoutes")){
+                                    self::$router->mount(_PATH_ . $namespace::trans($c_name."-slug"), function() use ($module, $namespace, $c_name){
+                                        self::$router->before("GET", "*", function() use ($module, $namespace, $c_name){
+                                            self::$smarty->assign("page", $c_name);
+                                            self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
+                                            self::$smarty->assign("module_dir", _MODULES_."/".$namespace[$c_name]::$config['name']);
+
+                                            /* DEFINIR AQUI */
+                                        });
+                                    });
+                                }
+                                // INSTALL MODULE INIT OPTIONS
+                                if (method_exists($namespace[$c_name], "__update"))
+                                    $namespace[$c_name]::__update();
+                                // INSTALL MODULE INIT OPTIONS
+                                if (method_exists($namespace[$c_name], "__install"))
+                                    $namespace[$c_name]::__install();
+
+                                // MENU INIT OPTIONS
+                                if (method_exists($namespace[$c_name], "menu"))
+                                    Menu::addItem($namespace[$c_name]::menu());
+
+                                // LOAT ROUTER FUNCTION FROM MODULE
+                                if (method_exists($namespace[$c_name], "loadRoutes")){
+                                    $namespace[$c_name]::loadRoutes();
+                                    self::$router->before("GET", _PATH_ . $c_name."/.*", function() use ($module, $namespace, $c_name){
+                                        self::$smarty->assign("page", $c_name);
+                                        self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
+                                        self::$smarty->assign("module_dir", _MODULES_."/".$namespace[$c_name]::$config['name']);
+                                    });
+                                }
+
+                                self::$router->mount(_PATH_ . $c_name, function() use ($module, $namespace, $c_name)
+                                {
+
+                                    self::$router->before("POST|GET", "/(.*)", function($fn) use ($module, $namespace, $c_name)
+                                    {
+                                        self::$smarty->assign("page", $c_name);
+                                        self::$smarty->assign("module_dir", _MODULES_."/".$module);
+                                        if (method_exists($namespace[$c_name], "Smarty")) {
+                                            $namespace[$c_name]::Smarty();
+                                        }
+                                    });
+                                    self::$router->get("/", function() use ($module, $namespace, $c_name)
+                                    {
+
+                                        $fn = $c_name . "ViewPage";
+                                        if (method_exists($namespace[$c_name], $fn)) {
+                                            self::response($namespace[$c_name]::$fn(), "HTML");
+                                        }
+                                    });
+
+                                    self::$router->get("/(\w+)", function($fn) use ($module, $namespace, $c_name)
+                                    {
+                                        $fn = $fn . "ViewAction";
+                                        if (method_exists($namespace[$c_name], $fn)) {
+                                            self::response($namespace[$c_name]::$fn(), "json");
+                                        }
+                                    });
+                                    self::$router->post("/(\w+)", function($fn) use ($module, $namespace, $c_name)
+                                    {
+                                        $fn = $fn . "Action";
+                                        if (method_exists($namespace[$c_name], $fn)) {
+                                            self::response($namespace[$c_name]::$fn(), "json");
+                                        }
+                                    });
+                                });
                             }
-                        });
-                        self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace)
-                        {
-                            $fn = $fn . "JsViewAction";
-                            if (method_exists($namespace, $fn)) {
-                                self::response($namespace::$fn(), "js");
+
+                        }else{
+
+
+                            self::$list[$config['name']]  = $config;
+
+                            $namespace  = 'src\\Modules\\' . ucfirst($module);
+                            //$modules->$module = self::getInstance($namespace);
+
+                            $namespace::$config = self::$list[$config['name']];
+
+
+                            if (method_exists($namespace, "Smarty")) {
+                                $namespace::Smarty();
                             }
-                        });
-                        if(method_exists($namespace, "loadRoutes")){
-                            self::$router->mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
-                                self::$router->before("GET", "*", function() use ($module, $namespace){
+                            self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace)
+                            {
+                                $fn = $fn . "CssViewAction";
+                                if (method_exists($namespace, $fn)) {
+                                    self::response($namespace::$fn(), "css");
+                                }
+                            });
+                            self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace)
+                            {
+                                $fn = $fn . "JsViewAction";
+                                if (method_exists($namespace, $fn)) {
+                                    self::response($namespace::$fn(), "js");
+                                }
+                            });
+                            if(method_exists($namespace, "loadRoutes")){
+                                self::$router->mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
+                                    self::$router->before("GET", "*", function() use ($module, $namespace){
+                                        self::$smarty->assign("page", $namespace::$config['name']);
+                                        self::$smarty->assign("module", $namespace::$config['name']);
+                                        self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
+
+                                        /* DEFINIR AQUI */
+                                    });
+                                });
+                            }
+
+
+                            // INSTALL MODULE INIT OPTIONS
+                            if (method_exists($namespace, "__install"))
+                                $namespace::__install();
+
+                            // MENU INIT OPTIONS
+                            if (method_exists($namespace, "menu"))
+                                Menu::addItem($namespace::menu());
+
+                            // LOAT ROUTER FUNCTION FROM MODULE
+                            if (method_exists($namespace, "loadRoutes")){
+                                $namespace::loadRoutes();
+                                self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
                                     self::$smarty->assign("page", $namespace::$config['name']);
                                     self::$smarty->assign("module", $namespace::$config['name']);
                                     self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
+                                });
+                            }
 
-                                    /* DEFINIR AQUI */
+                            self::$router->mount(_PATH_ . $namespace::$config['name'], function() use ($module, $namespace)
+                            {
+                                self::$router->before("POST|GET", "/(.*)", function($fn) use ($module, $namespace)
+                                {
+                                    self::$smarty->assign("page", $module);
+                                    self::$smarty->assign("module_dir", _MODULES_."/".$module);
+                                });
+                                self::$router->get("/", function() use ($module, $namespace)
+                                {
+                                    $fn = $module . "ViewPage";
+                                    if (method_exists($namespace, $fn)) {
+                                        self::response($namespace::$fn(), "HTML");
+                                    }
+                                });
+
+                                self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
+                                {
+                                    $fn = $fn . "ViewAction";
+                                    if (method_exists($namespace, $fn)) {
+                                        self::response($namespace::$fn(), "json");
+                                    }
+                                });
+                                self::$router->post("/(\w+)", function($fn) use ($module, $namespace)
+                                {
+                                    $fn = $fn . "Action";
+                                    if (method_exists($namespace, $fn)) {
+                                        self::response($namespace::$fn(), "json");
+                                    }
                                 });
                             });
                         }
-                        // INSTALL MODULE INIT OPTIONS
-                        if (method_exists($namespace, "__install"))
-                            $namespace::__install();
-
-                        // MENU INIT OPTIONS
-                        if (method_exists($namespace, "menu"))
-                            Menu::addItem($namespace::menu());
-
-                        // LOAT ROUTER FUNCTION FROM MODULE
-                        if (method_exists($namespace, "loadRoutes")){
-                            $namespace::loadRoutes();
-                            self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
-                                self::$smarty->assign("page", $namespace::$config['name']);
-                                self::$smarty->assign("module", $namespace::$config['name']);
-                                self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
-                            });
-                        }
-
-                        self::$router->mount(_PATH_ . $namespace::$config['name'], function() use ($module, $namespace)
-                        {
-                            self::$router->before("POST|GET", "/(.*)", function($fn) use ($module, $namespace)
-                            {
-                                self::$smarty->assign("page", $module);
-                                self::$smarty->assign("module_dir", _MODULES_."/".$module);
-                            });
-                            self::$router->get("/", function() use ($module, $namespace)
-                            {
-                                $fn = $module . "ViewPage";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "HTML");
-                                }
-                            });
-
-                            self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
-                            {
-                                $fn = $fn . "ViewAction";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "json");
-                                }
-                            });
-                            self::$router->post("/(\w+)", function($fn) use ($module, $namespace)
-                            {
-                                $fn = $fn . "Action";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "json");
-                                }
-                            });
-                        });
-
-
                     }
+
                 }
             }
             self::$smarty->assign("modules", self::$list);

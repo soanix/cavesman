@@ -156,18 +156,31 @@ class Smarty extends \Smarty {
     	return '';
     }
     public static function smartyJs($params, $smarty){
+        $file = isset($params['file']) ? $params['file'] : '';
+        $template = isset($params['template']) ? $params['template'] : false;
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+
         if(!is_dir(_WEB_."/c"))
             mkdir(_WEB_."/c");
         if(!is_dir(_WEB_."/c/js"))
             mkdir(_WEB_."/c/js");
-    	$file = isset($params['file']) ? $params['file'] : '';
+
 
         if(file_exists($file)){
-            $name = hash("sha256", $file."-".filemtime($file));
+            $name = hash("sha256", $file."-".\src\Modules\Lang::$iso."-".filemtime($file));
             $new_file = _WEB_."/c/js/".$name.".js";
             $js = _PATH_."c/js/".$name.".js";
             if(!file_exists($new_file)){
-                copy($file, $new_file);
+                if($template){
+                    $compiled = \Cavesman\Cavesman::$smarty->fetch($file);
+
+                    $fp = fopen($new_file, "w+");
+                    fwrite($fp, "/* File: ".$file."*/\n\n");
+                    fwrite($fp, $compiled);
+                    fclose($fp);
+                }else{
+                    copy($file, $new_file);
+                }
             }
             $time = "";
     	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
@@ -179,7 +192,17 @@ class Smarty extends \Smarty {
             $new_file = _WEB_."/c/js/".$name.".js";
             $js = _PATH_."c/js/".$name.".js";
             if(!file_exists($new_file)){
-                copy($f, $new_file);
+                if($template){
+                    $compiled = \Cavesman\Cavesman::$smarty->fetch($f);
+
+                    $fp = fopen($new_file, "w+");
+                    fwrite($fp, "/* File: ".$file."*/\n\n");
+                    fwrite($fp, $compiled);
+                    fclose($fp);
+                }else{
+                    copy($f, $new_file);
+                }
+
             }
     		$time = "";
     	}else{

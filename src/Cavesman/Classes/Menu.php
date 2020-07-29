@@ -37,8 +37,19 @@ class Menu {
             if(
                 (!isset($item['menu']) && $menu == 'main') ||
                 (isset($item['menu']) && $item['menu'] == $menu)
-            )
-                $html .= Cavesman::$smarty->fetch($file, array("items" => $item));
+            ){
+                $binds = ["items" => $item];
+
+                foreach($item['items'] as $i){
+                    if(isset($i['binds'])){
+                        foreach($i['binds'] as $name => $value){
+                            $binds[$name] = is_object($value) ? $value() : $value;
+                        }
+                    }
+
+                }
+                $html .= Cavesman::$smarty->fetch($file, $binds);
+            }
         }
         return $html;
     }
