@@ -31,8 +31,16 @@ class DB extends \PDO
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
+
                     $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     if ($config['active']) {
+
+                        if(is_dir(_MODULES_ . "/" . $directory . "/abstract")){
+                            foreach (glob(_MODULES_ . "/" . $directory . "/abstract/*.php") as $filename) {
+                                require_once $filename;
+                            }
+                        }
+
                         if(is_dir(_MODULES_ . "/" . $directory . "/entity"))
                             array_push($directoryEntity, _MODULES_ . "/" . $directory . "/entity");
                     }
