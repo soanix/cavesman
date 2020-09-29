@@ -50,7 +50,18 @@ define("_THEME_", _THEMES_."/"._THEME_NAME_);
 
 /** RELATIVE PATHS**/
 
-define("_DOMAIN_", isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : "NONE");
+if(strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,4))=='http') {
+   $strOut = sprintf('http://%s:%d',
+                  $_SERVER['SERVER_NAME'],
+                  $_SERVER['SERVER_PORT']);
+} else {
+    $strOut = sprintf('https://%s:%d',
+                  $_SERVER['SERVER_NAME'],
+                  $_SERVER['SERVER_PORT']);
+}
+
+
+define("_DOMAIN_", $strOut);
 
 // Browser path for media
 define("_TEMPLATES_", _PATH_."themes");
