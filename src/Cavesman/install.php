@@ -34,6 +34,16 @@ if(!file_exists(_APP_."/config/main.json")){
     fwrite($fp, json_encode(["env" => "dev"], JSON_PRETTY_PRINT));
     fclose($fp);
 }
+if(!file_exists(_APP_."/config/params.json")){
+    $fp = fopen(_APP_."/config/params.json", "w+");
+    fwrite($fp, json_encode(["debug" => true, "theme" => "public"], JSON_PRETTY_PRINT));
+    fclose($fp);
+}
+if(!file_exists(_APP_."/config/params.dev.json")){
+    $fp = fopen(_APP_."/config/params.dev.json", "w+");
+    fwrite($fp, json_encode([], JSON_PRETTY_PRINT));
+    fclose($fp);
+}
 if(!file_exists(_THEMES_."/public/index.php")){
     $fp = fopen(_THEMES_."/public/index.php", "w+");
     $indexphp = '<?php'.PHP_EOL
@@ -64,7 +74,7 @@ if(!file_exists(_WEB_."/index.php")){
     $fp = fopen(_WEB_."/index.php", "w+");
     $routesphp = '<?php'.PHP_EOL
         .'require \'../vendor/autoload.php\';'.PHP_EOL
-        .'Cavesman\Cavesman::getInstance(Cavesman\Display::class)->startTheme()->theme();'.PHP_EOL
+        .'Cavesman\Cavesman::run();'.PHP_EOL
     .'?>';
     fwrite($fp, $routesphp);
     fclose($fp);
