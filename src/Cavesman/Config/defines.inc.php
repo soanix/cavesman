@@ -49,19 +49,23 @@ define("_THEME_NAME_", DEFAULT_THEME);
 define("_THEME_", _THEMES_."/"._THEME_NAME_);
 
 /** RELATIVE PATHS**/
-
-if(strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,4))=='http') {
-   $strOut = sprintf('http://%s:%d',
-                  $_SERVER['SERVER_NAME'],
-                  $_SERVER['SERVER_PORT']);
-} else {
-    $strOut = sprintf('https://%s:%d',
-                  $_SERVER['SERVER_NAME'],
-                  $_SERVER['SERVER_PORT']);
+if (PHP_SAPI !== 'cli'){
+    if(strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,4))=='http') {
+       $strOut = sprintf('http://%s:%d',
+                      $_SERVER['SERVER_NAME'],
+                      $_SERVER['SERVER_PORT']);
+    } else {
+        $strOut = sprintf('https://%s:%d',
+                      $_SERVER['SERVER_NAME'],
+                      $_SERVER['SERVER_PORT']);
+    }
+    define("_DOMAIN_", $strOut);
+}else{
+    define("_DOMAIN_", "localhost");
 }
 
 
-define("_DOMAIN_", $strOut);
+
 
 // Browser path for media
 define("_TEMPLATES_", _PATH_."themes");
