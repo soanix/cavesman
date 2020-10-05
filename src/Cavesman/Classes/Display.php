@@ -232,6 +232,8 @@ class Display extends Cavesman
         if (defined("_PATH_"))
             self::$smarty->assign("base", _PATH_);
         self::$smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
+        self::$smarty->assign("data", _ROOT_."/../data");
+        self::$smarty->assign("root", _ROOT_);
         self::$smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
         self::$smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
         self::$smarty->assign("template", _THEME_ );

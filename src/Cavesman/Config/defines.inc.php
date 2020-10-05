@@ -1,4 +1,8 @@
 <?php
+
+if (session_status() !== PHP_SESSION_ACTIVE) {session_start();}
+
+
 //config dir of app
 if(!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT']."/../vendor"))
     define("_ROOT_", $_SERVER['DOCUMENT_ROOT']."/..");
@@ -18,8 +22,13 @@ define("_APP_", _ROOT_."/app");
 define("_SRC_", _ROOT_."/src");
 
 define("_WEB_", _ROOT_."/web");
-
-define("DEFAULT_THEME", Cavesman\Config::get('params.theme'));
+if(is_array(Cavesman\Config::get('params.theme')))
+    if(isset($_SESSION['show_admin']) && $_SESSION['show_admin'])
+        define("DEFAULT_THEME", Cavesman\Config::get('params.theme.admin'));
+    else
+        define("DEFAULT_THEME", Cavesman\Config::get('params.theme.public'));
+else
+    define("DEFAULT_THEME", Cavesman\Config::get('params.theme'));
 
 define("_PATH_", "/");
 
@@ -46,26 +55,12 @@ define("_CACHE_", _APP_."/cache");
 //define("_THEME_NAME_", isset($_SESSION['theme']) && $_SESSION['theme'] ? $_SESSION['theme'] : DEFAULT_THEME);
 define("_THEME_NAME_", DEFAULT_THEME);
 
+
+
 define("_THEME_", _THEMES_."/"._THEME_NAME_);
-
 /** RELATIVE PATHS**/
-if (PHP_SAPI !== 'cli'){
-    if(strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,4))=='http') {
-       $strOut = sprintf('http://%s:%d',
-                      $_SERVER['SERVER_NAME'],
-                      $_SERVER['SERVER_PORT']);
-    } else {
-        $strOut = sprintf('https://%s:%d',
-                      $_SERVER['SERVER_NAME'],
-                      $_SERVER['SERVER_PORT']);
-    }
-    define("_DOMAIN_", $strOut);
-}else{
-    define("_DOMAIN_", "localhost");
-}
 
-
-
+define("_DOMAIN_", isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : "NONE");
 
 // Browser path for media
 define("_TEMPLATES_", _PATH_."themes");
