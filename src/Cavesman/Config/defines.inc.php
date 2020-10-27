@@ -62,16 +62,17 @@ define("_THEME_", _THEMES_."/"._THEME_NAME_);
 
 /** RELATIVE PATHS**/
 if (PHP_SAPI !== 'cli'){
-    if(strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,4))=='http') {
-       $strOut = sprintf('http://%s:%d',
-                      $_SERVER['SERVER_NAME'],
-                      $_SERVER['SERVER_PORT']);
-    } else {
-        $strOut = sprintf('https://%s:%d',
-                      $_SERVER['SERVER_NAME'],
-                      $_SERVER['SERVER_PORT']);
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+        $protocol = 'https';
+    }else{
+        if(isset($_SERVER['HTTPS'])){
+            $protocol = ($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != "off") ? "https" : "http";
+        }
+        else{
+            $protocol = 'http';
+        }
     }
-    define("_DOMAIN_", $strOut);
+    define("_DOMAIN_", $protocol . "://" . $_SERVER['HTTP_HOST']);
 }else{
     define("_DOMAIN_", "localhost");
 }
