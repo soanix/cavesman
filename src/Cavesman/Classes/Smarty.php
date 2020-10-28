@@ -28,10 +28,10 @@ class Smarty extends \Smarty {
         $this->config_dir = _CONFIG_."/";
         $this->compile_dir = _CACHE_."/views/smarty/compile/";
 		$this->cache_dir = _CACHE_."/views/smarty/cache/";
-		$this->caching = false;
-		$this->force_compile = true;
-		$this->compile_check = true;
-		$this->debugging = false;
+		$this->caching = Config::get("smarty.caching", false);
+		$this->force_compile = Config::get("smarty.force_compile", true);
+		$this->compile_check = Config::get("smarty.compile_check", true);
+		$this->debugging = Config::get("smarty.debugging", true);
 		$this->registerPlugin("function", "hook", '\Cavesman\Smarty::smartyHook');
 		$this->registerPlugin("function", "file", '\Cavesman\Smarty::smartyFile');
 		$this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');

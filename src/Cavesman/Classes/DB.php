@@ -15,10 +15,10 @@ class DB extends \PDO
             return self::$oConnection;
         }
         if (
-            !Config::get('db.host')
-            || !Config::get('db.user')
-            || !Config::get('db.password')
-            || !Config::get('db.dbname')
+            !Config::get('db.host', null)
+            || !Config::get('db.user', null)
+            || !Config::get('db.password', null)
+            || !Config::get('db.dbname', null)
         ){
             throw new \Exception("El archivo config/db.json no existe o no esta correctamente configurado", 1);
         }

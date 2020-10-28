@@ -58,10 +58,9 @@ class Modules extends Display
 
                 $module  = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
-                    $config           = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    $config = Config::get("modules.".$directory, $config);
                     $config['module'] = $directory;
-                    if(Config::get("params.modules.".$module))
-                        $config = array_merge($config, Config::get("params.modules.".$module));
                     if ($config['active']) {
                         if(is_dir(_MODULES_ . "/" . $directory."/controller")){
                             self::$list[$config['name']]  = $config;
