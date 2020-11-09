@@ -256,7 +256,14 @@ class Smarty extends \Smarty {
 
     public static function smartyConfig($params, $smarty) {
         $name = isset($params['get']) ? $params['get'] : '';
-        return \Cavesman\Config::get($name);
+        $assign = isset($params['assign']) ? $params['assign'] : false;
 
+        $value = \Cavesman\Config::get($name);
+        if($assign){
+            $name = explode(".", $name);
+            $name = end($name);
+            $smarty->assign($name, $value);
+        }else
+            return $value;
     }
 }
