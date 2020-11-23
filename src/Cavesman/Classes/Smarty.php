@@ -54,9 +54,10 @@ class Smarty extends \Smarty {
     public static function smartyCan($params, $smarty){
         $name = isset($params['do']) ? $params['do'] : 'general';
         $group_name = isset($params['group']) ? $params['group'] : '';
+        $team = isset($params['team']) ? $params['team'] : null;
 
         if(class_exists(\src\Modules\user::class))
-            return \src\Modules\User::can($name, $group_name);
+            return \src\Modules\User::can($name, $group_name, $team);
         else
             return true;
     }
