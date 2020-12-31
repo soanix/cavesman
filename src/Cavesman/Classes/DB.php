@@ -1,6 +1,7 @@
 <?php
 namespace Cavesman;
 
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
@@ -10,17 +11,9 @@ class DB extends \PDO
 {
     protected static $oConnection = false;
 
-    public static function getManager() {
+    public static function getManager($db = 'local') {
         if(self::$oConnection instanceof EntityManager !== false){
             return self::$oConnection;
-        }
-        if (
-            !Config::get('db.host', null)
-            || !Config::get('db.user', null)
-            || !Config::get('db.password', null)
-            || !Config::get('db.dbname', null)
-        ){
-            throw new \Exception("El archivo config/db.json no existe o no esta correctamente configurado", 1);
         }
 
         $directories = scandir(_MODULES_);
@@ -48,7 +41,9 @@ class DB extends \PDO
             }
         }
         $config = Setup::createAnnotationMetadataConfiguration($directoryEntity, true, null, null, false);
-        $connectionParams = Config::get("db");
+        $connectionParams = Config::get("db.".$db);
+
+
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
         self::$oConnection =  EntityManager::create($conn, $config);
 
@@ -57,12 +52,13 @@ class DB extends \PDO
     public static function getCli(){
 
         /* @var $entityManager \Doctrine\ORM\EntityManagerInterface */
-        $entityManager = self::getManager();
+        $entityManager = self::getManager("cli");
         $connectionHelper = new ConnectionHelper($entityManager->getConnection());
-        return new HelperSet([
+        $helperset = new HelperSet([
             'em'         => new EntityManagerHelper($entityManager),
             'db'         => $connectionHelper,
             'connection' => $connectionHelper,
         ]);
+        ConsoleRunner::run($helperset);
     }
 }

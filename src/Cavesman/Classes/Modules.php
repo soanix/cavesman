@@ -88,7 +88,7 @@ class Modules extends Display
                                         self::response($namespace[$c_name]::$fn(), "js");
                                     }
                                 });
-                                if(method_exists($namespace, "loadRoutes")){
+                                if(method_exists($namespace, "router")){
                                     self::$router->mount(_PATH_ . $namespace::trans($c_name."-slug"), function() use ($module, $namespace, $c_name){
                                         self::$router->before("GET", "*", function() use ($module, $namespace, $c_name){
                                             self::$smarty->assign("page", $c_name);
@@ -111,8 +111,8 @@ class Modules extends Display
                                     Menu::addItem($namespace[$c_name]::menu());
 
                                 // LOAT ROUTER FUNCTION FROM MODULE
-                                if (method_exists($namespace[$c_name], "loadRoutes")){
-                                    $namespace[$c_name]::loadRoutes();
+                                if (method_exists($namespace[$c_name], "router")){
+                                    $namespace[$c_name]::router();
                                     self::$router->before("GET", _PATH_ . $c_name."/.*", function() use ($module, $namespace, $c_name){
                                         self::$smarty->assign("page", $c_name);
                                         self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
@@ -185,7 +185,7 @@ class Modules extends Display
                                     self::response($namespace::$fn(), "js");
                                 }
                             });
-                            if(method_exists($namespace, "loadRoutes")){
+                            if(method_exists($namespace, "router")){
                                 self::$router->mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
                                     self::$router->before("GET", "*", function() use ($module, $namespace){
                                         self::$smarty->assign("page", $namespace::$config['name']);
@@ -207,8 +207,8 @@ class Modules extends Display
                                 Menu::addItem($namespace::menu());
 
                             // LOAT ROUTER FUNCTION FROM MODULE
-                            if (method_exists($namespace, "loadRoutes")){
-                                $namespace::loadRoutes();
+                            if (method_exists($namespace, "router")){
+                                $namespace::router();
                                 self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
                                     self::$smarty->assign("page", $namespace::$config['name']);
                                     self::$smarty->assign("module", $namespace::$config['name']);

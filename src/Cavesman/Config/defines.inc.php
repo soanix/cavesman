@@ -19,8 +19,6 @@ elseif(!defined("_ROOT_") && is_dir(getcwd()."/vendor"))
 
 define("_APP_", _ROOT_."/app");
 
-define("_DATA_", _ROOT_."/data");
-
 define("_SRC_", _ROOT_."/src");
 
 define("_WEB_", _ROOT_."/web");

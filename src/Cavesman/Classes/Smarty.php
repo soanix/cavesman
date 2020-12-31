@@ -54,10 +54,9 @@ class Smarty extends \Smarty {
     public static function smartyCan($params, $smarty){
         $name = isset($params['do']) ? $params['do'] : 'general';
         $group_name = isset($params['group']) ? $params['group'] : '';
-        $team = isset($params['team']) ? $params['team'] : null;
 
         if(class_exists(\src\Modules\user::class))
-            return \src\Modules\User::can($name, $group_name, $team);
+            return \src\Modules\User::can($name, $group_name);
         else
             return true;
     }
@@ -237,8 +236,6 @@ class Smarty extends \Smarty {
                 $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/img/".$file;
             elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file))
                 $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file;
-            elseif(file_exists(_DATA_."/assets/img/".$file))
-                $f = _DATA_."/assets/img/".$file;
             $name = hash("sha256", $file."-".filemtime($f));
             $new_file = _WEB_."/c/img/".$name.".".$extension;
             $img = _PATH_."c/img/".$name.".".$extension;
@@ -259,12 +256,7 @@ class Smarty extends \Smarty {
 
     public static function smartyConfig($params, $smarty) {
         $name = isset($params['get']) ? $params['get'] : '';
-        $assign = isset($params['assign']) ? $params['assign'] : '';
+        return \Cavesman\Config::get($name);
 
-        $value = \Cavesman\Config::get($name);
-        if($assign){
-            $smarty->assign($assign, $value);
-        }else
-            return $value;
     }
 }
