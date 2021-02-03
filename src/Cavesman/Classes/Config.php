@@ -28,6 +28,12 @@ class Config {
             $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
         }
 
+        // Env config
+        $file = _APP_."/config/" . $params[0]  .".local.json";
+        if(file_exists($file)){
+            $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
+        }
+
         $array = $config;
         if($config){
 
