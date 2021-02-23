@@ -19,7 +19,7 @@ class Menu
             $name = $item['name'] ?? "main";
             if (!isset(self::$items[$name]))
                 self::$items[$name] = [
-                    "name" => "main",
+                    "name" => $name,
                     "order" => $item['order'],
                     "items" => []
                 ];
@@ -36,16 +36,14 @@ class Menu
             foreach($item as $itm){
 
                 $name = $itm['name'] ?? "main";
-                var_dump($name);
                 if (!isset(self::$items[$name]))
                     self::$items[$name] = [
-                        "name" => "main",
+                        "name" => $name,
                         "order" => $itm['order'],
                         "items" => []
                     ];
                 if (isset($itm['items']) && $itm['items']) {
                     foreach ($itm['items'] as $menu) {
-                        var_dump($menu['label']);
                         if (!isset(self::$items[$name]['items'][$menu['name']])) {
                             self::$items[$name]['items'][$menu['name']] = $menu;
                         } else {
@@ -79,8 +77,8 @@ class Menu
 
         foreach (self::$items as $item) {
             if (
-                (!isset($item['menu']) && $menu == 'main') ||
-                (isset($item['menu']) && $item['menu'] == $menu)
+                (!isset($item['name']) && $menu == 'main') ||
+                (isset($item['name']) && $item['name'] == $menu)
             ) {
                 $binds = ["items" => $item];
 
