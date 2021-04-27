@@ -20,7 +20,6 @@ class Menu
             if (!isset(self::$items[$name]))
                 self::$items[$name] = [
                     "name" => $name,
-                    "order" => $item['order'],
                     "items" => []
                 ];
             if (isset($item['items']) && $item['items']) {
@@ -39,7 +38,6 @@ class Menu
                 if (!isset(self::$items[$name]))
                     self::$items[$name] = [
                         "name" => $name,
-                        "order" => $itm['order'],
                         "items" => []
                     ];
                 if (isset($itm['items']) && $itm['items']) {
@@ -69,9 +67,6 @@ class Menu
         }
         if (!file_exists($file))
             throw new \Exception("TEMPLATE FILE NOT DEFINED OR DEFAULT TEMPLATE NOT FOUND (" . $file . ")");
-        usort(self::$items, function ($a, $b) {
-            return $a['order'] <=> $b['order'];
-        });
 
         $html = '';
 
@@ -80,6 +75,7 @@ class Menu
                 (!isset($item['name']) && $menu == 'main') ||
                 (isset($item['name']) && $item['name'] == $menu)
             ) {
+
                 $binds = ["items" => $item];
 
                 foreach ($item['items'] as $i) {
@@ -90,6 +86,9 @@ class Menu
                     }
 
                 }
+                usort($binds['items']['items'], function ($a, $b) {
+                    return $a['order'] <=> $b['order'];
+                });
                 $html .= Cavesman::$smarty->fetch($file, $binds);
             }
         }
