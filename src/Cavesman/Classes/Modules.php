@@ -90,7 +90,7 @@ class Modules extends Display
                                 });
                                 if(method_exists($namespace, "router")){
                                     Router::mount(_PATH_ . $namespace::trans($c_name."-slug"), function() use ($module, $namespace, $c_name){
-                                       Router::before("GET", "*", function() use ($module, $namespace, $c_name){
+                                       Router::middleware("GET", "*", function() use ($module, $namespace, $c_name){
                                             self::$smarty->assign("page", $c_name);
                                             self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
                                             self::$smarty->assign("module_dir", _MODULES_."/".$namespace[$c_name]::$config['name']);
@@ -113,7 +113,7 @@ class Modules extends Display
                                 // LOAT ROUTER FUNCTION FROM MODULE
                                 if (method_exists($namespace[$c_name], "router")){
                                     $namespace[$c_name]::router();
-                                    Router::before("GET", _PATH_ . $c_name."/.*", function() use ($module, $namespace, $c_name){
+                                    Router::middleware("GET", _PATH_ . $c_name."/.*", function() use ($module, $namespace, $c_name){
                                         self::$smarty->assign("page", $c_name);
                                         self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
                                         self::$smarty->assign("module_dir", _MODULES_."/".$namespace[$c_name]::$config['name']);
@@ -123,7 +123,7 @@ class Modules extends Display
                                 Router::mount(_PATH_ . $c_name, function() use ($module, $namespace, $c_name)
                                 {
 
-                                    Router::before("POST|GET", "/(.*)", function($fn) use ($module, $namespace, $c_name)
+                                    Router::middleware("POST|GET", "/(.*)", function($fn) use ($module, $namespace, $c_name)
                                     {
                                         self::$smarty->assign("page", $c_name);
                                         self::$smarty->assign("module_dir", _MODULES_."/".$module);
@@ -187,7 +187,7 @@ class Modules extends Display
                             });
                             if(method_exists($namespace, "router")){
                                 Router::mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
-                                    Router::before("GET", "*", function() use ($module, $namespace){
+                                    Router::middleware("GET", "*", function() use ($module, $namespace){
                                         self::$smarty->assign("page", $namespace::$config['name']);
                                         self::$smarty->assign("module", $namespace::$config['name']);
                                         self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
@@ -209,7 +209,7 @@ class Modules extends Display
                             // LOAT ROUTER FUNCTION FROM MODULE
                             if (method_exists($namespace, "router")){
                                 $namespace::router();
-                               Router::before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
+                               Router::middleware("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
                                     self::$smarty->assign("page", $namespace::$config['name']);
                                     self::$smarty->assign("module", $namespace::$config['name']);
                                     self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
@@ -218,7 +218,7 @@ class Modules extends Display
 
                             Router::mount(_PATH_ . $namespace::$config['name'], function() use ($module, $namespace)
                             {
-                                Router::before("POST|GET", "/(.*)", function($fn) use ($module, $namespace)
+                                Router::middleware("POST|GET", "/(.*)", function($fn) use ($module, $namespace)
                                 {
                                     self::$smarty->assign("page", $module);
                                     self::$smarty->assign("module_dir", _MODULES_."/".$module);
