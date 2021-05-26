@@ -1,6 +1,8 @@
 <?php
 namespace Cavesman;
 
+use \Soanix\Router\Router;
+
 class Modules extends Display
 {
     public static $instance;
@@ -74,14 +76,14 @@ class Modules extends Display
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
 
 
-                                self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace, $c_name)
+                                Router::get("/css/(\w+).css", function($fn) use ($module, $namespace, $c_name)
                                 {
                                     $fn = $fn . "CssViewAction";
                                     if (method_exists($namespace[$c_name], $fn)) {
                                         self::response($namespace[$c_name]::$fn(), "css");
                                     }
                                 });
-                                self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace, $c_name)
+                                Router::get("/js/(\w+).js", function($fn) use ($module, $namespace, $c_name)
                                 {
                                     $fn = $fn . "JsViewAction";
                                     if (method_exists($namespace[$c_name], $fn)) {
@@ -89,8 +91,8 @@ class Modules extends Display
                                     }
                                 });
                                 if(method_exists($namespace, "router")){
-                                    self::$router->mount(_PATH_ . $namespace::trans($c_name."-slug"), function() use ($module, $namespace, $c_name){
-                                        self::$router->before("GET", "*", function() use ($module, $namespace, $c_name){
+                                    Router::mount(_PATH_ . $namespace::trans($c_name."-slug"), function() use ($module, $namespace, $c_name){
+                                       Router::before("GET", "*", function() use ($module, $namespace, $c_name){
                                             self::$smarty->assign("page", $c_name);
                                             self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
                                             self::$smarty->assign("module_dir", _MODULES_."/".$namespace[$c_name]::$config['name']);
@@ -113,17 +115,17 @@ class Modules extends Display
                                 // LOAT ROUTER FUNCTION FROM MODULE
                                 if (method_exists($namespace[$c_name], "router")){
                                     $namespace[$c_name]::router();
-                                    self::$router->before("GET", _PATH_ . $c_name."/.*", function() use ($module, $namespace, $c_name){
+                                    Router::before("GET", _PATH_ . $c_name."/.*", function() use ($module, $namespace, $c_name){
                                         self::$smarty->assign("page", $c_name);
                                         self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
                                         self::$smarty->assign("module_dir", _MODULES_."/".$namespace[$c_name]::$config['name']);
                                     });
                                 }
 
-                                self::$router->mount(_PATH_ . $c_name, function() use ($module, $namespace, $c_name)
+                                Router::mount(_PATH_ . $c_name, function() use ($module, $namespace, $c_name)
                                 {
 
-                                    self::$router->before("POST|GET", "/(.*)", function($fn) use ($module, $namespace, $c_name)
+                                    Router::before("POST|GET", "/(.*)", function($fn) use ($module, $namespace, $c_name)
                                     {
                                         self::$smarty->assign("page", $c_name);
                                         self::$smarty->assign("module_dir", _MODULES_."/".$module);
@@ -131,7 +133,7 @@ class Modules extends Display
                                             $namespace[$c_name]::Smarty();
                                         }
                                     });
-                                    self::$router->get("/", function() use ($module, $namespace, $c_name)
+                                    Router::get("/", function() use ($module, $namespace, $c_name)
                                     {
 
                                         $fn = $c_name . "ViewPage";
@@ -140,14 +142,14 @@ class Modules extends Display
                                         }
                                     });
 
-                                    self::$router->get("/(\w+)", function($fn) use ($module, $namespace, $c_name)
+                                    Router::get("/(\w+)", function($fn) use ($module, $namespace, $c_name)
                                     {
                                         $fn = $fn . "ViewAction";
                                         if (method_exists($namespace[$c_name], $fn)) {
                                             self::response($namespace[$c_name]::$fn(), "json");
                                         }
                                     });
-                                    self::$router->post("/(\w+)", function($fn) use ($module, $namespace, $c_name)
+                                   Router::post("/(\w+)", function($fn) use ($module, $namespace, $c_name)
                                     {
                                         $fn = $fn . "Action";
                                         if (method_exists($namespace[$c_name], $fn)) {
@@ -171,14 +173,14 @@ class Modules extends Display
                             if (method_exists($namespace, "Smarty")) {
                                 $namespace::Smarty();
                             }
-                            self::$router->get("/css/(\w+).css", function($fn) use ($module, $namespace)
+                            Router::get("/css/(\w+).css", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "CssViewAction";
                                 if (method_exists($namespace, $fn)) {
                                     self::response($namespace::$fn(), "css");
                                 }
                             });
-                            self::$router->get("/js/(\w+).js", function($fn) use ($module, $namespace)
+                            Router::get("/js/(\w+).js", function($fn) use ($module, $namespace)
                             {
                                 $fn = $fn . "JsViewAction";
                                 if (method_exists($namespace, $fn)) {
@@ -186,8 +188,8 @@ class Modules extends Display
                                 }
                             });
                             if(method_exists($namespace, "router")){
-                                self::$router->mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
-                                    self::$router->before("GET", "*", function() use ($module, $namespace){
+                                Router::mount("/" . $namespace::trans($namespace::$config['name']."-slug"), function() use ($module, $namespace){
+                                    Router::before("GET", "*", function() use ($module, $namespace){
                                         self::$smarty->assign("page", $namespace::$config['name']);
                                         self::$smarty->assign("module", $namespace::$config['name']);
                                         self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
@@ -209,21 +211,21 @@ class Modules extends Display
                             // LOAT ROUTER FUNCTION FROM MODULE
                             if (method_exists($namespace, "router")){
                                 $namespace::router();
-                                self::$router->before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
+                               Router::before("GET", _PATH_ . $namespace::$config['name']."/.*", function() use ($module, $namespace){
                                     self::$smarty->assign("page", $namespace::$config['name']);
                                     self::$smarty->assign("module", $namespace::$config['name']);
                                     self::$smarty->assign("module_dir", _MODULES_."/".$namespace::$config['name']);
                                 });
                             }
 
-                            self::$router->mount(_PATH_ . $namespace::$config['name'], function() use ($module, $namespace)
+                            Router::mount(_PATH_ . $namespace::$config['name'], function() use ($module, $namespace)
                             {
-                                self::$router->before("POST|GET", "/(.*)", function($fn) use ($module, $namespace)
+                                Router::before("POST|GET", "/(.*)", function($fn) use ($module, $namespace)
                                 {
                                     self::$smarty->assign("page", $module);
                                     self::$smarty->assign("module_dir", _MODULES_."/".$module);
                                 });
-                                self::$router->get("/", function() use ($module, $namespace)
+                                Router::get("/", function() use ($module, $namespace)
                                 {
                                     $fn = $module . "ViewPage";
                                     if (method_exists($namespace, $fn)) {
@@ -231,14 +233,14 @@ class Modules extends Display
                                     }
                                 });
 
-                                self::$router->get("/(\w+)", function($fn) use ($module, $namespace)
+                                Router::get("/(\w+)", function($fn) use ($module, $namespace)
                                 {
                                     $fn = $fn . "ViewAction";
                                     if (method_exists($namespace, $fn)) {
                                         self::response($namespace::$fn(), "json");
                                     }
                                 });
-                                self::$router->post("/(\w+)", function($fn) use ($module, $namespace)
+                                Router::post("/(\w+)", function($fn) use ($module, $namespace)
                                 {
                                     $fn = $fn . "Action";
                                     if (method_exists($namespace, $fn)) {
