@@ -1,8 +1,6 @@
 <?php
 namespace Cavesman;
 
-use Soanix\Router\Router;
-
 class Modules extends Display
 {
     public static $instance;
