@@ -2,11 +2,9 @@
 namespace Cavesman;
 
 class Cavesman {
-    public static $router;
     public static $smarty;
 
     public static function __install(){
-        self::$router = self::getInstance(Router::class);
         self::$smarty = self::getInstance(Smarty::class);
     }
 
