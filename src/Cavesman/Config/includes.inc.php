@@ -9,9 +9,6 @@ include_once(_CLASSES_."/db.class.php");
 //add smarty custom class
 include_once(_CLASSES_."/smarty.class.php");
 
-//add router custom class
-include_once(_CLASSES_."/router.class.php");
-
 // add front end class
 include_once(_CLASSES_."/frontend.class.php");
 
