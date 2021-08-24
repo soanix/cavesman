@@ -68,7 +68,7 @@ class Modules extends Display
                             foreach (glob(_MODULES_ . "/" . $directory . "/controller/*.php") as $filename) {
                                 $controller = pathinfo($filename);
                                 $c_name = $controller['filename'];
-                                $namespace[$c_name]  = 'src\\Modules\\' . ucfirst($module)."\\Controller\\".ucFirst($c_name);
+                                $namespace[$c_name]  = 'src\\Modules\\' . self::parseClassName($module)."\\Controller\\".ucFirst($c_name);
                                 //$modules->$module = self::getInstance($namespace);
 
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
@@ -162,7 +162,7 @@ class Modules extends Display
 
                             self::$list[$config['name']]  = $config;
 
-                            $namespace  = 'src\\Modules\\' . ucfirst($module);
+                            $namespace  = 'src\\Modules\\' . self::parseClassName($module);
                             //$modules->$module = self::getInstance($namespace);
 
                             $namespace::$config = self::$list[$config['name']];
@@ -266,7 +266,7 @@ class Modules extends Display
         $modules = self::getInstance(self::class);
         if ($hook) {
             foreach (self::$list as $module) {
-                $namespace          = 'src\\Modules\\' . $module['module'];
+                $namespace          = 'src\\Modules\\' . self::parseClassName($module['module']);
                 $hook_name          = "hook" . str_replace(" ", "", ucwords(str_replace("_", " ", $hook)));
                 if (method_exists($namespace, $hook_name) && $module['active'])
                     $html .= $namespace::$hook_name();
@@ -295,6 +295,13 @@ class Modules extends Display
 			}
             return $binded;
         }
+    }
+    private static function parseClassName($name) {
+        $name = explode("_", $name);
+        $name = array_map(function($string){
+            return ucfirst(mb_strtolower($string));
+        }, $name);
+        return implode('', $name);
     }
 
 }
