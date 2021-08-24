@@ -43,7 +43,8 @@ class DB extends \PDO
         $config = Setup::createAnnotationMetadataConfiguration($directoryEntity, true, null, null, false);
         $connectionParams = Config::get("db.".$db);
 
-
+        if(!is_array($connectionParams))
+             throw new \Exception('DB Config is not correct formated');
         $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
         self::$oConnection =  EntityManager::create($conn, $config);
 
