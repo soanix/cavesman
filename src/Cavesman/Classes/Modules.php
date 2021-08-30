@@ -119,7 +119,7 @@ class Modules extends Display
                                         self::$smarty->assign("module_dir", _MODULES_ . "/" . $namespace[$c_name]::$config['name']);
                                     });
                                 }
-                                
+
                                 Router::mount(_PATH_ . self::trans($c_name . "-slug", [], $module), function () use ($module, $namespace, $c_name) {
 
                                     Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace, $c_name) {
@@ -211,7 +211,33 @@ class Modules extends Display
 
                             Router::mount(_PATH_ . $namespace::$config['name'], function () use ($module, $namespace) {
                                 Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace) {
-                                    self::$smarty->assign("page", $module);
+                                    self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
+                                    self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
+                                });
+                                Router::get("/", function () use ($module, $namespace) {
+                                    $fn = $module . "ViewPage";
+                                    if (method_exists($namespace, $fn)) {
+                                        self::response($namespace::$fn(), "HTML");
+                                    }
+                                });
+
+                                Router::get("/(\w+)", function ($fn) use ($module, $namespace) {
+                                    $fn = $fn . "ViewAction";
+                                    if (method_exists($namespace, $fn)) {
+                                        self::response($namespace::$fn(), "json");
+                                    }
+                                });
+                                Router::post("/(\w+)", function ($fn) use ($module, $namespace) {
+                                    $fn = $fn . "Action";
+                                    if (method_exists($namespace, $fn)) {
+                                        self::response($namespace::$fn(), "json");
+                                    }
+                                });
+                            });
+
+                            Router::mount(_PATH_ . self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']), function () use ($module, $namespace) {
+                                Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace) {
+                                    self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
                                     self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
                                 });
                                 Router::get("/", function () use ($module, $namespace) {
