@@ -71,23 +71,10 @@ class Modules extends Display
                                 $controller = pathinfo($filename);
                                 $c_name = $controller['filename'];
                                 $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . self::parseClassName($c_name);
-                                //$modules->$module = self::getInstance($namespace);
+                               
 
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
 
-
-                                Router::get("/css/(\w+).css", function ($fn) use ($module, $namespace, $c_name) {
-                                    $fn = $fn . "CssViewAction";
-                                    if (method_exists($namespace[$c_name], $fn)) {
-                                        self::response($namespace[$c_name]::$fn(), "css");
-                                    }
-                                });
-                                Router::get("/js/(\w+).js", function ($fn) use ($module, $namespace, $c_name) {
-                                    $fn = $fn . "JsViewAction";
-                                    if (method_exists($namespace[$c_name], $fn)) {
-                                        self::response($namespace[$c_name]::$fn(), "js");
-                                    }
-                                });
                                 if (method_exists($namespace, "router")) {
                                     Router::mount(_PATH_ . $namespace::trans($c_name . "-slug"), function () use ($module, $namespace, $c_name) {
                                         Router::middleware("GET", "*", function () use ($module, $namespace, $c_name) {
@@ -129,26 +116,7 @@ class Modules extends Display
                                             $namespace[$c_name]::Smarty();
                                         }
                                     });
-                                    Router::get("/", function () use ($module, $namespace, $c_name) {
-
-                                        $fn = $c_name . "ViewPage";
-                                        if (method_exists($namespace[$c_name], $fn)) {
-                                            self::response($namespace[$c_name]::$fn(), "HTML");
-                                        }
-                                    });
-
-                                    Router::get("/(\w+)", function ($fn) use ($module, $namespace, $c_name) {
-                                        $fn = $fn . "ViewAction";
-                                        if (method_exists($namespace[$c_name], $fn)) {
-                                            self::response($namespace[$c_name]::$fn(), "json");
-                                        }
-                                    });
-                                    Router::post("/(\w+)", function ($fn) use ($module, $namespace, $c_name) {
-                                        $fn = $fn . "Action";
-                                        if (method_exists($namespace[$c_name], $fn)) {
-                                            self::response($namespace[$c_name]::$fn(), "json");
-                                        }
-                                    });
+                                    
                                 });
                             }
 
@@ -166,18 +134,7 @@ class Modules extends Display
                             if (method_exists($namespace, "Smarty")) {
                                 $namespace::Smarty();
                             }
-                            Router::get("/css/(\w+).css", function ($fn) use ($module, $namespace) {
-                                $fn = $fn . "CssViewAction";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "css");
-                                }
-                            });
-                            Router::get("/js/(\w+).js", function ($fn) use ($module, $namespace) {
-                                $fn = $fn . "JsViewAction";
-                                if (method_exists($namespace, $fn)) {
-                                    self::response($namespace::$fn(), "js");
-                                }
-                            });
+                            
                             if (method_exists($namespace, "router")) {
                                 Router::mount("/" . $namespace::trans($namespace::$config['name'] . "-slug"), function () use ($module, $namespace) {
                                     Router::middleware("GET", "*", function () use ($module, $namespace) {
@@ -214,25 +171,7 @@ class Modules extends Display
                                     self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
                                     self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
                                 });
-                                Router::get("/", function () use ($module, $namespace) {
-                                    $fn = $module . "ViewPage";
-                                    if (method_exists($namespace, $fn)) {
-                                        self::response($namespace::$fn(), "HTML");
-                                    }
-                                });
-
-                                Router::get("/(\w+)", function ($fn) use ($module, $namespace) {
-                                    $fn = $fn . "ViewAction";
-                                    if (method_exists($namespace, $fn)) {
-                                        self::response($namespace::$fn(), "json");
-                                    }
-                                });
-                                Router::post("/(\w+)", function ($fn) use ($module, $namespace) {
-                                    $fn = $fn . "Action";
-                                    if (method_exists($namespace, $fn)) {
-                                        self::response($namespace::$fn(), "json");
-                                    }
-                                });
+                               
                             });
 
                             Router::mount(_PATH_ . self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']), function () use ($module, $namespace) {
@@ -240,25 +179,7 @@ class Modules extends Display
                                     self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
                                     self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
                                 });
-                                Router::get("/", function () use ($module, $namespace) {
-                                    $fn = $module . "ViewPage";
-                                    if (method_exists($namespace, $fn)) {
-                                        self::response($namespace::$fn(), "HTML");
-                                    }
-                                });
-
-                                Router::get("/(\w+)", function ($fn) use ($module, $namespace) {
-                                    $fn = $fn . "ViewAction";
-                                    if (method_exists($namespace, $fn)) {
-                                        self::response($namespace::$fn(), "json");
-                                    }
-                                });
-                                Router::post("/(\w+)", function ($fn) use ($module, $namespace) {
-                                    $fn = $fn . "Action";
-                                    if (method_exists($namespace, $fn)) {
-                                        self::response($namespace::$fn(), "json");
-                                    }
-                                });
+                                
                             });
                         }
                     }
