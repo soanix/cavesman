@@ -14,5 +14,10 @@ class Http {
     public static function jsonResponse($message, $code = 200) {
         return self::response(json_encode($message), $code, 'application/json');
     }
+    
+    public static function redirect($url, $statusCode = 303) {
+       header('Location: ' . $url, true, $statusCode);
+       die();
+    }
 
 }
