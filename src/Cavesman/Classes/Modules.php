@@ -2,11 +2,9 @@
 
 namespace Cavesman;
 
-use src\Modules\Lang;
-
 class Modules extends Display
 {
-    public static $instance;
+    public static $instance, $config = [];
 
     // Define list to put all modules
     public static $list = array();
@@ -21,6 +19,29 @@ class Modules extends Display
      */
     public static function loadModules(): void
     {
+        // Install modules
+        if(Config::get('main.install', true)) {
+            foreach (Config::get('modules', (object)[]) as $name => $module) {
+                if (!is_dir(_MODULES_ . '/' . $name))
+                    mkdir(_MODULES_ . '/' . $name);
+                if (!file_exists(_MODULES_ . '/' . $name . '/' . $name . '.php')) {
+                    touch(_MODULES_ . '/' . $name . '/' . $name . '.php');
+                    $fp = fopen(_MODULES_ . '/' . $name . '/' . $name . '.php', 'w+');
+                    fwrite($fp, "<?php" . PHP_EOL);
+                    fwrite($fp, "namespace src\Modules;" . PHP_EOL . PHP_EOL);
+                    fwrite($fp, "class " . ucfirst($name) . ' extends \Cavesman\Modules {');
+                    fwrite($fp, '}');
+                    fclose($fp);
+                }
+                if (!file_exists(_MODULES_ . '/' . $name . '/config.json')) {
+                    touch(_MODULES_ . '/' . $name . '/config.json');
+                    $fp = fopen(_MODULES_ . '/' . $name . '/config.json', 'w+');
+                    fwrite($fp, json_encode($module, JSON_PRETTY_PRINT));
+                    fclose($fp);
+                }
+            }
+        }
+
         $modules = self::getInstance(self::class);
         if (is_dir(_MODULES_)) {
             $directories = scandir(_MODULES_);
@@ -150,12 +171,12 @@ class Modules extends Display
      */
     public static function trans(string $string = '', array $binds = [], string $modules = ''): string
     {
-        if (class_exists(Lang::class)) {
+        if (class_exists('\src\Modules\Lang')) {
             if ($modules)
-                return Lang::l($string, $binds, $modules);
+                return \src\Modules\Lang::l($string, $binds, $modules);
             if (isset(get_called_class()::$config['name']))
-                return Lang::l($string, $binds, get_called_class()::$config['name']);
-            return Lang::l($string, $binds);
+                return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
+            return \src\Modules\Lang::l($string, $binds);
         } else {
             $binded = $string;
             foreach ($binds as $key => $value) {
