@@ -3,11 +3,9 @@ namespace Cavesman;
 
 class Cavesman
 {
-    public static $smarty;
-
     public static function __install()
     {
-        self::$smarty = self::getInstance(Smarty::class);
+
     }
 
     public static function getInstance($module): object

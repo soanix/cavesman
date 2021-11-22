@@ -14,12 +14,6 @@ class Modules extends Display
     public static function __install()
     {
         parent::__install();
-        if (defined("_APP_")) {
-            if (!is_dir(_WEB_ . "/img"))
-                mkdir(_WEB_ . "/img/");
-            if (!is_dir(_WEB_ . "/img/m"))
-                mkdir(_WEB_ . "/img/m");
-        }
     }
 
     /**
@@ -74,20 +68,8 @@ class Modules extends Display
                                 $c_name = $controller['filename'];
                                 $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . self::parseClassName($c_name);
 
-
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
 
-                                if (method_exists($namespace, "router")) {
-                                    Router::mount(_PATH_ . $namespace::trans($c_name . "-slug"), function () use ($module, $namespace, $c_name) {
-                                        Router::middleware("GET", "*", function () use ($module, $namespace, $c_name) {
-                                            self::$smarty->assign("page", $c_name);
-                                            self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
-                                            self::$smarty->assign("module_dir", _MODULES_ . "/" . $namespace[$c_name]::$config['name']);
-
-                                            /* DEFINIR AQUI */
-                                        });
-                                    });
-                                }
                                 // INSTALL MODULE INIT OPTIONS
                                 if (method_exists($namespace[$c_name], "__update"))
                                     $namespace[$c_name]::__update();
@@ -102,18 +84,10 @@ class Modules extends Display
                                 // LOAT ROUTER FUNCTION FROM MODULE
                                 if (method_exists($namespace[$c_name], "router")) {
                                     $namespace[$c_name]::router();
-                                    Router::middleware("GET", _PATH_ . $c_name . "/.*", function () use ($module, $namespace, $c_name) {
-                                        self::$smarty->assign("page", $c_name);
-                                        self::$smarty->assign("module", $namespace[$c_name]::$config['name']);
-                                        self::$smarty->assign("module_dir", _MODULES_ . "/" . $namespace[$c_name]::$config['name']);
-                                    });
                                 }
 
                                 Router::mount(_PATH_ . self::trans($c_name . "-slug", [], $module), function () use ($module, $namespace, $c_name) {
-
                                     Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace, $c_name) {
-                                        self::$smarty->assign("page", self::trans($c_name . "-slug", [], $module));
-                                        self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
                                         if (method_exists($namespace[$c_name], "Smarty")) {
                                             $namespace[$c_name]::Smarty();
                                         }
@@ -137,19 +111,6 @@ class Modules extends Display
                                 $namespace::Smarty();
                             }
 
-                            if (method_exists($namespace, "router")) {
-                                Router::mount("/" . $namespace::trans($namespace::$config['name'] . "-slug"), function () use ($module, $namespace) {
-                                    Router::middleware("GET", "*", function () use ($module, $namespace) {
-                                        self::$smarty->assign("page", $namespace::$config['name']);
-                                        self::$smarty->assign("module", $namespace::$config['name']);
-                                        self::$smarty->assign("module_dir", _MODULES_ . "/" . $namespace::$config['name']);
-
-                                        /* DEFINIR AQUI */
-                                    });
-                                });
-                            }
-
-
                             // INSTALL MODULE INIT OPTIONS
                             if (method_exists($namespace, "__install"))
                                 $namespace::__install();
@@ -161,34 +122,13 @@ class Modules extends Display
                             // LOAT ROUTER FUNCTION FROM MODULE
                             if (method_exists($namespace, "router")) {
                                 $namespace::router();
-                                Router::middleware("GET", _PATH_ . $namespace::$config['name'] . "/.*", function () use ($module, $namespace) {
-                                    self::$smarty->assign("page", $namespace::$config['name']);
-                                    self::$smarty->assign("module", $namespace::$config['name']);
-                                    self::$smarty->assign("module_dir", _MODULES_ . "/" . $namespace::$config['name']);
-                                });
                             }
 
-                            Router::mount(_PATH_ . $namespace::$config['name'], function () use ($module, $namespace) {
-                                Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace) {
-                                    self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
-                                    self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
-                                });
-
-                            });
-
-                            Router::mount(_PATH_ . self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']), function () use ($module, $namespace) {
-                                Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace) {
-                                    self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
-                                    self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
-                                });
-
-                            });
                         }
                     }
 
                 }
             }
-            self::$smarty->assign("modules", self::$list);
         }
     }
 

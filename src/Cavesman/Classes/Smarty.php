@@ -35,13 +35,13 @@ class Smarty extends \Smarty
         $this->caching = Config::get("smarty.caching", false);
         $this->force_compile = Config::get("smarty.force_compile", true);
         $this->compile_check = Config::get("smarty.compile_check", true);
-        $this->debugging = Config::get("smarty.debugging", true);
+        $this->debugging = Config::get("smarty.debugging", false);
         $this->registerPlugin("function", "hook", '\Cavesman\Smarty::smartyHook');
         $this->registerPlugin("function", "file", '\Cavesman\Smarty::smartyFile');
         $this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');
         $this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
         $this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
-        $this->registerPlugin("function", "l", '\Cavesman\Smarty::smartyLang');
+        $this->registerPlugin("function", "trans", '\Cavesman\Smarty::smartyLang');
         $this->registerPlugin("function", "can", '\Cavesman\Smarty::smartyCan');
         $this->registerPlugin("function", "menu", '\Cavesman\Menu::render');
         $this->registerPlugin("function", "git_version", '\Cavesman\Git::version');
@@ -63,8 +63,8 @@ class Smarty extends \Smarty
         $name = isset($params['do']) ? $params['do'] : 'general';
         $group_name = isset($params['group']) ? $params['group'] : '';
 
-        if (class_exists(user::class))
-            return User::can($name, $group_name);
+        if (class_exists('\src\Modules\User') && method_exists('\src\Modules\User', 'can'))
+            return \src\Modules\User::can($name, $group_name);
         else
             return true;
     }
