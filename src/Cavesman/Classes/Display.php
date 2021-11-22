@@ -1,35 +1,26 @@
 <?php
+
 namespace Cavesman;
+
+use src\Modules\Lang;
+use src\Modules\User;
 
 class Display extends Cavesman
 {
     public static $instance;
-    /**
-     * Init function to load Smarty
-     */
-    private static function init() : void
+
+    public static function trans(string $string = '', array $binds = [], string $module = ''): string
     {
-        parent::__install();
-        $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
-        self::$smarty->template_dir = $tmpl;
-        self::$smarty->assign("template", $tmpl);
-        Modules::loadModules();
-
-    }
-
-    public static function trans(string $string = '', array $binds = [], string $module = '') : string {
-        if(class_exists(\src\Modules\Lang::class)){
-            return \src\Modules\Lang::l($string, $binds, $module);
+        if (class_exists(Lang::class)) {
+            return Lang::l($string, $binds, $module);
         } else {
             $binded = $string;
-			foreach($binds as $key => $value){
-				$binded = str_replace($key, $value, $binded);
-			}
+            foreach ($binds as $key => $value) {
+                $binded = str_replace($key, $value, $binded);
+            }
             return $binded;
         }
     }
-
-
 
     /**
      * Get POST value by key
@@ -60,10 +51,48 @@ class Display extends Cavesman
     /**
      * Start theme operations
      */
-    public static function startTheme() : void
+    public static function startTheme(): void
     {
+
         self::init();
     }
+
+    /**
+     * Init function to load Smarty
+     */
+    private static function init(): void
+    {
+        parent::__install();
+        $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
+        self::$smarty->template_dir = $tmpl;
+        self::$smarty->assign("template", $tmpl);
+        Modules::loadModules();
+
+    }
+
+    /**
+     * Load smarty base vars and start gui
+     */
+    public static function theme(): void
+    {
+        if (defined("_PATH_"))
+            self::$smarty->assign("base", _PATH_);
+        self::$smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
+        self::$smarty->assign("data", _ROOT_ . "/../data");
+        self::$smarty->assign("root", _ROOT_);
+        self::$smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
+        self::$smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
+        self::$smarty->assign("template", _THEME_);
+
+        if (file_exists(_APP_ . "/routes.php"))
+            include_once(_APP_ . "/routes.php");
+        else
+            Display::response("No se ha encontrado el archivo routes.php", "json", 500);
+        if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php")) {
+            include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
+        }
+    }
+
     /**
      * Return error
      *
@@ -194,62 +223,42 @@ class Display extends Cavesman
             header('Content-Type: application/json; Charset=UTF-8');
             self::json($msg);
 
-        } elseif(strtolower($type == 'xlsx')){
+        } elseif (strtolower($type == 'xlsx')) {
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; Charset=UTF-8');
             echo $msg;
-        }elseif(strtolower($type == 'css')){
+        } elseif (strtolower($type == 'css')) {
             header('Content-Type: text/css; Charset=UTF-8');
             echo $msg;
-        }elseif(strtolower($type == 'js')){
+        } elseif (strtolower($type == 'js')) {
             header('Content-Type: application/javascript; Charset=UTF-8');
             echo $msg;
         } elseif (strtolower($type) == "html") {
-            if(file_exists(_THEME_."/tpl/error/".$code.".tpl")){
-                header('X-PHP-Response-Code: '.$code, true, $code);
-                if($_SERVER['REQUEST_METHOD'] == "GET")
-                    self::getInstance(Smarty::class)->display("error/".$code.".tpl");
-                if($_SERVER['REQUEST_METHOD'] == "POST")
+            if (file_exists(_THEME_ . "/tpl/error/" . $code . ".tpl")) {
+                header('X-PHP-Response-Code: ' . $code, true, $code);
+                if ($_SERVER['REQUEST_METHOD'] == "GET")
+                    self::getInstance(Smarty::class)->display("error/" . $code . ".tpl");
+                if ($_SERVER['REQUEST_METHOD'] == "POST")
                     self::response(array("error" => $msg), "json", $code);
-            }else{
-                header('X-PHP-Response-Code: '.$code, true, $code);
-                    echo $msg;
+            } else {
+                header('X-PHP-Response-Code: ' . $code, true, $code);
+                echo $msg;
             }
         } else {
-            header('X-PHP-Response-Code: '.$code, true, $code);
+            header('X-PHP-Response-Code: ' . $code, true, $code);
             echo $msg;
         }
         exit();
     }
+
     private static function json($array, $param = NULL)
     {
         echo json_encode($array, $param);
     }
-    /**
-     * Load smarty base vars and start gui
-     */
-    public static function theme() : void
+
+    public static function can($name = "general", $group_name = " general")
     {
-        if (defined("_PATH_"))
-            self::$smarty->assign("base", _PATH_);
-        self::$smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
-        self::$smarty->assign("data", _ROOT_."/../data");
-        self::$smarty->assign("root", _ROOT_);
-        self::$smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
-        self::$smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
-        self::$smarty->assign("template", _THEME_ );
-
-        if (file_exists(_APP_ . "/routes.php"))
-            include_once(_APP_ . "/routes.php");
-        else
-            Display::response("No se ha encontrado el archivo routes.php", "json", 500);
-        if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php")){
-            include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
-        }
-    }
-
-    public static function can($name = "general", $group_name = " general"){
-        if(class_exists(\src\Modules\user::class))
-            return \src\Modules\User::can($name, $group_name);
+        if (class_exists(user::class))
+            return User::can($name, $group_name);
         else
             return true;
     }

@@ -2,7 +2,8 @@
 namespace Cavesman;
 
 
-class Router extends \Soanix\Router\Router {
+class Router extends \Soanix\Router\Router
+{
 
 }
 

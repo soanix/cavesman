@@ -27,9 +27,11 @@ composer require soanix/cavesman
 ```
 
 2. Create install.php with autoloader
+
 ```php
 require_once 'vendor/autoload.php';
 ```
+
 3. Running first request will generate proyect structure
 
 4. Now you can start develope

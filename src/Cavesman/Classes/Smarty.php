@@ -1,7 +1,12 @@
 <?php
 
 namespace Cavesman;
+
+use Cavesman\FrontEnd;
+use lessc;
 use ScssPhp\ScssPhp\Compiler;
+use src\Modules\Lang;
+use src\Modules\User;
 
 /**
  * Smarty Class
@@ -13,250 +18,264 @@ use ScssPhp\ScssPhp\Compiler;
  * @author  Md. Ali Ahsan Rana
  * @link    http://codesamplez.com/
  */
-use Cavesman\FrontEnd;
-use Cavesman\Modules;
-
-class Smarty extends \Smarty {
+class Smarty extends \Smarty
+{
     /**
      * constructor
      */
-    public  static $instance;
+    public static $instance;
 
-    function __construct(){
+    function __construct()
+    {
         parent::__construct();
         $this->template_dir = "";
-        $this->config_dir = _CONFIG_."/";
-        $this->compile_dir = _CACHE_."/views/smarty/compile/";
-		$this->cache_dir = _CACHE_."/views/smarty/cache/";
-		$this->caching = Config::get("smarty.caching", false);
-		$this->force_compile = Config::get("smarty.force_compile", true);
-		$this->compile_check = Config::get("smarty.compile_check", true);
-		$this->debugging = Config::get("smarty.debugging", true);
-		$this->registerPlugin("function", "hook", '\Cavesman\Smarty::smartyHook');
-		$this->registerPlugin("function", "file", '\Cavesman\Smarty::smartyFile');
-		$this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');
-		$this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
-		$this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
+        $this->config_dir = _CONFIG_ . "/";
+        $this->compile_dir = _CACHE_ . "/views/smarty/compile/";
+        $this->cache_dir = _CACHE_ . "/views/smarty/cache/";
+        $this->caching = Config::get("smarty.caching", false);
+        $this->force_compile = Config::get("smarty.force_compile", true);
+        $this->compile_check = Config::get("smarty.compile_check", true);
+        $this->debugging = Config::get("smarty.debugging", true);
+        $this->registerPlugin("function", "hook", '\Cavesman\Smarty::smartyHook');
+        $this->registerPlugin("function", "file", '\Cavesman\Smarty::smartyFile');
+        $this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');
+        $this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
+        $this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
         $this->registerPlugin("function", "l", '\Cavesman\Smarty::smartyLang');
         $this->registerPlugin("function", "can", '\Cavesman\Smarty::smartyCan');
         $this->registerPlugin("function", "menu", '\Cavesman\Menu::render');
         $this->registerPlugin("function", "git_version", '\Cavesman\Git::version');
         $this->registerPlugin("function", "config", '\Cavesman\Smarty::smartyConfig');
-	}
-	public static function __install(){
-		if(!is_dir(_CACHE_."/views"))
-			mkdir(_CACHE_."/views");
-		if(!is_dir(_CACHE_."/views/smaty"))
-			mkdir(_CACHE_."/views/smarty");
-		if(!is_dir(_CACHE_."/views/smarty/compile"))
-			mkdir(_CACHE_."/views/smarty/compile");
-	}
-    public static function smartyCan($params, $smarty){
+    }
+
+    public static function __install()
+    {
+        if (!is_dir(_CACHE_ . "/views"))
+            mkdir(_CACHE_ . "/views");
+        if (!is_dir(_CACHE_ . "/views/smaty"))
+            mkdir(_CACHE_ . "/views/smarty");
+        if (!is_dir(_CACHE_ . "/views/smarty/compile"))
+            mkdir(_CACHE_ . "/views/smarty/compile");
+    }
+
+    public static function smartyCan($params, $smarty)
+    {
         $name = isset($params['do']) ? $params['do'] : 'general';
         $group_name = isset($params['group']) ? $params['group'] : '';
 
-        if(class_exists(\src\Modules\user::class))
-            return \src\Modules\User::can($name, $group_name);
+        if (class_exists(user::class))
+            return User::can($name, $group_name);
         else
             return true;
     }
-    public static function smartyLang($params, $smarty){
+
+    public static function smartyLang($params, $smarty)
+    {
         $s = isset($params['s']) ? $params['s'] : '';
-    	$r = isset($params['r']) ? $params['r'] : array();
+        $r = isset($params['r']) ? $params['r'] : array();
         $m = isset($params['m']) ? $params['m'] : '';
         return Display::trans($s, $r, $m);
     }
-    public static function smartyFile($params, $smarty) : string {
-    	$name = isset($params['name']) ? $params['name'] : '';
-    	include_once(_CLASSES_."/modules.class.php");
-    	$modules = FrontEnd::getInstance(Modules::class);
-    	$plugin_info = $modules->list[str_replace(".tpl", "", $name)];
-    	if(file_exists($plugin_info['directory']."/".$name))
-    		return $smarty->fetch($plugin_info['directory']."/".$name);
-    	else
-    		return $smarty->fetch($name);
+
+    public static function smartyFile($params, $smarty): string
+    {
+        $name = isset($params['name']) ? $params['name'] : '';
+        include_once(_CLASSES_ . "/modules.class.php");
+        $modules = Cavesman::getInstance(Modules::class);
+        $plugin_info = $modules->list[str_replace(".tpl", "", $name)];
+        if (file_exists($plugin_info['directory'] . "/" . $name))
+            return $smarty->fetch($plugin_info['directory'] . "/" . $name);
+        else
+            return $smarty->fetch($name);
     }
-    public static function smartyHook($params, $smarty){
-    	foreach($params as $key => $param){
+
+    public static function smartyHook($params, $smarty)
+    {
+        foreach ($params as $key => $param) {
             Cavesman::$smarty->assign($key, $param);
         }
-    	return Cavesman::getInstance(Modules::class)->hooks($params['name']);
+        return Cavesman::getInstance(Modules::class)->hooks($params['name']);
     }
 
-    public static function smartyCss($params, $smarty){
-    	$file = isset($params['file']) ? $params['file'] : '';
+    public static function smartyCss($params, $smarty)
+    {
+        $file = isset($params['file']) ? $params['file'] : '';
         $template = isset($params['template']) ? $params['template'] : false;
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        if(!is_dir(_WEB_."/c"))
-            mkdir(_WEB_."/c");
-        if(!is_dir(_WEB_."/c/css"))
-            mkdir(_WEB_."/c/css");
+        if (!is_dir(_WEB_ . "/c"))
+            mkdir(_WEB_ . "/c");
+        if (!is_dir(_WEB_ . "/c/css"))
+            mkdir(_WEB_ . "/c/css");
 
-    	$file = isset($params['file']) ? $params['file'] : '';
+        $file = isset($params['file']) ? $params['file'] : '';
 
-        if(file_exists($file)){
-            $name = hash("sha256", $file."-".filemtime($file));
-            $new_file = _WEB_."/c/css/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
-            $css = _PATH_."c/css/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
-            if(!file_exists($new_file)){
-                if($extension == 'less'){
-                    $less = new \lessc;
+        if (file_exists($file)) {
+            $name = hash("sha256", $file . "-" . filemtime($file));
+            $new_file = _WEB_ . "/c/css/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
+            $css = _PATH_ . "c/css/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
+            if (!file_exists($new_file)) {
+                if ($extension == 'less') {
+                    $less = new lessc;
                     $compiled = $less->compileFile($css);
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, $compiled);
                     fclose($fp);
-                }else{
+                } else {
                     copy($file, $new_file);
                 }
             }
             $time = "";
-    	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
-            if(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/css/".$file))
-                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/css/".$file;
-            elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file))
-                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/css/".$file;
+        } elseif (stripos($file, "/") !== 0 && stripos($file, "://") === false) {
+            if (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/css/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/css/" . $file;
+            elseif (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/css/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/css/" . $file;
 
-            $name = hash("sha256", $file."-".filemtime($f));
-            $new_file = _WEB_."/c/css/".$name.".css";
-            $css = _PATH_."c/css/".$name.".css";
-            if(!file_exists($new_file)){
-                if($extension == 'less'){
-                    $less = new \lessc;
+            $name = hash("sha256", $file . "-" . filemtime($f));
+            $new_file = _WEB_ . "/c/css/" . $name . ".css";
+            $css = _PATH_ . "c/css/" . $name . ".css";
+            if (!file_exists($new_file)) {
+                if ($extension == 'less') {
+                    $less = new lessc;
                     $compiled = $less->compileFile($f);
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, $compiled);
                     fclose($fp);
-                }elseif($extension == 'scss'){
+                } elseif ($extension == 'scss') {
                     $scss = new Compiler();
                     $scss->setImportPaths(dirname($f));
-                    $compiled = $scss->compile('@import "'.basename($f).'";');
+                    $compiled = $scss->compile('@import "' . basename($f) . '";');
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, $compiled);
                     fclose($fp);
-                }elseif($template){
-                    $compiled = \Cavesman\Cavesman::$smarty->fetch($f);
+                } elseif ($template) {
+                    $compiled = Cavesman::$smarty->fetch($f);
 
                     $fp = fopen($new_file, "w+");
-                    fwrite($fp, "/* File: ".$file."*/\n\n");
+                    fwrite($fp, "/* File: " . $file . "*/\n\n");
                     fwrite($fp, $compiled);
                     fclose($fp);
-                }else{
+                } else {
                     copy($f, $new_file);
                 }
             }
-    		$time = "";
+            $time = "";
 
-    	}else{
-    		$css = $file;
-    		$time = false;
-    	}
+        } else {
+            $css = $file;
+            $time = false;
+        }
 
-        if($file)
-    		return '<link rel="stylesheet" type="text/css" href="'.$css.($time ? '?'.$time : '').'">';
-    	return '';
+        if ($file)
+            return '<link rel="stylesheet" type="text/css" href="' . $css . ($time ? '?' . $time : '') . '">';
+        return '';
     }
-    public static function smartyJs($params, $smarty){
+
+    public static function smartyJs($params, $smarty)
+    {
         $file = isset($params['file']) ? $params['file'] : '';
         $template = isset($params['template']) ? $params['template'] : false;
         $extension = pathinfo($file, PATHINFO_EXTENSION);
 
-        if(!is_dir(_WEB_."/c"))
-            mkdir(_WEB_."/c");
-        if(!is_dir(_WEB_."/c/js"))
-            mkdir(_WEB_."/c/js");
+        if (!is_dir(_WEB_ . "/c"))
+            mkdir(_WEB_ . "/c");
+        if (!is_dir(_WEB_ . "/c/js"))
+            mkdir(_WEB_ . "/c/js");
 
 
-        if(file_exists($file)){
-            $name = hash("sha256", $file."-".\src\Modules\Lang::$iso."-".filemtime($file));
-            $new_file = _WEB_."/c/js/".$name.".js";
-            $js = _PATH_."c/js/".$name.".js";
-            if(!file_exists($new_file)){
-                if($template){
-                    $compiled = \Cavesman\Cavesman::$smarty->fetch($file);
+        if (file_exists($file)) {
+            $name = hash("sha256", $file . "-" . Lang::$iso . "-" . filemtime($file));
+            $new_file = _WEB_ . "/c/js/" . $name . ".js";
+            $js = _PATH_ . "c/js/" . $name . ".js";
+            if (!file_exists($new_file)) {
+                if ($template) {
+                    $compiled = Cavesman::$smarty->fetch($file);
 
                     $fp = fopen($new_file, "w+");
-                    fwrite($fp, "/* File: ".$file."*/\n\n");
+                    fwrite($fp, "/* File: " . $file . "*/\n\n");
                     fwrite($fp, $compiled);
                     fclose($fp);
-                }else{
+                } else {
                     copy($file, $new_file);
                 }
             }
             $time = "";
-    	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
-            if(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/js/".$file))
-                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/js/".$file;
-            elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file))
-                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/js/".$file;
-            $name = hash("sha256", $file."-".filemtime($f));
-            $new_file = _WEB_."/c/js/".$name.".js";
-            $js = _PATH_."c/js/".$name.".js";
-            if(!file_exists($new_file)){
-                if($template){
-                    $compiled = \Cavesman\Cavesman::$smarty->fetch($f);
+        } elseif (stripos($file, "/") !== 0 && stripos($file, "://") === false) {
+            if (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/js/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/js/" . $file;
+            elseif (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/js/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/js/" . $file;
+            $name = hash("sha256", $file . "-" . filemtime($f));
+            $new_file = _WEB_ . "/c/js/" . $name . ".js";
+            $js = _PATH_ . "c/js/" . $name . ".js";
+            if (!file_exists($new_file)) {
+                if ($template) {
+                    $compiled = Cavesman::$smarty->fetch($f);
 
                     $fp = fopen($new_file, "w+");
-                    fwrite($fp, "/* File: ".$file."*/\n\n");
+                    fwrite($fp, "/* File: " . $file . "*/\n\n");
                     fwrite($fp, $compiled);
                     fclose($fp);
-                }else{
+                } else {
                     copy($f, $new_file);
                 }
 
             }
-    		$time = "";
-    	}else{
-    		$js = $file;
-    		$time = false;
-    	}
-    	if($file)
-    		return '<script src="'.$js.($time ? '?'.$time : '').'"></script>';
-    	return "";
+            $time = "";
+        } else {
+            $js = $file;
+            $time = false;
+        }
+        if ($file)
+            return '<script src="' . $js . ($time ? '?' . $time : '') . '"></script>';
+        return "";
     }
 
-    public static function smartyImgUrl($params, $smarty){
+    public static function smartyImgUrl($params, $smarty)
+    {
 
         $file = isset($params['file']) ? $params['file'] : '';
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        if(!is_dir(_WEB_."/c"))
-            mkdir(_WEB_."/c");
-        if(!is_dir(_WEB_."/c/img"))
-            mkdir(_WEB_."/c/img");
+        if (!is_dir(_WEB_ . "/c"))
+            mkdir(_WEB_ . "/c");
+        if (!is_dir(_WEB_ . "/c/img"))
+            mkdir(_WEB_ . "/c/img");
 
-        if(file_exists($file)){
-            $name = hash("sha256", $file."-".filemtime($file));
-            $new_file = _WEB_."/c/img/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
-            $img = _PATH_."c/img/".$name.".".pathinfo($file, PATHINFO_EXTENSION);
-            if(!file_exists($new_file)){
+        if (file_exists($file)) {
+            $name = hash("sha256", $file . "-" . filemtime($file));
+            $new_file = _WEB_ . "/c/img/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
+            $img = _PATH_ . "c/img/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
+            if (!file_exists($new_file)) {
                 copy($file, $new_file);
             }
             $time = "";
-    	}elseif(stripos($file, "/") !== 0 && stripos($file, "://") === false ){
-            if(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/img/".$file))
-                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/img/".$file;
-            elseif(file_exists(_SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file))
-                $f = _SRC_._TEMPLATES_."/"._THEME_NAME_."/assets/img/".$file;
-            $name = hash("sha256", $file."-".filemtime($f));
-            $new_file = _WEB_."/c/img/".$name.".".$extension;
-            $img = _PATH_."c/img/".$name.".".$extension;
-            if(!file_exists($new_file)){
+        } elseif (stripos($file, "/") !== 0 && stripos($file, "://") === false) {
+            if (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/img/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/img/" . $file;
+            elseif (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/img/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/img/" . $file;
+            $name = hash("sha256", $file . "-" . filemtime($f));
+            $new_file = _WEB_ . "/c/img/" . $name . "." . $extension;
+            $img = _PATH_ . "c/img/" . $name . "." . $extension;
+            if (!file_exists($new_file)) {
                 copy($f, $new_file);
             }
-    		$time = "";
+            $time = "";
 
-    	}else{
-    		$img = $file;
-    		$time = false;
-    	}
+        } else {
+            $img = $file;
+            $time = false;
+        }
 
-    	if($file)
-    		return $img.'?'.$time;
-    	return "";
+        if ($file)
+            return $img . '?' . $time;
+        return "";
     }
 
-    public static function smartyConfig($params, $smarty) {
+    public static function smartyConfig($params, $smarty)
+    {
         $name = isset($params['get']) ? $params['get'] : '';
-        return \Cavesman\Config::get($name);
+        return Config::get($name);
 
     }
 }

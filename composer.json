@@ -10,7 +10,7 @@
     "minimum-stability": "dev",
     "license": "MIT",
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "composer/composer": ">=1.9",
         "smarty/smarty": "~3.1",
         "soanix/router": "dev-master",
@@ -18,8 +18,8 @@
     },
     "autoload": {
         "files": [
-            "src/Cavesman/Config/defines.inc.php",
-            "src/Cavesman/Config/config.inc.php",
+            "src/Cavesman/Config/Defines.php",
+            "src/Cavesman/Config/Config.php",
             "src/Cavesman/install.php",
             "src/Cavesman/Cavesman.php"
         ],

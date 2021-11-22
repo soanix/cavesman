@@ -2,6 +2,8 @@
 
 namespace Cavesman;
 
+use src\Modules\Lang;
+
 class Modules extends Display
 {
     public static $instance;
@@ -71,7 +73,7 @@ class Modules extends Display
                                 $controller = pathinfo($filename);
                                 $c_name = $controller['filename'];
                                 $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . self::parseClassName($c_name);
-                               
+
 
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
 
@@ -116,7 +118,7 @@ class Modules extends Display
                                             $namespace[$c_name]::Smarty();
                                         }
                                     });
-                                    
+
                                 });
                             }
 
@@ -134,7 +136,7 @@ class Modules extends Display
                             if (method_exists($namespace, "Smarty")) {
                                 $namespace::Smarty();
                             }
-                            
+
                             if (method_exists($namespace, "router")) {
                                 Router::mount("/" . $namespace::trans($namespace::$config['name'] . "-slug"), function () use ($module, $namespace) {
                                     Router::middleware("GET", "*", function () use ($module, $namespace) {
@@ -171,7 +173,7 @@ class Modules extends Display
                                     self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
                                     self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
                                 });
-                               
+
                             });
 
                             Router::mount(_PATH_ . self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']), function () use ($module, $namespace) {
@@ -179,7 +181,7 @@ class Modules extends Display
                                     self::$smarty->assign("page", self::trans($namespace::$config['name'] . "-slug", [], $namespace::$config['name']));
                                     self::$smarty->assign("module_dir", _MODULES_ . "/" . $module);
                                 });
-                                
+
                             });
                         }
                     }
@@ -187,6 +189,39 @@ class Modules extends Display
                 }
             }
             self::$smarty->assign("modules", self::$list);
+        }
+    }
+
+    public static function parseClassName($name)
+    {
+        $name = explode("_", $name);
+        $name = array_map(function ($string) {
+            return ucfirst(mb_strtolower($string));
+        }, $name);
+        return implode('', $name);
+    }
+
+    /**
+     * Translate multilanguage support function
+     * @param string $string string to translate
+     * @param array $binds array with strings to sustitute
+     * @param string $modules module from translate comeback
+     * @return string          string translated or parsed
+     */
+    public static function trans(string $string = '', array $binds = [], string $modules = ''): string
+    {
+        if (class_exists(Lang::class)) {
+            if ($modules)
+                return Lang::l($string, $binds, $modules);
+            if (isset(get_called_class()::$config['name']))
+                return Lang::l($string, $binds, get_called_class()::$config['name']);
+            return Lang::l($string, $binds);
+        } else {
+            $binded = $string;
+            foreach ($binds as $key => $value) {
+                $binded = str_replace($key, $value, $binded);
+            }
+            return $binded;
         }
     }
 
@@ -208,39 +243,6 @@ class Modules extends Display
             }
         }
         return $html;
-    }
-
-    /**
-     * Translate multilanguage support function
-     * @param string $string string to translate
-     * @param array $binds array with strings to sustitute
-     * @param string $modules module from translate comeback
-     * @return string          string translated or parsed
-     */
-    public static function trans(string $string = '', array $binds = [], string $modules = ''): string
-    {
-        if (class_exists(\src\Modules\Lang::class)) {
-            if($modules)
-                return \src\Modules\Lang::l($string, $binds, $modules);
-            if (isset(get_called_class()::$config['name']))
-                return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
-            return \src\Modules\Lang::l($string, $binds);
-        } else {
-            $binded = $string;
-            foreach ($binds as $key => $value) {
-                $binded = str_replace($key, $value, $binded);
-            }
-            return $binded;
-        }
-    }
-
-    public static function parseClassName($name)
-    {
-        $name = explode("_", $name);
-        $name = array_map(function ($string) {
-            return ucfirst(mb_strtolower($string));
-        }, $name);
-        return implode('', $name);
     }
 
 }

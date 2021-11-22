@@ -2,16 +2,12 @@
 
 namespace Cavesman;
 
+use Exception;
+
 class Menu
 {
 
     public static $items = [];
-
-    private static function isAssoc(array $arr)
-    {
-        if (array() === $arr) return false;
-        return array_keys($arr) !== range(0, count($arr) - 1);
-    }
 
     public static function addItem(array $item): void
     {
@@ -32,7 +28,7 @@ class Menu
                 }
             }
         } else {
-            foreach($item as $itm){
+            foreach ($item as $itm) {
 
                 $name = $itm['name'] ?? "main";
                 if (!isset(self::$items[$name]))
@@ -53,6 +49,12 @@ class Menu
         }
     }
 
+    private static function isAssoc(array $arr)
+    {
+        if (array() === $arr) return false;
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
     public static function render(array $params = array(), $smarty = null): string
     {
         $template_dir = Cavesman::$smarty->template_dir[0];
@@ -66,7 +68,7 @@ class Menu
             $file = $template_dir . "/partial/menu/sidebar-item.tpl";
         }
         if (!file_exists($file))
-            throw new \Exception("TEMPLATE FILE NOT DEFINED OR DEFAULT TEMPLATE NOT FOUND (" . $file . ")");
+            throw new Exception("TEMPLATE FILE NOT DEFINED OR DEFAULT TEMPLATE NOT FOUND (" . $file . ")");
 
         $html = '';
 
