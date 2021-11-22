@@ -8,8 +8,8 @@ use DateTimeZone;
 class Git
 {
 
-    const MAJOR = 2;
-    const MINOR = 0;
+    const MAJOR = 0;
+    const MINOR = 2;
     const PATCH = 0;
 
     public static function version($params, $smarty)
