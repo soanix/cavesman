@@ -39,7 +39,7 @@ class Request
      *
      * @return string
      */
-    public static function get($value = '', $default = null)
+    public static function files($value = '', $default = null)
     {
         return isset($_FILES[$value]) ? $_FILES[$value] : $default;
     }
