@@ -57,7 +57,7 @@ class Menu
 
     public static function render(array $params = array(), $smarty = null): string
     {
-        $template_dir = Cavesman::$smarty->template_dir[0];
+        $template_dir = Smarty::getInstance()->template_dir[0];
         $file = isset($params['file']) ? $params['file'] : false;
         $menu = isset($params['name']) ? $params['name'] : 'main';
         if ($file && file_exists($template_dir . "/" . $file)) {
@@ -91,7 +91,7 @@ class Menu
                 usort($binds['items']['items'], function ($a, $b) {
                     return $a['order'] <=> $b['order'];
                 });
-                $html .= Cavesman::$smarty->fetch($file, $binds);
+                $html .= Smarty::partial($file, $binds);
             }
         }
         return $html;
