@@ -92,15 +92,15 @@ class Smarty extends \Smarty
         $modules = Cavesman::getInstance(Modules::class);
         $plugin_info = $modules->list[str_replace(".tpl", "", $name)];
         if (file_exists($plugin_info['directory'] . "/" . $name))
-            return $smarty->fetch($plugin_info['directory'] . "/" . $name);
+            return self::partial($plugin_info['directory'] . "/" . $name);
         else
-            return $smarty->fetch($name);
+            return self::partial($name);
     }
 
     public static function smartyHook($params, $smarty)
     {
         foreach ($params as $key => $param) {
-            Cavesman::$smarty->assign($key, $param);
+            self::set($key, $param);
         }
         return Cavesman::getInstance(Modules::class)->hooks($params['name']);
     }
@@ -157,7 +157,7 @@ class Smarty extends \Smarty
                     fwrite($fp, $compiled);
                     fclose($fp);
                 } elseif ($template) {
-                    $compiled = Cavesman::$smarty->fetch($f);
+                    $compiled = self::partial($f);
 
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, "/* File: " . $file . "*/\n\n");
@@ -197,7 +197,7 @@ class Smarty extends \Smarty
             $js = _PATH_ . "c/js/" . $name . ".js";
             if (!file_exists($new_file)) {
                 if ($template) {
-                    $compiled = Cavesman::$smarty->fetch($file);
+                    $compiled = self::partial($file);
 
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, "/* File: " . $file . "*/\n\n");
@@ -218,7 +218,7 @@ class Smarty extends \Smarty
             $js = _PATH_ . "c/js/" . $name . ".js";
             if (!file_exists($new_file)) {
                 if ($template) {
-                    $compiled = Cavesman::$smarty->fetch($f);
+                    $compiled = self::partial($f);
 
                     $fp = fopen($new_file, "w+");
                     fwrite($fp, "/* File: " . $file . "*/\n\n");
