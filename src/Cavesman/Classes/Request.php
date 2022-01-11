@@ -44,4 +44,22 @@ class Request
         return isset($_FILES[$value]) ? $_FILES[$value] : $default;
     }
     
+    /**
+     * Get HEADER value by key
+     *
+     * @param string $string Text string to search in HEADER key
+     * @param string $default Default value if key is not defined
+     *
+     * @return string
+     */
+    public static function header($key = '', $default = null) {
+        $headers = apache_request_headers();
+
+        if(!empty($headers[$key]))
+            return $headers[$key];
+        elseif (!empty($headers[mb_strtolower($key)]))
+            return $headers[mb_strtolower($key)];
+        return $default;
+    }
+    
 }
