@@ -4,7 +4,7 @@
 
 PHP modular framework
 
-Version: 0.1.x
+Version: 0.2.x
 
 ## Features
 
@@ -16,7 +16,7 @@ Version: 0.1.x
 
 ## Requeriments
 
-- PHP >= 7.x
+- PHP >= 8.0
 
 ## How to Install
 
