@@ -21,7 +21,9 @@ class Modules extends Display
     {
         // Install modules
         if(Config::get('main.install', true)) {
-            foreach (Config::get('modules', (object)[]) as $name => $module) {
+            foreach (Config::get('modules.list', []) as $name => $module) {
+                if(!isset($module['name']))
+                    continue;
                 if (!is_dir(_MODULES_ . '/' . $name))
                     mkdir(_MODULES_ . '/' . $name);
                 if (!file_exists(_MODULES_ . '/' . $name . '/' . $name . '.php')) {
@@ -78,7 +80,7 @@ class Modules extends Display
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
                     $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
-                    $config = Config::get("modules." . $directory, $config);
+                    $config = Config::get("modules.list." . $directory, $config);
                     $config['module'] = $directory;
                     if ($config['active']) {
                         if (is_dir(_MODULES_ . "/" . $directory . "/controller")) {
