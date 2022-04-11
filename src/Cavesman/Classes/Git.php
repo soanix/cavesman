@@ -7,20 +7,8 @@ use DateTimeZone;
 
 class Git
 {
-
-    const MAJOR = 0;
-    const MINOR = 2;
-    const PATCH = 0;
-
     public static function version($params, $smarty)
     {
-        $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
-
-        $commitDate = new DateTime(trim(exec('git log -n1 --pretty=%ci HEAD')));
-        $commitDate->setTimezone(new DateTimeZone('UTC'));
-
-        return sprintf('v%s.%s.%s-dev.%s', self::MAJOR, self::MINOR, self::PATCH, $commitHash, $commitDate->format('Y-m-d H:i:s'));
+       return substr(file_get_contents(dirname(__FILE__).'/../../../.git/refs/heads/master'),0,7);
     }
-
-
 }
