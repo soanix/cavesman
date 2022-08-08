@@ -39,8 +39,8 @@ class DB extends PDO
 
         $directories = scandir(_MODULES_);
         $directoryEntity = [];
-        if (is_dir(_ROOT_ . "/src/entity"))
-            $directoryEntity[] = _ROOT_ . "/src/entity";
+        if (is_dir(_ROOT_ . "/src/Entities"))
+            $directoryEntity[] = _ROOT_ . "/src/Entities";
         if (is_dir(_MODULES_)) {
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
@@ -55,8 +55,8 @@ class DB extends PDO
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/entity"))
-                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/entity");
+                        if (is_dir(_MODULES_ . "/" . $directory . "/Entities"))
+                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entities");
                     }
                 }
             }

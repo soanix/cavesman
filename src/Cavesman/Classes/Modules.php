@@ -15,7 +15,7 @@ class Modules extends Display
     }
 
     /**
-     * Load all modules in src/modules
+     * Load all modules in src/Module
      */
     public static function loadModules(): void
     {

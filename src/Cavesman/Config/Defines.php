@@ -41,16 +41,14 @@ define("_DEV_MODE_", Config::get("params.debug"));
 //config dir of app
 define("_CONFIG_", _ROOT_ . "/Config");
 //Classes main dir
-define("_CLASSES_", _SRC_ . "/classes");
+define("_CLASSES_", _SRC_ . "/Classes");
 //Controllers main dir
-define("_CONTROLLERS_", _SRC_ . "/controllers");
+define("_CONTROLLERS_", _SRC_ . "/Controllers");
 //Themes main dir
-define("_THEMES_", _SRC_ . "/themes");
+define("_THEMES_", _SRC_ . "/Views");
 
-//Tools main dir
-define("_TOOLS_", _ROOT_ . "/tools");
 //Modules main dir
-define("_MODULES_", _SRC_ . "/modules");
+define("_MODULES_", _SRC_ . "/Modules");
 //Language main dir
 define("_LANG_", _APP_ . "/lang");
 //Cache main dir

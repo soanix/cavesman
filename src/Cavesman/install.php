@@ -10,18 +10,18 @@ if(\Cavesman\Config::get('main.install', true)){
         mkdir(_APP_);
     if (!is_dir(_WEB_))
         mkdir(_WEB_);
-    if (!is_dir(_SRC_ . "/themes"))
-        mkdir(_SRC_ . "/themes");
-    if (!is_dir(_SRC_ . "/themes/public"))
-        mkdir(_SRC_ . "/themes/public");
-    if (!is_dir(_SRC_ . "/themes/public/tpl"))
-        mkdir(_SRC_ . "/themes/public/tpl");
+    if (!is_dir(_SRC_ . "/Views"))
+        mkdir(_SRC_ . "/Views");
+    if (!is_dir(_SRC_ . "/Views/public"))
+        mkdir(_SRC_ . "/Views/public");
+    if (!is_dir(_SRC_ . "/Views/public/tpl"))
+        mkdir(_SRC_ . "/Views/public/tpl");
     if (!is_dir(_APP_ . "/cache"))
         mkdir(_APP_ . "/cache");
     if (!is_dir(_APP_ . "/config"))
         mkdir(_APP_ . "/config");
-    if (!is_dir(_SRC_ . "/modules"))
-        mkdir(_SRC_ . "/modules");
+    if (!is_dir(_SRC_ . "/Module"))
+        mkdir(_SRC_ . "/Module");
     if (!file_exists(_WEB_ . "/.htaccess")) {
         $fp = fopen(_WEB_ . "/.htaccess", "w+");
         $htaccess = 'RewriteEngine On' . PHP_EOL
