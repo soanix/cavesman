@@ -21,7 +21,7 @@ if(\Cavesman\Config::get('main.install', true)){
     if (!is_dir(_APP_ . "/config"))
         mkdir(_APP_ . "/config");
     if (!is_dir(_SRC_ . "/Modules"))
-        mkdir(_SRC_ . "/Module");
+        mkdir(_SRC_ . "/Modules");
     if (!file_exists(_WEB_ . "/.htaccess")) {
         $fp = fopen(_WEB_ . "/.htaccess", "w+");
         $htaccess = 'RewriteEngine On' . PHP_EOL
