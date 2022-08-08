@@ -20,7 +20,7 @@ if(\Cavesman\Config::get('main.install', true)){
         mkdir(_APP_ . "/cache");
     if (!is_dir(_APP_ . "/config"))
         mkdir(_APP_ . "/config");
-    if (!is_dir(_SRC_ . "/Module"))
+    if (!is_dir(_SRC_ . "/Modules"))
         mkdir(_SRC_ . "/Module");
     if (!file_exists(_WEB_ . "/.htaccess")) {
         $fp = fopen(_WEB_ . "/.htaccess", "w+");
