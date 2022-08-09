@@ -4,7 +4,12 @@ namespace Cavesman;
 
 class Config
 {
-
+    
+    /**
+     * @param string $config
+     * @param $default
+     * @return array|mixed|null
+     */
     public static function get(string $config = '', $default = NULL)
     {
         $params = explode(".", $config);
