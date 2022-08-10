@@ -67,8 +67,8 @@ class Modules extends Display
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/entity")) {
-                            foreach (glob(_MODULES_ . "/" . $directory . "/entity/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . $directory . "/Entity")) {
+                            foreach (glob(_MODULES_ . "/" . $directory . "/Entity/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
