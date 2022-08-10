@@ -78,7 +78,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 // Browser path for media
-define("_TEMPLATES_", _PATH_ . "themes");
+define("_TEMPLATES_", _PATH_ . "Views");
 
 
 ?>
