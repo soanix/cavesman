@@ -48,7 +48,7 @@ class Smarty extends \Smarty
         $this->registerPlugin("function", "config", '\Cavesman\Smarty::smartyConfig');
     }
 
-    public static function getInstance(): Smarty
+    public static function getInstance(): static
     {
         if ((self::$instance instanceof self) === false) {
             self::$instance = new self();
