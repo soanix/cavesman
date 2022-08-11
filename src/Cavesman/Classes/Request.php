@@ -11,7 +11,7 @@ class Request
      * @param string $string Text string to search in POST key
      * @param string $default Default value if key is not defined
      *
-     * @return string
+     * @return  string|array|null|mixed
      */
     public static function post($string = '', $default = '')
     {
@@ -24,7 +24,7 @@ class Request
      * @param string $string Text string to search in GET key
      * @param string $default Default value if key is not defined
      *
-     * @return string
+     * @return string|array|null|mixed
      */
     public static function get($value = '', $default = '')
     {
@@ -37,7 +37,7 @@ class Request
      * @param string $string Text string to search in GET key
      * @param string $default Default value if key is not defined
      *
-     * @return string
+     * @return string|array|null|mixed
      */
     public static function files($value = '', $default = null)
     {
@@ -50,7 +50,7 @@ class Request
      * @param string $string Text string to search in HEADER key
      * @param string $default Default value if key is not defined
      *
-     * @return string
+     * @return string|array|null|mixed
      */
     public static function header($key = '', $default = null) {
         $headers = apache_request_headers();
