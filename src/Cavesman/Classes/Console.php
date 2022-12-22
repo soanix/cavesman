@@ -220,7 +220,7 @@ class Console
 
         // If no route was handled, trigger the 404 (if any)
         if ($numHandled === 0) {
-            self::trigger404(self::$afterRoutes[self::$requestedMethod]);
+            self::trigger404(self::$afterRoutes[self::$requestedMethod] ?? []);
         } // If a route was handled, perform the finish callback (if any)
         else {
             if ($callback && is_callable($callback)) {
