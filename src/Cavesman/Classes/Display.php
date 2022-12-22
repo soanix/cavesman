@@ -58,6 +58,15 @@ class Display extends Cavesman
     }
 
     /**
+     * Start theme operations
+     */
+    public static function startCli(): void
+    {
+
+        self::initCli();
+    }
+
+    /**
      * Init function to load Smarty
      */
     private static function init(): void
@@ -69,6 +78,13 @@ class Display extends Cavesman
         $smarty->assign("template", $tmpl);
         Modules::loadModules();
 
+    }
+    private static function initCli(): void
+    {
+        if (file_exists(_APP_ . "/routes.php"))
+            include_once(_APP_ . "/routes.php");
+        parent::__install();
+        Modules::loadModules();
     }
 
     /**
