@@ -15,7 +15,7 @@ use Symfony\Component\Console\Helper\HelperSet;
 
 class DB extends PDO
 {
-    protected static $oConnection = false;
+    protected static $oConnection = [];
 
     public static function getCli()
     {
@@ -33,8 +33,8 @@ class DB extends PDO
 
     public static function getManager($db = 'local')
     {
-        if (self::$oConnection instanceof EntityManager !== false) {
-            return self::$oConnection;
+        if (self::$oConnection[$db] ?? false instanceof EntityManager !== false) {
+            return self::$oConnection[$db];
         }
 
         $directories = scandir(_MODULES_);
@@ -67,8 +67,8 @@ class DB extends PDO
         if (!is_array($connectionParams))
             throw new Exception('DB Config is not correct formated');
         $conn = DriverManager::getConnection($connectionParams, $config);
-        self::$oConnection = EntityManager::create($conn, $config);
+        self::$oConnection[$db] = EntityManager::create($conn, $config);
 
-        return self::$oConnection;
+        return self::$oConnection[$db];
     }
 }
