@@ -24,20 +24,20 @@ class Modules extends Display
             foreach (Config::get('modules.list', []) as $name => $module) {
                 if(!isset($module['name']))
                     continue;
-                if (!is_dir(_MODULES_ . '/' . $name))
-                    mkdir(_MODULES_ . '/' . $name);
-                if (!file_exists(_MODULES_ . '/' . $name . '/' . $name . '.php')) {
-                    touch(_MODULES_ . '/' . $name . '/' . $name . '.php');
-                    $fp = fopen(_MODULES_ . '/' . $name . '/' . $name . '.php', 'w+');
+                if (!is_dir(_MODULES_ . '/' . Modules::parseClassName($name)))
+                    mkdir(_MODULES_ . '/' . Modules::parseClassName($name));
+                if (!file_exists(_MODULES_ . '/' . Modules::parseClassName($name) . '/' . Modules::parseClassName($name) . '.php')) {
+                    touch(_MODULES_ . '/' . Modules::parseClassName($name) . '/' . Modules::parseClassName($name) . '.php');
+                    $fp = fopen(_MODULES_ . '/' . Modules::parseClassName($name) . '/' . Modules::parseClassName($name) . '.php', 'w+');
                     fwrite($fp, "<?php" . PHP_EOL);
                     fwrite($fp, "namespace src\Modules;" . PHP_EOL . PHP_EOL);
-                    fwrite($fp, "class " . ucfirst($name) . ' extends \Cavesman\Modules {');
+                    fwrite($fp, "class " . Modules::parseClassName($name) . ' extends \Cavesman\Modules {');
                     fwrite($fp, '}');
                     fclose($fp);
                 }
-                if (!file_exists(_MODULES_ . '/' . $name . '/config.json')) {
-                    touch(_MODULES_ . '/' . $name . '/config.json');
-                    $fp = fopen(_MODULES_ . '/' . $name . '/config.json', 'w+');
+                if (!file_exists(_MODULES_ . '/' . Modules::parseClassName($name) . '/config.json')) {
+                    touch(_MODULES_ . '/' . Modules::parseClassName($name) . '/config.json');
+                    $fp = fopen(_MODULES_ . '/' . Modules::parseClassName($name) . '/config.json', 'w+');
                     fwrite($fp, json_encode($module, JSON_PRETTY_PRINT));
                     fclose($fp);
                 }
@@ -50,25 +50,25 @@ class Modules extends Display
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
-                    $config['module'] = $directory;
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . Modules::parseClassName($directory) . "/config.json"), true);
+                    $config['module'] = Modules::parseClassName($directory);
                     if ($config['active']) {
-                        require_once _MODULES_ . "/" . $directory . "/" . $module . ".php";
+                        require_once _MODULES_ . "/" . Modules::parseClassName($directory) . "/" . Modules::parseClassName($directory) . ".php";
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/controller")) {
-                            foreach (glob(_MODULES_ . "/" . $directory . "/controller/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller")) {
+                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/abstract")) {
-                            foreach (glob(_MODULES_ . "/" . $directory . "/abstract/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract")) {
+                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/Entity")) {
-                            foreach (glob(_MODULES_ . "/" . $directory . "/Entity/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity")) {
+                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
@@ -79,14 +79,14 @@ class Modules extends Display
 
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . Modules::parseClassName($directory) . "/config.json"), true);
                     $config = Config::get("modules.list." . $directory, $config);
                     $config['module'] = $directory;
                     if ($config['active']) {
-                        if (is_dir(_MODULES_ . "/" . $directory . "/controller")) {
+                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller")) {
                             self::$list[$config['name']] = $config;
                             $namespace = [];
-                            foreach (glob(_MODULES_ . "/" . $directory . "/controller/*.php") as $filename) {
+                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller/*.php") as $filename) {
                                 $controller = pathinfo($filename);
                                 $c_name = $controller['filename'];
                                 $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . self::parseClassName($c_name);
