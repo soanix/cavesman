@@ -2,10 +2,6 @@
 
 use Cavesman\Config;
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
-
 
 //config dir of app
 if (!defined("_ROOT_") && is_dir($_SERVER['DOCUMENT_ROOT'] . "/../vendor"))
@@ -26,6 +22,11 @@ define("_APP_", _ROOT_ . "/app");
 define("_SRC_", _ROOT_ . "/src");
 
 define("_WEB_", _ROOT_ . "/web");
+
+if (Config::get('params.session.enabled', true) && PHP_SAPI !== 'cli') {
+    session_start();
+}
+
 if (is_array(Cavesman\Config::get('params.theme', 'public')))
     if (isset($_SESSION['show_admin']) && $_SESSION['show_admin'])
         define("DEFAULT_THEME", Cavesman\Config::get('params.theme.admin', 'admin'));
