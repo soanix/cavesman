@@ -43,20 +43,20 @@ class DB extends PDO
             $directoryEntity[] = _ROOT_ . "/src/Entity";
         if (is_dir(_MODULES_)) {
             foreach ($directories as $directory) {
-                $module = str_replace('directory/', '', $directory);
+                $module = str_replace('directory/', '', Modules::parseClassName($directory));
                 if ($module !== '.' && $module != '..') {
 
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . Modules::parseClassName($directory) . "/config.json"), true);
                     if ($config['active']) {
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/Abstract")) {
-                            foreach (glob(_MODULES_ . "/" . $directory . "/Abstract/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract")) {
+                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/Entity"))
-                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
+                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity"))
+                            array_push($directoryEntity, _MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity");
                     }
                 }
             }
