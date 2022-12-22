@@ -21,6 +21,8 @@ class Cavesman
         if (PHP_SAPI !== 'cli') {
             Display::startTheme();
             Display::theme();
+        }else {
+            Display::startCli();
         }
     }
 }
