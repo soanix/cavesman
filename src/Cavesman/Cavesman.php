@@ -21,8 +21,10 @@ class Cavesman
         if (PHP_SAPI !== 'cli') {
             Display::startTheme();
             Display::theme();
+            Router::run();
         }else {
             Display::startCli();
+            Console::run();
         }
     }
 }
