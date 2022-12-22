@@ -14,6 +14,12 @@ namespace Cavesman;
  */
 class Console
 {
+
+    const ERROR = 'error';
+    const WARNING = 'warning';
+    const SUCCESS = 'success';
+    const INFO = 'info';
+
     /**
      * @var array The route patterns and their handling functions
      */
@@ -212,6 +218,8 @@ class Console
             self::handle(self::$beforeRoutes[self::$requestedMethod]);
         }
 
+
+
         // Handle all routes
         $numHandled = 0;
         if (isset(self::$afterRoutes[self::$requestedMethod])) {
@@ -362,6 +370,7 @@ class Console
                     return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], ':') : null;
                 }, $matches, array_keys($matches));
 
+
                 // Call the handling function with the URL parameters if the desired input is callable
                 self::invoke($route['fn'], $params);
 
@@ -380,6 +389,7 @@ class Console
 
     private static function invoke($fn, $params = array())
     {
+
         if (is_callable($fn)) {
             call_user_func_array($fn, $params);
         } // If not, check the existence of special parameters
@@ -393,9 +403,13 @@ class Console
             }
 
             try {
+
                 $reflectedMethod = new \ReflectionMethod($controller, $method);
                 // Make sure it's callable
                 if ($reflectedMethod->isPublic() && (!$reflectedMethod->isAbstract())) {
+
+
+
                     if ($reflectedMethod->isStatic()) {
                         forward_static_call_array(array($controller, $method), $params);
                     } else {
@@ -451,5 +465,29 @@ class Console
     public static function setBasePath($serverBasePath)
     {
         self::$serverBasePath = $serverBasePath;
+    }
+
+    public static function print($message = '', $type = '', $exit = false)
+    {
+        echo "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
+        switch ($type) {
+            case self::ERROR:
+                echo "\e[0;31m[ERROR] \e[m\t" . $message;
+                break;
+            case self::WARNING:
+                echo "\e[0;33m[WARNING] \e\t[m" . $message;
+                break;
+            case self::SUCCESS:
+                echo "\e[0;32m[SUCCESS] \e\t[m" . $message;
+                break;
+            default:
+                echo "[INFO]\t" . $message;
+        }
+
+        if ($message)
+            echo PHP_EOL;
+
+        if ($exit)
+            exit();
     }
 }
