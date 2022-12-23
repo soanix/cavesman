@@ -177,7 +177,7 @@ class Modules extends Display
     {
         if (class_exists('\src\Modules\Lang')) {
             if ($modules)
-                return \src\Modules\Lang::l($string, $binds, $self::parseClassName($modules));
+                return \src\Modules\Lang::l($string, $binds, self::parseClassName($modules));
             if (isset(get_called_class()::$config['name']))
                 return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
             return \src\Modules\Lang::l($string, $binds);
