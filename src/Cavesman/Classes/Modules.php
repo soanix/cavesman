@@ -81,8 +81,6 @@ class Modules extends Display
                     $config = json_decode(file_get_contents(_MODULES_ . "/" . self::parseClassName($module) . "/config.json"), true);
                     $config = Config::get("modules.list." . self::parseClassName($module), $config);
                     $config['module'] = self::parseClassName($directory);
-                    if(!$config['active'])
-                    echo $module;
                     if ($config['active']) {
                         if (is_dir(_MODULES_ . "/" . self::parseClassName($module) . "/Controller")) {
                             self::$list[$config['name']] = $config;
