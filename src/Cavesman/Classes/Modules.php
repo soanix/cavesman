@@ -24,51 +24,50 @@ class Modules extends Display
             foreach (Config::get('modules.list', []) as $name => $module) {
                 if(!isset($module['name']))
                     continue;
-                if (!is_dir(_MODULES_ . '/' . Modules::parseClassName($name)))
-                    mkdir(_MODULES_ . '/' . Modules::parseClassName($name));
-                if (!file_exists(_MODULES_ . '/' . Modules::parseClassName($name) . '/' . Modules::parseClassName($name) . '.php')) {
-                    touch(_MODULES_ . '/' . Modules::parseClassName($name) . '/' . Modules::parseClassName($name) . '.php');
-                    $fp = fopen(_MODULES_ . '/' . Modules::parseClassName($name) . '/' . Modules::parseClassName($name) . '.php', 'w+');
+                if (!is_dir(_MODULES_ . '/' . self::parseClassName($name)))
+                    mkdir(_MODULES_ . '/' . self::parseClassName($name));
+                if (!file_exists(_MODULES_ . '/' . self::parseClassName($name) . '/' .self::parseClassName($name) . '.php')) {
+                    touch(_MODULES_ . '/' . self::parseClassName($name) . '/' . self::parseClassName($name) . '.php');
+                    $fp = fopen(_MODULES_ . '/' . self::parseClassName($name) . '/' . self::parseClassName($name) . '.php', 'w+');
                     fwrite($fp, "<?php" . PHP_EOL);
                     fwrite($fp, "namespace src\Modules;" . PHP_EOL . PHP_EOL);
-                    fwrite($fp, "class " . Modules::parseClassName($name) . ' extends \Cavesman\Modules {');
+                    fwrite($fp, "class " . self::parseClassName($name) . ' extends \Cavesman\Modules {');
                     fwrite($fp, '}');
                     fclose($fp);
                 }
-                if (!file_exists(_MODULES_ . '/' . Modules::parseClassName($name) . '/config.json')) {
-                    touch(_MODULES_ . '/' . Modules::parseClassName($name) . '/config.json');
-                    $fp = fopen(_MODULES_ . '/' . Modules::parseClassName($name) . '/config.json', 'w+');
+                if (!file_exists(_MODULES_ . '/' . self::parseClassName($name) . '/config.json')) {
+                    touch(_MODULES_ . '/' . self::parseClassName($name) . '/config.json');
+                    $fp = fopen(_MODULES_ . '/' . self::parseClassName($name) . '/config.json', 'w+');
                     fwrite($fp, json_encode($module, JSON_PRETTY_PRINT));
                     fclose($fp);
                 }
             }
         }
-
         $modules = self::getInstance(self::class);
         if (is_dir(_MODULES_)) {
             $directories = scandir(_MODULES_);
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . Modules::parseClassName($directory) . "/config.json"), true);
-                    $config['module'] = Modules::parseClassName($directory);
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" .$module . "/config.json"), true);
+                    $config['module'] = self::parseClassName($name);
                     if ($config['active']) {
-                        require_once _MODULES_ . "/" . Modules::parseClassName($directory) . "/" . Modules::parseClassName($directory) . ".php";
+                        require_once _MODULES_ . "/" . $module . "/" . $module . ".php";
 
-                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller")) {
-                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . $module . "/Controller")) {
+                            foreach (glob(_MODULES_ . "/" . $module . "/Controller/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract")) {
-                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . $module . "/Abstract")) {
+                            foreach (glob(_MODULES_ . "/" . $module . "/Abstract/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity")) {
-                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . $module . "/Entity")) {
+                            foreach (glob(_MODULES_ . "/" . $module . "/Entity/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
@@ -79,17 +78,19 @@ class Modules extends Display
 
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . Modules::parseClassName($directory) . "/config.json"), true);
-                    $config = Config::get("modules.list." . $directory, $config);
-                    $config['module'] = $directory;
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . self::parseClassName($module) . "/config.json"), true);
+                    $config = Config::get("modules.list." . self::parseClassName($module), $config);
+                    $config['module'] = self::parseClassName($directory);
+                    if(!$config['active'])
+                    echo $module;
                     if ($config['active']) {
-                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller")) {
+                        if (is_dir(_MODULES_ . "/" . self::parseClassName($module) . "/Controller")) {
                             self::$list[$config['name']] = $config;
                             $namespace = [];
-                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Controller/*.php") as $filename) {
+                            foreach (glob(_MODULES_ . "/" . self::parseClassName($module) . "/Controller/*.php") as $filename) {
                                 $controller = pathinfo($filename);
                                 $c_name = $controller['filename'];
-                                $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . self::parseClassName($c_name);
+                                $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . $c_name;
 
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
 
@@ -109,7 +110,7 @@ class Modules extends Display
                                     $namespace[$c_name]::router();
                                 }
 
-                                Router::mount(_PATH_ . self::trans($c_name . "-slug", [], $module), function () use ($module, $namespace, $c_name) {
+                                Router::mount(_PATH_ . self::trans($c_name . "-slug", [], self::parseClassName($module)), function () use ($module, $namespace, $c_name) {
                                     Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace, $c_name) {
                                         if (method_exists($namespace[$c_name], "Smarty")) {
                                             $namespace[$c_name]::Smarty();
@@ -157,6 +158,9 @@ class Modules extends Display
 
     public static function parseClassName($name)
     {
+        if(preg_match('/[A-Z]/', $name)){
+            return $name;
+        }
         $name = explode("_", $name);
         $name = array_map(function ($string) {
             return ucfirst(mb_strtolower($string));
@@ -175,7 +179,7 @@ class Modules extends Display
     {
         if (class_exists('\src\Modules\Lang')) {
             if ($modules)
-                return \src\Modules\Lang::l($string, $binds, $modules);
+                return \src\Modules\Lang::l($string, $binds, $self::parseClassName($modules));
             if (isset(get_called_class()::$config['name']))
                 return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
             return \src\Modules\Lang::l($string, $binds);
