@@ -43,20 +43,20 @@ class DB extends PDO
             $directoryEntity[] = _ROOT_ . "/src/Entity";
         if (is_dir(_MODULES_)) {
             foreach ($directories as $directory) {
-                $module = str_replace('directory/', '', Modules::parseClassName($directory));
+                $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
 
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . Modules::parseClassName($directory) . "/config.json"), true);
+                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     if ($config['active']) {
 
-                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract")) {
-                            foreach (glob(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Abstract/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . $directory . "/Abstract")) {
+                            foreach (glob(_MODULES_ . "/" . $directory . "/Abstract/*.php") as $filename) {
                                 require_once $filename;
                             }
                         }
 
-                        if (is_dir(_MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity"))
-                            array_push($directoryEntity, _MODULES_ . "/" . Modules::parseClassName($directory) . "/Entity");
+                        if (is_dir(_MODULES_ . "/" . $directory . "/Entity"))
+                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
                     }
                 }
             }
@@ -70,5 +70,21 @@ class DB extends PDO
         self::$oConnection[$db] = EntityManager::create($conn, $config);
 
         return self::$oConnection[$db];
+    }
+
+    /**
+     * @return int
+     * @throws Exception
+     */
+    public static function hasPendingChanges($db = 'local') {
+
+        $uow = self::getManager($db)->getUnitOfWork();
+        $pending = count($uow->getScheduledEntityInsertions())
+            + count($uow->getScheduledEntityUpdates())
+            + count($uow->getScheduledEntityDeletions())
+            + count($uow->getScheduledCollectionUpdates())
+            + count($uow->getScheduledCollectionDeletions());
+
+        return $pending;
     }
 }
