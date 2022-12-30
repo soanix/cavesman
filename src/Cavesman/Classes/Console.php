@@ -19,6 +19,8 @@ class Console
     const WARNING = 'warning';
     const SUCCESS = 'success';
     const INFO = 'info';
+    const PROGRESS = 'progress';
+
 
     /**
      * @var array The route patterns and their handling functions
@@ -54,6 +56,30 @@ class Console
      * @var string Default Controllers Namespace
      */
     private static $namespace = '';
+
+    /**
+     * @var string Log string of all display
+     */
+    public static string $log = '';
+
+    /**
+     * @var int Last percent recorded
+     */
+    public static int $lastPercent = -1;
+
+    /**
+     * @var \DateTime Start Time
+     */
+    public static ?\DateTime $startProgress = null;
+    /**
+     * @var \DateTime Last update time
+     */
+    public static ?\DateTime $lastUpdate = null;
+
+    /**
+     * @var array List of errors
+     */
+    public static array $errors = [];
 
     public static function clear()
     {
@@ -217,7 +243,6 @@ class Console
         if (isset(self::$beforeRoutes[self::$requestedMethod])) {
             self::handle(self::$beforeRoutes[self::$requestedMethod]);
         }
-
 
 
         // Handle all routes
@@ -409,7 +434,6 @@ class Console
                 if ($reflectedMethod->isPublic() && (!$reflectedMethod->isAbstract())) {
 
 
-
                     if ($reflectedMethod->isStatic()) {
                         forward_static_call_array(array($controller, $method), $params);
                     } else {
@@ -467,27 +491,157 @@ class Console
         self::$serverBasePath = $serverBasePath;
     }
 
-    public static function print($message = '', $type = '', $exit = false)
+    private static function log($message, $type)
     {
-        echo "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
+
+        if (!Config::get('params.import.log', true))
+            return false;
+
+        if (in_array($type, [self::PROGRESS]))
+            return false;
+
+        $text = '';
+
+        $text .= "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
+
         switch ($type) {
             case self::ERROR:
-                echo "\e[0;31m[ERROR] \e[m\t" . $message;
+                $text .= "[ERROR] \t" . $message;
                 break;
             case self::WARNING:
-                echo "\e[0;33m[WARNING] \e\t[m" . $message;
+                $text .= "[WARNING] \t" . $message;
                 break;
             case self::SUCCESS:
-                echo "\e[0;32m[SUCCESS] \e\t[m" . $message;
+                $text .= "[SUCCESS] \t" . $message;
                 break;
             default:
-                echo "[INFO]\t" . $message;
+                $text .= "[INFO]\t" . $message;
         }
 
-        if ($message)
-            echo PHP_EOL;
+        $text .= PHP_EOL;
+
+        if (!is_dir(_APP_ . '/log/import'))
+            mkdir(_APP_ . '/log/import', 0777, true);
+
+        $fp = @fopen(_APP_ . '/log/import/' . date('d-m-Y') . '.log', 'a+');
+        @fwrite($fp, $text);
+        @fclose($fp);
+    }
+
+    public static function print($message = '', $type = '', $exit = false)
+    {
+        self::log($message, $type);
+
+        $text = '';
+        if (PHP_SAPI !== 'cli')
+            return false;
+        if (!in_array($type, [self::PROGRESS]))
+            $text .= "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
+        switch ($type) {
+            case self::PROGRESS:
+                $text .= $message;
+                break;
+            case self::ERROR:
+                self::$errors[] = $text . " ". $message;
+                $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
+
+                break;
+            case self::WARNING:
+                $text .= "\e[0;33m[WARNING] \e[m\t" . $message;
+                break;
+            case self::SUCCESS:
+                $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
+                break;
+            default:
+                $text .= "\e[m[INFO]\t" . $message;
+        }
+
+        $text .= PHP_EOL;
+
+        if (!in_array($type, [self::PROGRESS]))
+            self::$log .= $text;
+
+        if ($text && (Config::get('params.import.debug') || in_array($type, [self::PROGRESS])))
+            echo $text;
 
         if ($exit)
             exit();
+    }
+
+    /**
+     * @param int $current Current
+     * @param int $total
+     * @return false|void
+     */
+    public static function progress($current, $total)
+    {
+        $percent = intval(($current / $total) * 100);
+
+        if (!self::$startProgress)
+            self::$startProgress = new \DateTime();
+
+        if (!self::$lastUpdate)
+            self::$lastUpdate = new \DateTime();
+
+        if (self::$lastPercent !== $percent) {
+            $since_start = (new \DateTime())->diff(self::$lastUpdate);
+            $diff = (new \DateTime())->diff(self::$lastUpdate);
+
+            self::$lastUpdate = new \DateTime();
+            self::$lastPercent = $percent;
+
+            $minutes = $diff->i + ($diff->s / 60) + ($diff->h * 60);
+            $minutes = $minutes * (100 - $percent);
+
+            $estimated = (new \DateTime())->add(new \DateInterval('PT' . round($minutes, 0) . 'M'));
+
+            $diffEnd = (new \DateTime())->diff($estimated);
+
+            system('clear');
+
+            self::print("\e[0;33mProcessing\e[m" . str_pad('', $percent % 2 == 0 ? 3 : 1, '.', STR_PAD_LEFT), self::PROGRESS);
+
+            $formatedDuration = '';
+
+            if($diff->d)
+                $formatedDuration .= $diff->d . "days ";
+            if($diff->h)
+                $formatedDuration .= $diff->h . "h ";
+            if($diff->i)
+                $formatedDuration .= $diff->i . "m ";
+            if($diff->s)
+                $formatedDuration .= $diff->s . "s";
+
+
+            $formatEnd = '';
+
+            if($diffEnd->d)
+                $formatEnd .= $diffEnd->d . "days ";
+            if($diffEnd->h)
+                $formatEnd .= $diffEnd->h . "h ";
+            if($diffEnd->i)
+                $formatEnd .= $diffEnd->i . "m ";
+            if($diffEnd->s)
+                $formatEnd .= $diffEnd->s . "s";
+
+            self::print("\e[0;33mRunning time:\e[m " . $formatedDuration, self::PROGRESS);
+            self::print("\e[0;35mEstimated time duration:\e[m " . $formatEnd, self::PROGRESS);
+            self::print("\e[0;35mEstimated date end:\e[m " . $estimated->format('d-m-Y H:i:s'), self::PROGRESS);
+            self::print("\e[0;33mItems processed:\e[m " . $current, self::PROGRESS);
+
+            self::print("\e[0;32mCompleted:\e[m " . $percent . "%", self::PROGRESS);
+
+
+            $left = round($percent / 2, 0) - 1;
+            $right = 50 - $left - 1;
+
+            self::print("\e[0;32m[\e[m" . str_pad('', $left, "=", STR_PAD_LEFT) . ">" . "\e[m" . str_pad('', $right, "·", STR_PAD_LEFT) . "\e[0;32m]\e[m", self::PROGRESS);
+
+            foreach(self::$errors as $error) {
+                self::print("\e[0;33m[ERROR]\e[m\t " . $error . "%", self::PROGRESS);
+            }
+
+        }
+
     }
 }
