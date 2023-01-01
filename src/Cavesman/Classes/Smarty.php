@@ -6,7 +6,6 @@ use Cavesman\FrontEnd;
 use lessc;
 use ScssPhp\ScssPhp\Compiler;
 use src\Modules\Lang;
-use src\Modules\User;
 
 /**
  * Smarty Class
@@ -40,6 +39,7 @@ class Smarty extends \Smarty
         $this->registerPlugin("function", "file", '\Cavesman\Smarty::smartyFile');
         $this->registerPlugin("function", "css", '\Cavesman\Smarty::smartyCss');
         $this->registerPlugin("function", "img", '\Cavesman\Smarty::smartyImgUrl');
+        $this->registerPlugin("function", "video", '\Cavesman\Smarty::smartyVideoUrl');
         $this->registerPlugin("function", "js", '\Cavesman\Smarty::smartyJs');
         $this->registerPlugin("function", "trans", '\Cavesman\Smarty::smartyLang');
         $this->registerPlugin("function", "can", '\Cavesman\Smarty::smartyCan');
@@ -262,21 +262,69 @@ class Smarty extends \Smarty
                 $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/img/" . $file;
             elseif (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/img/" . $file))
                 $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/img/" . $file;
-            $name = hash("sha256", $file . "-" . filemtime($f));
-            $new_file = _WEB_ . "/c/img/" . $name . "." . $extension;
-            $img = _PATH_ . "c/img/" . $name . "." . $extension;
-            if (!file_exists($new_file)) {
-                copy($f, $new_file);
+
+            if (file_exists($file) && !empty($name)) {
+                $name = hash("sha256", $file . "-" . @filemtime($f));
+                $new_file = _WEB_ . "/c/img/" . $name . "." . $extension;
+                $img = _PATH_ . "c/img/" . $name . "." . $extension;
+                if (!file_exists($new_file)) {
+                    copy($f, $new_file);
+                }
+                $time = "";
             }
-            $time = "";
 
         } else {
             $img = $file;
             $time = false;
         }
 
-        if ($file)
+        if ($file && !empty($img))
             return $img . '?' . $time;
+        return "";
+    }
+
+    public static function smartyVideoUrl($params, $smarty)
+    {
+
+        $file = isset($params['file']) ? $params['file'] : '';
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        if (!is_dir(_WEB_ . "/c"))
+            mkdir(_WEB_ . "/c");
+        if (!is_dir(_WEB_ . "/c/video"))
+            mkdir(_WEB_ . "/c/video");
+
+        if (file_exists($file)) {
+
+            $name = hash("sha256", $file . "-" . filemtime($file));
+            $new_file = _WEB_ . "/c/video/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
+            $video = _PATH_ . "c/video/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
+            if (!file_exists($new_file)) {
+                copy($file, $new_file);
+            }
+            $time = "";
+        } elseif (stripos($file, "/") !== 0 && stripos($file, "://") === false) {
+            if (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/video/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/video/" . $file;
+            elseif (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/video/" . $file))
+                $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/video/" . $file;
+
+            if (file_exists($file) && !empty($name)) {
+                $name = hash("sha256", $file . "-" . @filemtime($f));
+                $new_file = _WEB_ . "/c/video/" . $name . "." . $extension;
+                $video = _PATH_ . "c/video/" . $name . "." . $extension;
+                if (!file_exists($new_file)) {
+                    copy($f, $new_file);
+                }
+                $time = "";
+            }
+
+        } else {
+            $video = $file;
+            $time = false;
+        }
+
+        if ($file && !empty($video))
+            return $video . '?' . $time;
         return "";
     }
 
