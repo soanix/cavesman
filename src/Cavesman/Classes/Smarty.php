@@ -263,7 +263,7 @@ class Smarty extends \Smarty
             elseif (file_exists(_SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/img/" . $file))
                 $f = _SRC_ . _TEMPLATES_ . "/" . _THEME_NAME_ . "/assets/img/" . $file;
 
-            if (file_exists($file) && !empty($name)) {
+            if ($f && file_exists($f)) {
                 $name = hash("sha256", $file . "-" . @filemtime($f));
                 $new_file = _WEB_ . "/c/img/" . $name . "." . $extension;
                 $img = _PATH_ . "c/img/" . $name . "." . $extension;
