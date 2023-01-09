@@ -198,6 +198,14 @@ class Console
     }
 
     /**
+     * @return void
+     */
+    public static function clean()
+    {
+        echo chr(27) . chr(91) . 'H' . chr(27) . chr(91) . 'J';
+    }
+
+    /**
      * Get the request method used, taking overrides into account.
      *
      * @return string The Request method to handle
@@ -542,7 +550,7 @@ class Console
                 $text .= $message;
                 break;
             case self::ERROR:
-                self::$errors[] = $text . " ". $message;
+                self::$errors[] = $text . " " . $message;
                 $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
 
                 break;
@@ -597,31 +605,31 @@ class Console
 
             $diffEnd = (new \DateTime())->diff($estimated);
 
-            system('clear');
+            Console::clean();
 
             self::print("\e[0;33mProcessing\e[m" . str_pad('', $percent % 2 == 0 ? 3 : 1, '.', STR_PAD_LEFT), self::PROGRESS);
 
             $formatedDuration = '';
 
-            if($diff->d)
+            if ($diff->d)
                 $formatedDuration .= $diff->d . "days ";
-            if($diff->h)
+            if ($diff->h)
                 $formatedDuration .= $diff->h . "h ";
-            if($diff->i)
+            if ($diff->i)
                 $formatedDuration .= $diff->i . "m ";
-            if($diff->s)
+            if ($diff->s)
                 $formatedDuration .= $diff->s . "s";
 
 
             $formatEnd = '';
 
-            if($diffEnd->d)
+            if ($diffEnd->d)
                 $formatEnd .= $diffEnd->d . "days ";
-            if($diffEnd->h)
+            if ($diffEnd->h)
                 $formatEnd .= $diffEnd->h . "h ";
-            if($diffEnd->i)
+            if ($diffEnd->i)
                 $formatEnd .= $diffEnd->i . "m ";
-            if($diffEnd->s)
+            if ($diffEnd->s)
                 $formatEnd .= $diffEnd->s . "s";
 
             self::print("\e[0;33mRunning time:\e[m " . $formatedDuration, self::PROGRESS);
@@ -637,7 +645,7 @@ class Console
 
             self::print("\e[0;32m[\e[m" . str_pad('', $left, "=", STR_PAD_LEFT) . ">" . "\e[m" . str_pad('', $right, "·", STR_PAD_LEFT) . "\e[0;32m]\e[m", self::PROGRESS);
 
-            foreach(self::$errors as $error) {
+            foreach (self::$errors as $error) {
                 self::print("\e[0;33m[ERROR]\e[m\t " . $error . "%", self::PROGRESS);
             }
 
