@@ -70,7 +70,7 @@ if(\Cavesman\Config::get('main.install', true)){
     if (!file_exists(_WEB_ . "/index.php")) {
         $fp = fopen(_WEB_ . "/index.php", "w+");
         $routesphp = '<?php' . PHP_EOL
-            . 'require __DIR__ . \'../vendor/autoload.php\';' . PHP_EOL
+            . 'require __DIR__ . \'/../vendor/autoload.php\';' . PHP_EOL
             . 'Cavesman\Cavesman::run();' . PHP_EOL
             . '?>';
         fwrite($fp, $routesphp);
