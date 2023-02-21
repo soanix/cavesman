@@ -41,11 +41,6 @@ if(\Cavesman\Config::get('main.install', true)){
         fwrite($fp, json_encode(["debug" => true, "theme" => "public"], JSON_PRETTY_PRINT));
         fclose($fp);
     }
-    if (!file_exists(_APP_ . "/config/params.dev.json")) {
-        $fp = fopen(_APP_ . "/config/params.dev.json", "w+");
-        fwrite($fp, json_encode([], JSON_PRETTY_PRINT));
-        fclose($fp);
-    }
     if (!file_exists(_THEMES_ . "/public/index.php")) {
         $fp = fopen(_THEMES_ . "/public/index.php", "w+");
         $indexphp = '<?php' . PHP_EOL
@@ -75,7 +70,7 @@ if(\Cavesman\Config::get('main.install', true)){
     if (!file_exists(_WEB_ . "/index.php")) {
         $fp = fopen(_WEB_ . "/index.php", "w+");
         $routesphp = '<?php' . PHP_EOL
-            . 'require \'../vendor/autoload.php\';' . PHP_EOL
+            . 'require __DIR__ . \'../vendor/autoload.php\';' . PHP_EOL
             . 'Cavesman\Cavesman::run();' . PHP_EOL
             . '?>';
         fwrite($fp, $routesphp);
