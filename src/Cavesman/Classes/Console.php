@@ -682,7 +682,7 @@ class Console
             self::print("\e[0;32m[\e[m" . str_pad('', $left, "=", STR_PAD_LEFT) . ">" . "\e[m" . str_pad('', $right, "·", STR_PAD_LEFT) . "\e[0;32m]\e[m", self::PROGRESS);
 
             foreach (self::$errors as $error) {
-                self::print("\e[0;33m[ERROR]\e[m\t " . $error . "%", self::PROGRESS);
+                self::print("\e[0;33m[ERROR]\e[m\t " . $error, self::PROGRESS);
             }
 
         }
