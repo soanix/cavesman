@@ -106,6 +106,12 @@ class Display extends Cavesman
             include_once(_APP_ . "/routes.php");
         else
             Display::response("No se ha encontrado el archivo routes.php", "json", 500);
+        
+        if (is_dir(_SRC_ . "/Routes"))
+            foreach (glob(_SRC_ . "/Routes/*.php") as $routeFile)
+                require_once $routeFile;
+        
+        
         if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php")) {
             include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
         }
