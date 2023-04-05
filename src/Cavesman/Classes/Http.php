@@ -5,9 +5,9 @@ namespace Cavesman;
 class Http
 {
 
-    public static function jsonResponse($message, $code = 200)
+    public static function jsonResponse($message, $code = 200, $flags = 0)
     {
-        return self::response(json_encode($message), $code, 'application/json');
+        return self::response(json_encode($message, $flags), $code, 'application/json');
     }
 
     public static function response($message, $code = 200, $contentType = 'html')
