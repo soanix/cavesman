@@ -50,7 +50,7 @@ class Modules extends Display
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
                     $config = json_decode(file_get_contents(_MODULES_ . "/" .$module . "/config.json"), true);
-                    $config['module'] = self::parseClassName($name);
+                    $config['module'] = self::parseClassName($module);
                     if ($config['active']) {
                         require_once _MODULES_ . "/" . $module . "/" . $module . ".php";
 
