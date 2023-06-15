@@ -627,7 +627,7 @@ class Console
         if (!self::$lastUpdate)
             self::$lastUpdate = new \DateTime();
 
-        if (Config::get('params.console.progress.only_on_percent_changes', true) && self::$lastPercent !== $percent) {
+        if (Config::get('params.console.progress.update_always', false) || self::$lastPercent !== $percent) {
             $since_start = (new \DateTime())->diff(self::$lastUpdate);
             $diff = (new \DateTime())->diff(self::$lastUpdate);
 
