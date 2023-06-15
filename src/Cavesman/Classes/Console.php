@@ -623,6 +623,9 @@ class Console
      */
     public static function progress($current, $total)
     {
+
+        self::$updateAlways = self::$updateAlways ?: Config::get('params.console.update_always', false);
+
         $percent = intval(($current / $total) * 100);
 
         if (!self::$startProgress)
