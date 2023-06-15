@@ -20,8 +20,7 @@ class Console
     const SUCCESS = 'success';
     const INFO = 'info';
     const PROGRESS = 'progress';
-
-
+    
     /**
      * @var array The route patterns and their handling functions
      */
@@ -80,6 +79,11 @@ class Console
      * @var array List of errors
      */
     public static array $errors = [];
+    
+    /**
+     * @var array List of errors
+     */
+    public static string $currentProgress = 'Generic';
 
     public static function clear()
     {
@@ -667,7 +671,8 @@ class Console
                 $formatEnd .= $diffEnd->i . "m ";
             if ($diffEnd->s)
                 $formatEnd .= $diffEnd->s . "s";
-
+            
+            self::print("\e[0;33mCurrent job:\e[m " . self::$currentProgress, self::PROGRESS);
             self::print("\e[0;33mRunning time:\e[m " . $formatedDuration, self::PROGRESS);
             self::print("\e[0;35mEstimated time duration:\e[m " . $formatEnd, self::PROGRESS);
             self::print("\e[0;35mEstimated date end:\e[m " . $estimated->format('d-m-Y H:i:s'), self::PROGRESS);
@@ -687,5 +692,9 @@ class Console
 
         }
 
+    }
+    
+    public static function setCurrentprogress($currentProgress) {
+        self::$currentProgress = $currentProgress;
     }
 }
