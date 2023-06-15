@@ -81,9 +81,15 @@ class Console
     public static array $errors = [];
     
     /**
-     * @var array List of errors
+     * @var array Current job in progress
      */
     public static string $currentProgress = 'Generic';
+
+    /**
+     * @var array List of errors
+     */
+    public static ?bool $updateAlways = null;
+
 
     public static function clear()
     {
@@ -624,7 +630,7 @@ class Console
     public static function progress($current, $total)
     {
 
-        self::$updateAlways = self::$updateAlways ?: Config::get('params.console.update_always', false);
+        self::$updateAlways = self::$updateAlways !== null ? self::$updateAlways : Config::get('params.console.update_always', false);
 
         $percent = intval(($current / $total) * 100);
 
