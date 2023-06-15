@@ -694,7 +694,7 @@ class Console
 
     }
     
-    public static function setCurrentprogress($currentProgress) {
+    public static function setCurrentJob($currentProgress) {
         self::$currentProgress = $currentProgress;
     }
 }
