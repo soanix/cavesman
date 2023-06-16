@@ -81,14 +81,23 @@ class Console
     public static array $errors = [];
     
     /**
-     * @var array Current job in progress
+     * @var string Current job in progress
      */
     public static string $currentProgress = 'Generic';
 
     /**
-     * @var array List of errors
+     * @var bool List of errors
      */
     public static ?bool $updateAlways = null;
+
+    /**
+     * @var bool Enable Log
+     */
+    public static ?bool $logEnabled = null;
+    /**
+     * @var bool Enable Log
+     */
+    public static ?bool $debug = null;
 
 
     public static function clear()
@@ -511,8 +520,9 @@ class Console
 
     private static function log($message, $type)
     {
+        self::$logEnabled = !is_null(self::$logEnabled) ? self::$logEnabled : Config::get('params.import.log', true);
 
-        if (!Config::get('params.import.log', true))
+        if (!self::$logEnabled)
             return false;
 
         if (in_array($type, [self::PROGRESS]))
@@ -579,7 +589,9 @@ class Console
         if (!in_array($type, [self::PROGRESS]))
             self::$log .= $text;
 
-        if ($text && (Config::get('params.import.debug') || in_array($type, [self::PROGRESS])))
+        self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.import.debug', true);
+
+        if ($text && (self::$debug || in_array($type, [self::PROGRESS])))
             echo $text;
 
         if ($exit)
@@ -630,27 +642,30 @@ class Console
     public static function progress($current, $total)
     {
 
-        self::$updateAlways = self::$updateAlways !== null ? self::$updateAlways : Config::get('params.console.update_always', false);
+        self::$updateAlways = !is_null(self::$updateAlways) ? self::$updateAlways : Config::get('params.console.progress.update_always', false);
 
         $percent = intval(($current / $total) * 100);
 
         if (!self::$startProgress)
             self::$startProgress = new \DateTime();
-
         if (!self::$lastUpdate)
             self::$lastUpdate = new \DateTime();
 
-        if (Config::get('params.console.progress.update_always', false) || self::$lastPercent !== $percent) {
-            $since_start = (new \DateTime())->diff(self::$lastUpdate);
+        if (self::$updateAlways || self::$lastPercent !== $percent) {
+            $since_start = (new \DateTime())->diff(self::$startProgress);
             $diff = (new \DateTime())->diff(self::$lastUpdate);
 
             self::$lastUpdate = new \DateTime();
             self::$lastPercent = $percent;
 
-            $minutes = $diff->i + ($diff->s / 60) + ($diff->h * 60);
-            $minutes = $minutes * (100 - $percent);
+            $seconds = $since_start->s + ($since_start->s * 60) + ($since_start->h * 60 * 60);
 
-            $estimated = (new \DateTime())->add(new \DateInterval('PT' . round($minutes, 0) . 'M'));
+            if($seconds > 0)
+                $seconds = ($current * ($total - $current)) / $seconds;
+            else
+                $seconds = 0;
+
+            $estimated = (new \DateTime())->add(new \DateInterval('PT' . round($seconds, 0) . 'S'));
 
             $diffEnd = (new \DateTime())->diff($estimated);
 
@@ -660,18 +675,22 @@ class Console
 
             $formatedDuration = '';
 
-            if ($diff->d)
-                $formatedDuration .= $diff->d . "days ";
-            if ($diff->h)
-                $formatedDuration .= $diff->h . "h ";
-            if ($diff->i)
-                $formatedDuration .= $diff->i . "m ";
-            if ($diff->s)
-                $formatedDuration .= $diff->s . "s";
+            if ($since_start->d)
+                $formatedDuration .= $since_start->d . "days ";
+            if ($since_start->h)
+                $formatedDuration .= $since_start->h . "h ";
+            if ($since_start->i)
+                $formatedDuration .= $since_start->i . "m ";
+            if ($since_start->s)
+                $formatedDuration .= $since_start->s . "s";
 
 
             $formatEnd = '';
 
+            if ($diffEnd->y)
+                $formatEnd .= $diffEnd->y . "years ";
+            if ($diffEnd->m)
+                $formatEnd .= $diffEnd->m . "month ";
             if ($diffEnd->d)
                 $formatEnd .= $diffEnd->d . "days ";
             if ($diffEnd->h)
@@ -686,6 +705,8 @@ class Console
             self::print("\e[0;35mEstimated time duration:\e[m " . $formatEnd, self::PROGRESS);
             self::print("\e[0;35mEstimated date end:\e[m " . $estimated->format('d-m-Y H:i:s'), self::PROGRESS);
             self::print("\e[0;33mItems processed:\e[m " . $current, self::PROGRESS);
+            self::print("\e[0;33mPending Items:\e[m " . $total - $current, self::PROGRESS);
+            self::print("\e[0;33mTotal Items:\e[m " . $total, self::PROGRESS);
             self::print("\e[0;33mMemory:\e[m " . round(memory_get_usage() / 1048576, 2)."MB", self::PROGRESS);
             self::print("\e[0;32mCompleted:\e[m " . $percent . "%", self::PROGRESS);
 
