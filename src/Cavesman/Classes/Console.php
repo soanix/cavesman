@@ -658,14 +658,15 @@ class Console
             self::$lastUpdate = new \DateTime();
             self::$lastPercent = $percent;
 
-            $seconds = $since_start->s + ($since_start->s * 60) + ($since_start->h * 60 * 60);
+            $seconds = $since_start->s + ($since_start->i * 60) + ($since_start->h * 60 * 60);
 
-            if($seconds > 0)
-                $seconds = ($current * ($total - $current)) / $seconds;
-            else
+            if ($seconds > 0 && $current > 0) {
+                $seconds = ($seconds * ($total - $current)) / $current;
+            } else {
                 $seconds = 0;
+            }
 
-            $estimated = (new \DateTime())->add(new \DateInterval('PT' . round($seconds, 0) . 'S'));
+            $estimated = (new \DateTime())->add(new \DateInterval('PT' . round(abs($seconds)) . 'S'));
 
             $diffEnd = (new \DateTime())->diff($estimated);
 
