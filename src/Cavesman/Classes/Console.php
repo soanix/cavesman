@@ -64,7 +64,7 @@ class Console
     /**
      * @var int Last percent recorded
      */
-    public static int $lastPercent = -1;
+    public static float $lastPercent = -1;
 
     /**
      * @var \DateTime Start Time
@@ -650,12 +650,12 @@ class Console
             self::$startProgress = new \DateTime();
         if (!self::$lastUpdate)
             self::$lastUpdate = new \DateTime();
-
         if (self::$updateAlways || self::$lastPercent !== $percent) {
             $since_start = (new \DateTime())->diff(self::$startProgress);
             $diff = (new \DateTime())->diff(self::$lastUpdate);
 
             self::$lastUpdate = new \DateTime();
+
             self::$lastPercent = $percent;
 
             $seconds = $since_start->s + ($since_start->i * 60) + ($since_start->h * 60 * 60);
