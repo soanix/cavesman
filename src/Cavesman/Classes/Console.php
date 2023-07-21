@@ -644,7 +644,7 @@ class Console
 
         self::$updateAlways = !is_null(self::$updateAlways) ? self::$updateAlways : Config::get('params.console.progress.update_always', false);
 
-        $percent = round(($current / $total) * 100, 2);
+        $percent = round(($current / $total) * 100, Config::get('params.console.progress.percent.precision', 1));
 
         if (!self::$startProgress)
             self::$startProgress = new \DateTime();
@@ -712,7 +712,7 @@ class Console
             self::print("\e[0;32mCompleted:\e[m " . $percent . "%", self::PROGRESS);
 
 
-            $left = round($percent / 2, 2) - 1;
+            $left = round($percent / 2, Config::get('params.console.progress.percent.precision', 1)) - 1;
             $right = 50 - $left - 1;
 
             self::print("\e[0;32m[\e[m" . str_pad('', $left, "=", STR_PAD_LEFT) . ">" . "\e[m" . str_pad('', $right, "·", STR_PAD_LEFT) . "\e[0;32m]\e[m", self::PROGRESS);
