@@ -429,6 +429,9 @@ class Smarty extends \Smarty
         // registerPlugin para el modificador 'string_format'
         $this->registerPlugin('modifier', 'string_format', 'sprintf');
 
+        // registerPlugin para el modificador 'string_format'
+        $this->registerPlugin('modifier', 'trim', 'trim');
+
         // registerPlugin para el modificador 'strip'
         $this->registerPlugin('modifier', 'strip', 'trim');
 
