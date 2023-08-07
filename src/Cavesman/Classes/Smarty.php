@@ -461,7 +461,7 @@ class Smarty extends \Smarty
         });
 
         // registerPlugin para el modificador 'sprintf'
-        $smarty->registerPlugin('modifier', 'sprintf', function ($format, ...$args) {
+        $this->registerPlugin('modifier', 'sprintf', function ($format, ...$args) {
             return sprintf($format, ...$args);
         });
 
