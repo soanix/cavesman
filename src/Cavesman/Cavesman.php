@@ -18,6 +18,9 @@ class Cavesman
 
     public static function run(string $env = 'dev'): void
     {
+        if (is_dir(_SRC_ . "/Install") && Config::get('main.install', true))
+            foreach (glob(_SRC_ . "/Install/*.php") as $routeFile)
+                require_once $routeFile;
         if (PHP_SAPI !== 'cli') {
             Display::startTheme();
             Display::theme();
