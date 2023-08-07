@@ -460,5 +460,10 @@ class Smarty extends \Smarty
             return in_array($value, $array);
         });
 
+        // registerPlugin para el modificador 'sprintf'
+        $smarty->registerPlugin('modifier', 'sprintf', function ($format, ...$args) {
+            return sprintf($format, ...$args);
+        });
+
     }
 }
