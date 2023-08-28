@@ -83,6 +83,11 @@ class Display extends Cavesman
     {
         if (file_exists(_APP_ . "/routes.php"))
             include_once(_APP_ . "/routes.php");
+        
+        if (is_dir(_SRC_ . "/Routes"))
+            foreach (glob(_SRC_ . "/Routes/*.php") as $routeFile)
+                require_once $routeFile;
+        
         parent::__install();
         Modules::loadModules();
     }
