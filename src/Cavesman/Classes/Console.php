@@ -586,7 +586,7 @@ class Console
                 $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
                 break;
             default:
-                $text .= "\e[1;36m[INFO][m\t" . $message;
+                $text .= "\e[1;36m[INFO] \e[m\t" . $message;
         }
 
         $text .= PHP_EOL;
@@ -628,7 +628,7 @@ class Console
                 $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
                 break;
             default:
-                $text .= "\e[1;36m[INFO][m\t" . $message;
+                $text .= "\e[1;36m[INFO] \e[m\t" . $message;
         }
 
         $text .= PHP_EOL;
