@@ -465,5 +465,9 @@ class Smarty extends \Smarty
             return sprintf($format, ...$args);
         });
 
+        $smarty->registerPlugin('modifier', 'htmlentities', function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8', $double_encode = true) {
+            return htmlentities($string, $quote_style, $charset, $double_encode);
+        });
+
     }
 }
