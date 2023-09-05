@@ -41,7 +41,7 @@ class Config
                         $default_array = self::getDefaultArray($params, $default);
                         $config = array_replace_recursive($config, $default_array);
                         $fp = fopen($file = _APP_ . "/config/" . $params[0] . ".json", "w+");
-                        fwrite($fp, json_encode($config, JSON_PRETTY_PRINT));
+                        fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
                         fclose($fp);
                         return $default;
                     }
@@ -51,7 +51,7 @@ class Config
             $default_array = self::getDefaultArray($params, $default);
             $config = array_replace_recursive($config, $default_array);
             $fp = fopen($file = _APP_ . "/config/" . $params[0] . ".json", "w+");
-            fwrite($fp, json_encode($config, JSON_PRETTY_PRINT));
+            fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
             fclose($fp);
             return $default;
         }
