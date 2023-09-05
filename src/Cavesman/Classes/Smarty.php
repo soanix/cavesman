@@ -85,7 +85,8 @@ class Smarty extends \Smarty
         $s = isset($params['s']) ? $params['s'] : '';
         $r = isset($params['r']) ? $params['r'] : array();
         $m = isset($params['m']) ? $params['m'] : '';
-        return Display::trans($s, $r, $m);
+        $l = isset($params['l']) ? $params['l'] : null;
+        return Display::trans($s, $r, $m, $l);
     }
 
     public static function smartyFile($params, $smarty): string
