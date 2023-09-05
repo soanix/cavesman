@@ -173,14 +173,14 @@ class Modules extends Display
      * @param string $modules module from translate comeback
      * @return string          string translated or parsed
      */
-    public static function trans(string $string = '', array $binds = [], string $modules = ''): string
+    public static function trans(string $string = '', array $binds = [], string $modules = '', $iso = null): string
     {
         if (class_exists('\src\Modules\Lang')) {
             if ($modules)
-                return \src\Modules\Lang::l($string, $binds, self::parseClassName($modules));
+                return \src\Modules\Lang::l($string, $binds, self::parseClassName($modules), $iso);
             if (isset(get_called_class()::$config['name']))
-                return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name']);
-            return \src\Modules\Lang::l($string, $binds);
+                return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name'], $iso);
+            return \src\Modules\Lang::l($string, $binds, '', $iso);
         } else {
             $binded = $string;
             foreach ($binds as $key => $value) {
