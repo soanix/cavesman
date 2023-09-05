@@ -9,10 +9,10 @@ class Display extends Cavesman
 {
     public static $instance;
 
-    public static function trans(string $string = '', array $binds = [], string $module = ''): string
+    public static function trans(string $string = '', array $binds = [], string $module = '', $iso = null): string
     {
         if (class_exists(Lang::class)) {
-            return Lang::l($string, $binds, $module);
+            return Lang::l($string, $binds, $module, $iso);
         } else {
             $binded = $string;
             foreach ($binds as $key => $value) {
