@@ -466,8 +466,18 @@ class Smarty extends \Smarty
             return sprintf($format, ...$args);
         });
 
+        // Define una función para modificacion personalizada para htmlentities
         $this->registerPlugin('modifier', 'htmlentities', function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8', $double_encode = true) {
             return htmlentities($string, $quote_style, $charset, $double_encode);
+        });
+
+        // Define una función de modificación personalizada para urlencode
+        $this->registerPlugin('modifier', 'urlencode', function($string){
+            return urlencode($string);
+        });
+        // Define una función de modificación personalizada para urldencode
+        $this->registerPlugin('modifier', 'urldencode', function($string){
+            return urldencode($string);
         });
 
     }
