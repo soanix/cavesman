@@ -605,38 +605,7 @@ class Console
 
     public static function show($message = '', $type = '', $exit = false)
     {
-        self::log($message, $type);
-
-        $text = '';
-        if (PHP_SAPI !== 'cli')
-            return false;
-        if (!in_array($type, [self::PROGRESS]))
-            $text .= "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
-        switch ($type) {
-            case self::PROGRESS:
-                $text .= $message;
-                break;
-            case self::ERROR:
-                self::$errors[] = $text . " " . $message;
-                $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
-
-                break;
-            case self::WARNING:
-                $text .= "\e[0;33m[WARNING] \e[m\t" . $message;
-                break;
-            case self::SUCCESS:
-                $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
-                break;
-            default:
-                $text .= "\e[1;36m[INFO] \e[m\t" . $message;
-        }
-
-        $text .= PHP_EOL;
-
-        echo $text;
-
-        if ($exit)
-            exit();
+        self::print($message, $type, $exit);
     }
 
     /**
