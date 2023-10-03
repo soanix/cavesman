@@ -13,8 +13,8 @@
         "php": ">=7.1",
         "composer/composer": ">=1.9",
         "smarty/smarty": "~4.1",
-        "soanix/router": "dev-master",
         "doctrine/orm": "~2.8.3"
+        "soanix/router": "~0.3",
     },
     "autoload": {
         "files": [
