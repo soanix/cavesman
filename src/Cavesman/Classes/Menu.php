@@ -20,8 +20,12 @@ class Menu
                 ];
             if (isset($item['items']) && $item['items']) {
                 foreach ($item['items'] as $menu) {
+
                     if (!isset(self::$items[$name]['items'][$menu['name']])) {
                         self::$items[$name]['items'][$menu['name']] = $menu;
+                        if (!Config::get('menu.' . $menu . '.items.' . $menu['name'] . '.visible', true)) {
+                            continue;
+                        }
                     } else {
                         self::$items[$name]['items'][$menu['name']]['childs'] = array_merge_recursive(self::$items[$name]['items'][$menu['name']]['childs'], $menu['childs']);
                     }
@@ -39,6 +43,9 @@ class Menu
                 if (isset($itm['items']) && $itm['items']) {
                     foreach ($itm['items'] as $menu) {
                         if (!isset(self::$items[$name]['items'][$menu['name']])) {
+                            if (!Config::get('menu.' . $name . '.items.' . $menu['name'] . '.visible', true)) {
+                                continue;
+                            }
                             self::$items[$name]['items'][$menu['name']] = $menu;
                         } else {
                             self::$items[$name]['items'][$menu['name']]['childs'] = array_merge_recursive(self::$items[$name]['items'][$menu['name']]['childs'], $menu['childs']);
