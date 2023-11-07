@@ -4,7 +4,9 @@ namespace Cavesman;
 
 class Config
 {
-    
+
+    private static $data = [];
+
     /**
      * @param string $config
      * @param $default
@@ -13,23 +15,31 @@ class Config
     public static function get(string $config = '', $default = NULL)
     {
         $params = explode(".", $config);
-        $file = _APP_ . "/config/" . $params[0] . ".json";
-        $config = [];
-        if (!is_dir(dirname($file)))
-            mkdir(dirname($file), 0777, true);
 
-        if (file_exists($file)) {
-            $config = json_decode(file_get_contents($file), true);
-        }
+        if(isset(self::$data[$params[0]]))
+            $config = self::$data[$params[0]];
+        else {
+            $file = _APP_ . "/config/" . $params[0] . ".json";
+            $config = [];
+            if (!is_dir(dirname($file)))
+                mkdir(dirname($file), 0777, true);
 
-        // Env config
-        $file = _APP_ . "/config/" . $params[0] . "." . self::getEnv() . ".json";
+            if (file_exists($file)) {
+                $config = json_decode(file_get_contents($file), true);
+            }
 
-        if (file_exists($file)) {
-            $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
+            // Env config
+            $file = _APP_ . "/config/" . $params[0] . "." . self::getEnv() . ".json";
+
+            if (file_exists($file)) {
+                $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
+            }
+            
+            self::$data[$params[0]] = $config;
         }
 
         $array = $config;
+
         if ($config) {
 
             foreach ($params as $key => $param) {
