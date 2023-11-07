@@ -23,7 +23,7 @@ class Menu
 
                     if (!isset(self::$items[$name]['items'][$menu['name']])) {
                         self::$items[$name]['items'][$menu['name']] = $menu;
-                        if (!Config::get('menu.' . $menu . '.items.' . $menu['name'] . '.visible', true)) {
+                        if (!Config::get('menu.' . $menu . '.items.' . $menu['name'] . '.visible', true) || !($menu['visible'] ?? true)) {
                             continue;
                         }
                     } else {
@@ -43,7 +43,7 @@ class Menu
                 if (isset($itm['items']) && $itm['items']) {
                     foreach ($itm['items'] as $menu) {
                         if (!isset(self::$items[$name]['items'][$menu['name']])) {
-                            if (!Config::get('menu.' . $name . '.items.' . $menu['name'] . '.visible', true)) {
+                            if (!Config::get('menu.' . $name . '.items.' . $menu['name'] . '.visible', true) || !($menu['visible'] ?? true)) {
                                 continue;
                             }
                             self::$items[$name]['items'][$menu['name']] = $menu;
