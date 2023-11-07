@@ -6,54 +6,52 @@ use Exception;
 
 class Menu
 {
-
     public static $items = [];
 
     public static function addItem(array $item): void
     {
         if (self::isAssoc($item)) {
             $name = $item['name'] ?? "main";
-            if (!isset(self::$items[$name]))
-                self::$items[$name] = [
-                    "name" => $name,
-                    "items" => []
-                ];
-            if (isset($item['items']) && $item['items']) {
-                foreach ($item['items'] as $menu) {
-
-                    if (!isset(self::$items[$name]['items'][$menu['name']])) {
-                        self::$items[$name]['items'][$menu['name']] = $menu;
-                        if (!Config::get('menu.' . $menu . '.items.' . $menu['name'] . '.visible', true) || !($menu['visible'] ?? true)) {
-                            continue;
-                        }
-                    } else {
-                        self::$items[$name]['items'][$menu['name']]['childs'] = array_merge_recursive(self::$items[$name]['items'][$menu['name']]['childs'], $menu['childs']);
-                    }
-                }
-            }
+            self::processMenu($name, $item);
         } else {
             foreach ($item as $itm) {
-
                 $name = $itm['name'] ?? "main";
-                if (!isset(self::$items[$name]))
-                    self::$items[$name] = [
-                        "name" => $name,
-                        "items" => []
-                    ];
-                if (isset($itm['items']) && $itm['items']) {
-                    foreach ($itm['items'] as $menu) {
-                        if (!isset(self::$items[$name]['items'][$menu['name']])) {
-                            if (!Config::get('menu.' . $name . '.items.' . $menu['name'] . '.visible', true) || !($menu['visible'] ?? true)) {
-                                continue;
-                            }
-                            self::$items[$name]['items'][$menu['name']] = $menu;
-                        } else {
-                            self::$items[$name]['items'][$menu['name']]['childs'] = array_merge_recursive(self::$items[$name]['items'][$menu['name']]['childs'], $menu['childs']);
+                self::processMenu($name, $itm);
+            }
+        }
+    }
+
+    private static function processMenu($name, $menu): void
+    {
+        if (!isset(self::$items[$name])) {
+            self::$items[$name] = [
+                "name" => $name,
+                "items" => []
+            ];
+        }
+
+        if (isset($menu['items']) && $menu['items']) {
+            foreach ($menu['items'] as $menuItem) {
+                if (!isset(self::$items[$name]['items'][$menuItem['name']])) {
+                    $isVisible = self::isMenuItemVisible($name, $menuItem);
+                    if ($isVisible) {
+                        self::$items[$name]['items'][$menuItem['name']] = $menuItem;
+                        if (isset($menuItem['childs']) && $menuItem['childs']) {
+                            self::$items[$name]['items'][$menuItem['name']]['childs']['items'] = array_filter(
+                                $menuItem['childs']['items'],
+                                fn($child) => self::isMenuItemVisible($name, $child)
+                            );
                         }
                     }
                 }
             }
         }
+    }
+
+    private static function isMenuItemVisible($menuName, $menuItem)
+    {
+        $configKey = "menu.{$menuName}.items.{$menuItem['name']}.visible";
+        return Config::get($configKey, true) && ($menuItem['visible'] ?? true);
     }
 
     private static function isAssoc(array $arr)
