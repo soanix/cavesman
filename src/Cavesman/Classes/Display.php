@@ -2,6 +2,7 @@
 
 namespace Cavesman;
 
+use mysql_xdevapi\Exception;
 use src\Modules\Lang;
 use src\Modules\User;
 
@@ -72,10 +73,13 @@ class Display extends Cavesman
     private static function init(): void
     {
         parent::__install();
-        $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
-        $smarty = self::getInstance(Smarty::class);
-        $smarty->template_dir = $tmpl;
-        $smarty->assign("template", $tmpl);
+
+        if (class_exists('\Smarty')) {
+            $tmpl = _THEMES_ . "/" . _THEME_NAME_ . "/tpl";
+            $smarty = self::getInstance(Smarty::class);
+            $smarty->template_dir = $tmpl;
+            $smarty->assign("template", $tmpl);
+        }
         Modules::loadModules();
 
     }
@@ -97,20 +101,22 @@ class Display extends Cavesman
      */
     public static function theme(): void
     {
-        $smarty = self::getInstance(Smarty::class);
-        if (defined("_PATH_"))
-            $smarty->assign("base", _PATH_);
-        $smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
-        $smarty->assign("data", _ROOT_ . "/../data");
-        $smarty->assign("root", _ROOT_);
-        $smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
-        $smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
-        $smarty->assign("template", _THEME_);
+        if (class_exists('\Smarty')) {
+            $smarty = self::getInstance(Smarty::class);
+            if (defined("_PATH_"))
+                $smarty->assign("base", _PATH_);
+            $smarty->assign("css", _TEMPLATES_ . "/" . _THEME_NAME_ . "/css");
+            $smarty->assign("data", _ROOT_ . "/../data");
+            $smarty->assign("root", _ROOT_);
+            $smarty->assign("js", _TEMPLATES_ . "/" . _THEME_NAME_ . "/js");
+            $smarty->assign("img", _TEMPLATES_ . "/" . _THEME_NAME_ . "/img");
+            $smarty->assign("template", _THEME_);
+        }
 
         if (file_exists(_APP_ . "/routes.php"))
             include_once(_APP_ . "/routes.php");
         else
-            Display::response("No se ha encontrado el archivo routes.php", "json", 500);
+            throw new Exception("No se ha encontrado el archivo routes.php",  500);
         
         if (is_dir(_SRC_ . "/Routes"))
             foreach (glob(_SRC_ . "/Routes/*.php") as $routeFile)
@@ -123,13 +129,14 @@ class Display extends Cavesman
     }
 
     /**
+     * @deprecated use new \Cavesman\Http\Repsonse
      * Return error
      *
-     * $msg String / Array Text of error
-     * $type String Text of error
-     * $header int Text of error
+     * @var $msg mixed / Array Text of error
+     * @var $type String Text of error
+     * @var $header int Text of error
      */
-    static function response($msg = '', $type = 'json', $code = 200)
+    static function response(mixed $msg = '', string $type = 'json', $code = 200)
     {
         switch ($code) {
             case 100:

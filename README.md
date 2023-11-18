@@ -2,17 +2,10 @@
 
 # Cave's Man
 
-PHP modular framework
+PHP framework
 
-Version: 0.2.x
+Version: 0.3.x
 
-## Features
-
-- [x] Multi-Language
-- [x] Router
-- [x] Autoload
-- [x] PSR
-- [x] ORM
 
 ## Requeriments
 
@@ -20,7 +13,7 @@ Version: 0.2.x
 
 ## How to Install
 
-1. Create your proyect
+1. Create your project
 
 ```bash
 composer require soanix/cavesman
@@ -32,7 +25,7 @@ composer require soanix/cavesman
 require_once 'vendor/autoload.php';
 ```
 
-3. Running first request will generate proyect structure
+3. Running first request will generate project structure
 
 4. Now you can start develope
 

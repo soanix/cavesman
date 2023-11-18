@@ -1,6 +1,7 @@
 {
     "name": "soanix/cavesman",
     "description": "PHP Framework",
+    "version": "0.3.4",
     "authors": [
         {
             "name": "Soanix",
@@ -9,12 +10,11 @@
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.1",
+        "php": ">=8.0",
         "composer/composer": ">=1.9",
-        "smarty/smarty": "~4.1",
-        "doctrine/orm": "~2.8.3",
-        "soanix/router": "~1"
+        "soanix/router": ">=1.6"
     },
+
     "autoload": {
         "files": [
             "src/Cavesman/Config/Defines.php",
@@ -23,7 +23,8 @@
             "src/Cavesman/Cavesman.php"
         ],
         "psr-4": {
-            "Cavesman\\": "src/Cavesman/Classes"
+            "Cavesman\\": "src/Cavesman/Classes",
+            "Cavesman\\Http\\": "src/Cavesman/Http"
         }
     }
 }

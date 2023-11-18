@@ -2,26 +2,46 @@
 
 namespace Cavesman;
 
+use Cavesman\Http\JsonResponse;
+use Cavesman\Http\Redirect;
+use Cavesman\Http\Response;
+
 class Http
 {
 
-    public static function jsonResponse($message, $code = 200, $flags = 0)
+    /**
+     * @deprecated Use new \Cavesman\Http\JsonRepsonse
+     * @param string $message
+     * @param int $code
+     * @param int $flags
+     * @return JsonResponse
+     */
+    public static function jsonResponse(mixed $message, int $code = 200, int $flags = 0): JsonResponse
     {
-        return self::response(json_encode($message, $flags), $code, 'application/json');
+        return new JsonResponse($message, $code, $flags);
     }
 
-    public static function response($message, $code = 200, $contentType = 'html')
+    /**
+     * @deprecated Use new \Cavesman\Http\Repsonse
+     * @param string $message
+     * @param int $code
+     * @param string $contentType
+     * @return Response
+     */
+    public static function response(mixed $message, int $code = 200, string $contentType = 'text/html'): Response
     {
-        header('X-PHP-Response-Code: ' . $code, true, $code);
-        header('Content-Type: ' . $contentType);
-        echo $message;
-        exit();
+        return new Response($message, $code, $contentType);
     }
 
-    public static function redirect($url, $statusCode = 303)
+    /**
+     * @deprecated Use new \Cavesman\Http\Redirect
+     * @param string $url
+     * @param int $statusCode
+     * @return Redirect
+     */
+    public static function redirect(string $url, int $statusCode = 303): Redirect
     {
-        header('Location: ' . $url, true, $statusCode);
-        die();
+        return new Redirect($url, $statusCode);
     }
 
 }
