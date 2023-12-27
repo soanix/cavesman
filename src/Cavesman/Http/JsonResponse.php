@@ -9,7 +9,7 @@ class JsonResponse {
     {
         header('X-PHP-Response-Code: ' . $code, true, $code);
         header('Content-Type: application/json');
-        echo json_encode($message, $flags);
+        echo json_encode($message, $flags ?: JSON_PRETTY_PRINT);
         exit();
     }
 }
