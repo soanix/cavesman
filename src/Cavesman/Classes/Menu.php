@@ -43,6 +43,14 @@ class Menu
                             );
                         }
                     }
+                }else{
+                    if (isset($menuItem['childs']) && $menuItem['childs']) {
+                        $m = array_filter(
+                            $menuItem['childs']['items'],
+                            fn($child) => self::isMenuItemVisible($name, $child)
+                        );
+                        self::$items[$name]['items'][$menuItem['name']]['childs']['items'] = array_merge(self::$items[$name]['items'][$menuItem['name']]['childs']['items'], $m);
+                    }
                 }
             }
         }
