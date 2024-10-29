@@ -3,44 +3,40 @@
 namespace Cavesman;
 
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
-use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
-use Doctrine\ORM\Tools\Setup;
-use Exception;
-use PDO;
-use Symfony\Component\Console\Helper\HelperSet;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
-class DB extends PDO
+class Db
 {
-    protected static $oConnection = [];
+    /** @var array $oConnection */
+    protected static array $oConnection = [];
 
-    public static function getCli()
+    public static function getCli(): void
     {
 
-        /* @var $entityManager EntityManagerInterface */
-        $entityManager = self::getManager("cli");
-        $connectionHelper = new ConnectionHelper($entityManager->getConnection());
-        $helperset = new HelperSet([
-            'em' => new EntityManagerHelper($entityManager),
-            'db' => $connectionHelper,
-            'connection' => $connectionHelper,
-        ]);
-        ConsoleRunner::run($helperset);
+        ConsoleRunner::run(
+            new SingleManagerProvider(self::getManager('cli'))
+        );
     }
 
-    public static function getManager($db = 'local')
+    public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db')
     {
-        if (self::$oConnection[$db] ?? false instanceof EntityManager !== false) {
-            return self::$oConnection[$db];
+        $key = $server . ':' . $database;
+
+        if (isset(self::$oConnection[$key]) && self::$oConnection[$key] instanceof EntityManager) {
+            return self::$oConnection[$key];
         }
 
         $directories = scandir(_MODULES_);
-        $directoryEntity = [];
+        $paths = [];
         if (is_dir(_ROOT_ . "/src/Entity"))
-            $directoryEntity[] = _ROOT_ . "/src/Entity";
+            $paths[] = _ROOT_ . "/src/Entity";
+        if (Config::get('params.db.global_aux', false)) {
+            if (is_dir(_ROOT_ . "/src/EntityAux"))
+                $paths[] = _ROOT_ . "/src/EntityAux";
+        }
         if (is_dir(_MODULES_)) {
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
@@ -49,42 +45,36 @@ class DB extends PDO
                     $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
                     if ($config['active']) {
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/Abstract")) {
-                            foreach (glob(_MODULES_ . "/" . $directory . "/Abstract/*.php") as $filename) {
+                        if (is_dir(_MODULES_ . "/" . $directory . "/Abstract"))
+                            foreach (glob(_MODULES_ . "/" . $directory . "/Abstract/*.php") as $filename)
                                 require_once $filename;
-                            }
-                        }
 
                         if (is_dir(_MODULES_ . "/" . $directory . "/Entity"))
-                            array_push($directoryEntity, _MODULES_ . "/" . $directory . "/Entity");
+                            $paths[] = _MODULES_ . "/" . $directory . "/Entity";
+
+                        if (Config::get('params.db.global_aux', false))
+                            if (is_dir(_MODULES_ . "/" . $directory . "/EntityAux"))
+                                $paths[] = _MODULES_ . "/" . $directory . "/EntityAux";
+
                     }
                 }
             }
         }
-        $config = Setup::createAnnotationMetadataConfiguration($directoryEntity, true, null, null, false);
-        $connectionParams = Config::get("db." . $db);
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            paths: $paths,
+            isDevMode: true,
+            cache: null
+        );
 
-        if (!is_array($connectionParams))
-            throw new Exception('DB Config is not correct formated');
-        $conn = DriverManager::getConnection($connectionParams, $config);
-        self::$oConnection[$db] = EntityManager::create($conn, $config);
+        $connectionParams = Config::get($file . '.' . $server);
 
-        return self::$oConnection[$db];
-    }
+        if ($database)
+            $connectionParams['dbname'] = $database;
 
-    /**
-     * @return int
-     * @throws Exception
-     */
-    public static function hasPendingChanges($db = 'local') {
+        $connection = DriverManager::getConnection($connectionParams);
 
-        $uow = self::getManager($db)->getUnitOfWork();
-        $pending = count($uow->getScheduledEntityInsertions())
-            + count($uow->getScheduledEntityUpdates())
-            + count($uow->getScheduledEntityDeletions())
-            + count($uow->getScheduledCollectionUpdates())
-            + count($uow->getScheduledCollectionDeletions());
+        self::$oConnection[$key] = new EntityManager($connection, $config);
 
-        return $pending;
+        return self::$oConnection[$key];
     }
 }

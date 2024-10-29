@@ -9,7 +9,7 @@ Version: 0.3.x
 
 ## Requeriments
 
-- PHP >= 8.0
+- PHP >= 8.3
 
 ## How to Install
 
@@ -31,4 +31,9 @@ require_once 'vendor/autoload.php';
 
 # CHANGE LOG
 
-COMMING SON
+### 0.3.4 BREAK
+
+UPDATE Doctrine 2 to Doctrine 3
+DB class now is named Db
+
+

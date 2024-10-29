@@ -1,7 +1,11 @@
 {
     "name": "soanix/cavesman",
     "description": "PHP Framework",
-    "version": "0.3.6",
+    "version": "0.4",
+    "bin" : [
+        "bin/cavesman",
+        "bin/doctrine"
+    ],
     "authors": [
         {
             "name": "Soanix",
@@ -10,11 +14,10 @@
     ],
     "license": "MIT",
     "require": {
-        "php": ">=8.0",
-        "composer/composer": ">=1.9",
+        "php": ">=8.3",
+        "ext-pdo": "*",
         "soanix/router": ">=1.6"
     },
-
     "autoload": {
         "files": [
             "src/Cavesman/Config/Defines.php",
