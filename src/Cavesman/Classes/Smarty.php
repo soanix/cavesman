@@ -477,9 +477,9 @@ if (class_exists('\Smarty')) {
             $this->registerPlugin('modifier', 'urlencode', function ($string) {
                 return urlencode($string);
             });
-            // Define una función de modificación personalizada para urldencode
-            $this->registerPlugin('modifier', 'urldencode', function ($string) {
-                return urldencode($string);
+            // Define una función de modificación personalizada para urldecode
+            $this->registerPlugin('modifier', 'urldecode', function ($string) {
+                return urldecode($string);
             });
 
         }
