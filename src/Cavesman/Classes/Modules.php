@@ -20,17 +20,17 @@ class Modules extends Display
     public static function loadModules(): void
     {
         // Install modules
-        if(Config::get('main.install', true)) {
+        if (Config::get('main.install', true)) {
             foreach (Config::get('modules.list', []) as $name => $module) {
-                if(!isset($module['name']))
+                if (!isset($module['name']))
                     continue;
                 if (!is_dir(_MODULES_ . '/' . self::parseClassName($name)))
                     mkdir(_MODULES_ . '/' . self::parseClassName($name));
-                if (!file_exists(_MODULES_ . '/' . self::parseClassName($name) . '/' .self::parseClassName($name) . '.php')) {
+                if (!file_exists(_MODULES_ . '/' . self::parseClassName($name) . '/' . self::parseClassName($name) . '.php')) {
                     touch(_MODULES_ . '/' . self::parseClassName($name) . '/' . self::parseClassName($name) . '.php');
                     $fp = fopen(_MODULES_ . '/' . self::parseClassName($name) . '/' . self::parseClassName($name) . '.php', 'w+');
                     fwrite($fp, "<?php" . PHP_EOL);
-                    fwrite($fp, "namespace src\Modules;" . PHP_EOL . PHP_EOL);
+                    fwrite($fp, "namespace App\Modules\\" . self::parseClassName($name) . ";" . PHP_EOL . PHP_EOL);
                     fwrite($fp, "class " . self::parseClassName($name) . ' extends \Cavesman\Modules {');
                     fwrite($fp, '}');
                     fclose($fp);
@@ -47,34 +47,6 @@ class Modules extends Display
         if (is_dir(_MODULES_)) {
             $directories = scandir(_MODULES_);
             foreach ($directories as $directory) {
-                $module = str_replace('directory/', '', $directory);
-                if ($module !== '.' && $module != '..') {
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" .$module . "/config.json"), true);
-                    $config['module'] = self::parseClassName($module);
-                    if ($config['active']) {
-                        require_once _MODULES_ . "/" . $module . "/" . $module . ".php";
-
-                        if (is_dir(_MODULES_ . "/" . $module . "/Controller")) {
-                            foreach (glob(_MODULES_ . "/" . $module . "/Controller/*.php") as $filename) {
-                                require_once $filename;
-                            }
-                        }
-
-                        if (is_dir(_MODULES_ . "/" . $module . "/Abstract")) {
-                            foreach (glob(_MODULES_ . "/" . $module . "/Abstract/*.php") as $filename) {
-                                require_once $filename;
-                            }
-                        }
-
-                        if (is_dir(_MODULES_ . "/" . $module . "/Entity")) {
-                            foreach (glob(_MODULES_ . "/" . $module . "/Entity/*.php") as $filename) {
-                                require_once $filename;
-                            }
-                        }
-                    }
-                }
-            }
-            foreach ($directories as $directory) {
 
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
@@ -88,7 +60,7 @@ class Modules extends Display
                             foreach (glob(_MODULES_ . "/" . self::parseClassName($module) . "/Controller/*.php") as $filename) {
                                 $controller = pathinfo($filename);
                                 $c_name = $controller['filename'];
-                                $namespace[$c_name] = 'src\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . $c_name;
+                                $namespace[$c_name] = '\\App\\Modules\\' . self::parseClassName($module) . "\\Controller\\" . $c_name;
 
                                 $namespace[$c_name]::$config = self::$list[$config['name']];
 
@@ -123,7 +95,7 @@ class Modules extends Display
 
                             self::$list[$config['name']] = $config;
 
-                            $namespace = 'src\\Modules\\' . self::parseClassName($module);
+                            $namespace = 'App\\Modules\\' . self::parseClassName($module) . '\\' . self::parseClassName($module);
                             //$modules->$module = self::getInstance($namespace);
 
                             $namespace::$config = self::$list[$config['name']];
@@ -156,7 +128,7 @@ class Modules extends Display
 
     public static function parseClassName($name)
     {
-        if(preg_match('/[A-Z]/', $name)){
+        if (preg_match('/[A-Z]/', $name)) {
             return $name;
         }
         $name = explode("_", $name);
@@ -175,12 +147,12 @@ class Modules extends Display
      */
     public static function trans(string $string = '', array $binds = [], string $modules = '', $iso = null): string
     {
-        if (class_exists('\src\Modules\Lang')) {
+        if (class_exists('\App\Modules\Lang\Lang')) {
             if ($modules)
-                return \src\Modules\Lang::l($string, $binds, self::parseClassName($modules), $iso);
+                return \App\Modules\Lang\Lang::l($string, $binds, self::parseClassName($modules), $iso);
             if (isset(get_called_class()::$config['name']))
-                return \src\Modules\Lang::l($string, $binds, get_called_class()::$config['name'], $iso);
-            return \src\Modules\Lang::l($string, $binds, '', $iso);
+                return \App\Modules\Lang\Lang::l($string, $binds, get_called_class()::$config['name'], $iso);
+            return \App\Modules\Lang\Lang::l($string, $binds, '', $iso);
         } else {
             $binded = $string;
             foreach ($binds as $key => $value) {
@@ -201,7 +173,7 @@ class Modules extends Display
         $modules = self::getInstance(self::class);
         if ($hook) {
             foreach (self::$list as $module) {
-                $namespace = 'src\\Modules\\' . self::parseClassName($module['module']);
+                $namespace = '\\App\\Modules\\' . self::parseClassName($module['module']);
                 $hook_name = "hook" . str_replace(" ", "", ucwords(str_replace("_", " ", $hook)));
                 if (method_exists($namespace, $hook_name) && $module['active'])
                     $html .= $namespace::$hook_name();
