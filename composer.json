@@ -1,7 +1,7 @@
 {
     "name": "soanix/cavesman",
     "description": "PHP Framework",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "bin" : [
         "bin/cavesman",
         "bin/doctrine"
