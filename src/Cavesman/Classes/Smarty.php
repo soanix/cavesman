@@ -2,10 +2,8 @@
 
 namespace Cavesman;
 
-use Cavesman\FrontEnd;
 use lessc;
 use ScssPhp\ScssPhp\Compiler;
-use src\Modules\Lang;
 
 if (class_exists('\Smarty')) {
 
@@ -76,8 +74,8 @@ if (class_exists('\Smarty')) {
             $name = isset($params['do']) ? $params['do'] : 'general';
             $group_name = isset($params['group']) ? $params['group'] : '';
 
-            if (class_exists('\src\Modules\User') && method_exists('\src\Modules\User', 'can'))
-                return \src\Modules\User::can($name, $group_name);
+            if (class_exists('\App\Modules\User\User') && method_exists('\App\Modules\User\User', 'can'))
+                return \App\Modules\User\User::can($name, $group_name);
             else
                 return true;
         }
