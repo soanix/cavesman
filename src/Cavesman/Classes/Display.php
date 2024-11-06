@@ -3,8 +3,6 @@
 namespace Cavesman;
 
 use mysql_xdevapi\Exception;
-use src\Modules\Lang;
-use src\Modules\User;
 
 class Display extends Cavesman
 {
@@ -12,8 +10,8 @@ class Display extends Cavesman
 
     public static function trans(string $string = '', array $binds = [], string $module = '', $iso = null): string
     {
-        if (class_exists(Lang::class)) {
-            return Lang::l($string, $binds, $module, $iso);
+        if (class_exists('\App\Modules\Lang\Lang')) {
+            return \App\Modules\Lang\Lang::l($string, $binds, $module, $iso);
         } else {
             $binded = $string;
             foreach ($binds as $key => $value) {
@@ -87,11 +85,11 @@ class Display extends Cavesman
     {
         if (file_exists(_APP_ . "/routes.php"))
             include_once(_APP_ . "/routes.php");
-        
+
         if (is_dir(_SRC_ . "/Routes"))
             foreach (glob(_SRC_ . "/Routes/*.php") as $routeFile)
                 require_once $routeFile;
-        
+
         parent::__install();
         Modules::loadModules();
     }
@@ -117,12 +115,12 @@ class Display extends Cavesman
             include_once(_APP_ . "/routes.php");
         else
             throw new Exception("No se ha encontrado el archivo routes.php",  500);
-        
+
         if (is_dir(_SRC_ . "/Routes"))
             foreach (glob(_SRC_ . "/Routes/*.php") as $routeFile)
                 require_once $routeFile;
-        
-        
+
+
         if (file_exists(_THEMES_ . "/" . _THEME_NAME_ . "/index.php")) {
             include_once(_THEMES_ . "/" . _THEME_NAME_ . "/index.php");
         }
@@ -293,8 +291,8 @@ class Display extends Cavesman
 
     public static function can($name = "general", $group_name = " general")
     {
-        if (class_exists(user::class))
-            return User::can($name, $group_name);
+        if (class_exists('\App\Modules\User\User'))
+            return \App\Modules\User\User::can($name, $group_name);
         else
             return true;
     }
