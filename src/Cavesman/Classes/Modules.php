@@ -88,6 +88,13 @@ class Modules extends Display
                                     });
 
                                 });
+                                Router::mount(_PATH_ . $namespace[$c_name]::getClass(), function () use ($module, $namespace, $c_name) {
+                                    Router::middleware("POST|GET", "/(.*)", function ($fn) use ($module, $namespace, $c_name) {
+                                        if (method_exists($namespace[$c_name], "Smarty")) {
+                                            $namespace[$c_name]::Smarty();
+                                        }
+                                    });
+                                });
                             }
 
                         } else {
