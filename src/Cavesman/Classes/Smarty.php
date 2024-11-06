@@ -196,7 +196,8 @@ if (class_exists('\Smarty')) {
 
 
             if (file_exists($file)) {
-                $name = hash("sha256", $file . "-" . Lang::$iso . "-" . filemtime($file));
+                $iso = class_exists('\App\Modules\Lang\Lang') ? \App\Modules\Lang\Lang::$iso : 'es';
+                $name = hash("sha256", $file . "-" . $iso . "-" . filemtime($file));
                 $new_file = _WEB_ . "/c/js/" . $name . ".js";
                 $js = _PATH_ . "c/js/" . $name . ".js";
                 if (!file_exists($new_file)) {
