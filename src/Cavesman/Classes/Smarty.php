@@ -2,9 +2,6 @@
 
 namespace Cavesman;
 
-use lessc;
-use ScssPhp\ScssPhp\Compiler;
-
 if (class_exists('\Smarty')) {
 
     /**
@@ -12,6 +9,7 @@ if (class_exists('\Smarty')) {
      *
      * initializes basic smarty settings and act as smarty object
      *
+     * @deprecated  Smarty support is discontinued and will be deleted in 0.5
      * @final   Smarty
      * @category    Libraries
      * @author  Md. Ali Ahsan Rana
@@ -126,15 +124,7 @@ if (class_exists('\Smarty')) {
                 $new_file = _WEB_ . "/c/css/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
                 $css = _PATH_ . "c/css/" . $name . "." . pathinfo($file, PATHINFO_EXTENSION);
                 if (!file_exists($new_file)) {
-                    if ($extension == 'less') {
-                        $less = new lessc;
-                        $compiled = $less->compileFile($css);
-                        $fp = fopen($new_file, "w+");
-                        fwrite($fp, $compiled);
-                        fclose($fp);
-                    } else {
-                        copy($file, $new_file);
-                    }
+                    copy($file, $new_file);
                 }
                 $time = "";
             } elseif (stripos($file, "/") !== 0 && stripos($file, "://") === false) {
@@ -147,20 +137,7 @@ if (class_exists('\Smarty')) {
                 $new_file = _WEB_ . "/c/css/" . $name . ".css";
                 $css = _PATH_ . "c/css/" . $name . ".css";
                 if (!file_exists($new_file)) {
-                    if ($extension == 'less') {
-                        $less = new lessc;
-                        $compiled = $less->compileFile($f);
-                        $fp = fopen($new_file, "w+");
-                        fwrite($fp, $compiled);
-                        fclose($fp);
-                    } elseif ($extension == 'scss') {
-                        $scss = new Compiler();
-                        $scss->setImportPaths(dirname($f));
-                        $compiled = $scss->compile('@import "' . basename($f) . '";');
-                        $fp = fopen($new_file, "w+");
-                        fwrite($fp, $compiled);
-                        fclose($fp);
-                    } elseif ($template) {
+                    if ($template) {
                         $compiled = self::partial($f);
 
                         $fp = fopen($new_file, "w+");

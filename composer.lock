@@ -1,0 +1,77 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "f9eb4cf83e58be1433b8a347bec65dbd",
+    "packages": [
+        {
+            "name": "soanix/router",
+            "version": "1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/soanix/router.git",
+                "reference": "d491e0a2a292b46239c78f35129859385775f742"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/soanix/router/zipball/d491e0a2a292b46239c78f35129859385775f742",
+                "reference": "d491e0a2a292b46239c78f35129859385775f742",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=8.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2.14",
+                "phpunit/php-code-coverage": "~2.2.3",
+                "phpunit/phpunit": "~4.8.36"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Soanix": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bram(us) Van Damme",
+                    "email": "bramus@bram.us",
+                    "homepage": "https://www.bram.us"
+                },
+                {
+                    "name": "Pedro 'Soanix' Oliver",
+                    "email": "soanix91@gmail.com"
+                }
+            ],
+            "description": "A lightweight and simple object oriented PHP Router",
+            "homepage": "https://github.com/soanix/router",
+            "keywords": [
+                "router",
+                "routing"
+            ],
+            "support": {
+                "source": "https://github.com/soanix/router/tree/1.7"
+            },
+            "time": "2024-12-02T20:57:39+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.4",
+        "ext-pdo": "*"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}

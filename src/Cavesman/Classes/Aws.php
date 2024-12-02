@@ -2,7 +2,6 @@
 
 namespace Cavesman;
 
-use App\Models\Enterprise;
 use Aws\S3\S3Client;
 
 class Aws
@@ -89,7 +88,7 @@ class Aws
         ]);
 
         return $s3->deleteObject([
-            'Bucket' => Enterprise::$current->aws,
+            'Bucket' => Config::get('aws.s3.bucket', 'strong-bucket'),
             'Key' => $file
         ]);
 
@@ -111,6 +110,6 @@ class Aws
             ]
         ]);
 
-        return $s3->getObjectUrl(Enterprise::$current->getAws(), $file);
+        return $s3->getObjectUrl(Config::get('aws.s3.bucket', 'strong-bucket'), $file);
     }
 }
