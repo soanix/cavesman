@@ -4,7 +4,7 @@ namespace Cavesman;
 
 class Translate
 {
-    const FILE = _APP_ . '/locale/messages.json';
+    const string FILE = _APP_ . '/locale/messages.json';
 
     public static string $currentLanguage = 'en';
     public static array $strings = [];

@@ -15,26 +15,26 @@ namespace Cavesman;
 class Console
 {
 
-    const ERROR = 'error';
-    const WARNING = 'warning';
-    const SUCCESS = 'success';
-    const INFO = 'info';
-    const PROGRESS = 'progress';
+    const string ERROR = 'error';
+    const string WARNING = 'warning';
+    const string SUCCESS = 'success';
+    const string INFO = 'info';
+    const string PROGRESS = 'progress';
     
     /**
      * @var array The route patterns and their handling functions
      */
-    private static $afterRoutes = array();
+    private static array $afterRoutes = [];
 
     /**
      * @var array The before middleware route patterns and their handling functions
      */
-    private static $beforeRoutes = array();
+    private static array $beforeRoutes = [];
 
     /**
      * @var array [object|callable] The function to be executed when no route has been matched
      */
-    protected static $notFoundCallback = array();
+    protected static array $notFoundCallback = [];
 
     /**
      * @var string Current base route, used for (sub)route mounting
@@ -110,9 +110,9 @@ class Console
         self::$baseRoute = '';
         self::$requestedMethod = '';
         self::$serverBasePath = null;
-        self::$afterRoutes = array();
-        self::$beforeRoutes = array();
-        self::$notFoundCallback = array();
+        self::$afterRoutes = [];
+        self::$beforeRoutes = [];
+        self::$notFoundCallback = [];
         self::$namespace = '';
 
     }
@@ -199,7 +199,7 @@ class Console
      */
     public static function getRequestHeaders()
     {
-        $headers = array();
+        $headers = [];
 
         // If getallheaders() is available, use that
         if (function_exists('getallheaders')) {
@@ -329,7 +329,7 @@ class Console
             foreach (self::$notFoundCallback as $route_pattern => $route_callable) {
 
                 // matches result
-                $matches = array();
+                $matches = [];
 
                 // check if there is a match and get matches as $matches (pointer)
                 $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches, PREG_OFFSET_CAPTURE);
@@ -444,7 +444,7 @@ class Console
         return $numHandled;
     }
 
-    private static function invoke($fn, $params = array())
+    private static function invoke($fn, $params = [])
     {
 
         if (is_callable($fn)) {

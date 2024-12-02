@@ -3,8 +3,10 @@
 namespace Cavesman\Http;
 
 use Cavesman\Http;
+use JetBrains\PhpStorm\NoReturn;
 
 class JsonResponse {
+    #[NoReturn]
     public function __construct(mixed $message, int $code = 200, $flags = null)
     {
         header('X-PHP-Response-Code: ' . $code, true, $code);
