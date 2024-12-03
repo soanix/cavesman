@@ -18,6 +18,9 @@
         "soanix/router": "^1.7",
         "ext-mbstring": "*"
     },
+    "require-dev": {
+        "doctrine/orm": "3.3.0"
+    },
     "autoload": {
         "files": [
             "src/Cavesman/Config/Defines.php",

@@ -60,13 +60,15 @@ class Db
                 }
             }
         }
-        $config = ORMSetup::createAttributeMetadataConfiguration(
-            paths: $paths,
-            isDevMode: true,
-            cache: null
-        );
 
         $connectionParams = Config::get($file . '.' . $server);
+
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            paths: $paths,
+            isDevMode: Config::get($file . '.' . $server . '.dev_mode', true)
+        );
+
+
 
         if ($database)
             $connectionParams['dbname'] = $database;
