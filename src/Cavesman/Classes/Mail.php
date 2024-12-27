@@ -14,7 +14,16 @@ class Mail
 {
     public static $instance;
 
-    public static function generate() {
+    public static function getInstance(): PHPMailer {
+        if(!self::$instance instanceof self) {
+            self::generate();
+
+        }
+        return self::$instance;
+    }
+
+
+    public static function generate(): PHPMailer {
         self::$instance = new PHPMailer(true);
         self::$instance->CharSet = 'UTF-8';
 
@@ -32,6 +41,8 @@ class Mail
 
         //Recipients
         self::$instance->setFrom(Config::get("mail.from.email"), Config::get("mail.from.name"));
+
+        return self::$instance;
     }
 
     /**
