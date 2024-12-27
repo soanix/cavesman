@@ -57,7 +57,7 @@ class Mail
     public static function send(string|array $to, string $subject = '', string|array  $body = '', array $files = [], array $embedImages = []): bool
     {
         // Instantiation and passing `true` enables exceptions
-        if(!self::$instance instanceof self) {
+        if(!self::$instance instanceof PHPMailer) {
             self::generate();
         }
 
