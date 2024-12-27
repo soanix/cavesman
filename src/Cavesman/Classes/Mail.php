@@ -72,8 +72,6 @@ class Mail
         if (Config::get("mail.reply.enable", false))
             $mail->addReplyTo(Config::get("mail.reply.email"), Config::get("mail.reply.name"));
 
-        $mail->addEmbeddedImage(_THEME_ . '/assets/img/logo/logo-yellow.png', 'logo');
-
         // Content
 
         $mail->Subject = $subject;
