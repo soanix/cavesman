@@ -34,4 +34,5 @@ Console::command('cavesman:install', function () {
     include __DIR__ . '/Command/Install.php';
 });
 
-Console::command('router:list', Console::class . '@listRoutesCommand');
+Console::command('command:list', Console::class . '@listRoutesCommand');
+Console::command('route:list', Router::class . '@listRoutesCommand');

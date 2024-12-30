@@ -20,7 +20,7 @@ class Console
     const string SUCCESS = 'success';
     const string INFO = 'info';
     const string PROGRESS = 'progress';
-    
+
     /**
      * @var array The route patterns and their handling functions
      */
@@ -79,7 +79,7 @@ class Console
      * @var array List of errors
      */
     public static array $errors = [];
-    
+
     /**
      * @var string Current job in progress
      */
@@ -117,19 +117,12 @@ class Console
 
     }
 
-    public static function listRoutesCommand() {
-
-        Console::show('MIDDLEWARE');
-
-        foreach(self::$beforeRoutes as $method =>  $route) {
-            Console::show('[' . $method . '] ' . $route['route'], Console::PROGRESS);
+    public static function listRoutesCommand(): void
+    {
+        foreach (self::$afterRoutes as $method => $routes) {
+            foreach ($routes as $route)
+                Console::show('[' . $method . '] ' . $route['pattern'], Console::PROGRESS);
         }
-
-        Console::show('ROUTES');
-        foreach(self::$afterRoutes as $method =>  $route) {
-            Console::show('[' . $method . '] ' . $route['route'], Console::PROGRESS);
-        }
-
     }
 
     /**
@@ -285,7 +278,6 @@ class Console
      */
     public static function run($callback = null)
     {
-
         // Handle all before middlewares
         if (isset(self::$beforeRoutes[self::$requestedMethod])) {
             self::handle(self::$beforeRoutes[self::$requestedMethod]);
@@ -690,7 +682,7 @@ class Console
                 $formatEnd .= $diffEnd->i . "m ";
             if ($diffEnd->s)
                 $formatEnd .= $diffEnd->s . "s";
-            
+
             self::print("\e[0;33mCurrent job:\e[m " . self::$currentProgress, self::PROGRESS);
             self::print("\e[0;33mRunning time:\e[m " . $formatedDuration, self::PROGRESS);
             self::print("\e[0;35mEstimated time duration:\e[m " . $formatEnd, self::PROGRESS);
@@ -698,7 +690,7 @@ class Console
             self::print("\e[0;33mItems processed:\e[m " . $current, self::PROGRESS);
             self::print("\e[0;33mPending Items:\e[m " . $total - $current, self::PROGRESS);
             self::print("\e[0;33mTotal Items:\e[m " . $total, self::PROGRESS);
-            self::print("\e[0;33mMemory:\e[m " . round(memory_get_usage() / 1048576, 2)."MB", self::PROGRESS);
+            self::print("\e[0;33mMemory:\e[m " . round(memory_get_usage() / 1048576, 2) . "MB", self::PROGRESS);
             self::print("\e[0;32mCompleted:\e[m " . $percent . "%", self::PROGRESS);
 
 
@@ -714,8 +706,9 @@ class Console
         }
 
     }
-    
-    public static function setCurrentJob($currentProgress) {
+
+    public static function setCurrentJob($currentProgress)
+    {
         self::$currentProgress = $currentProgress;
     }
 }
