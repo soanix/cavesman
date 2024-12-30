@@ -1,4 +1,5 @@
 <?php
+
 namespace Cavesman;
 
 
@@ -25,9 +26,8 @@ class Router extends \Soanix\Router\Router
         return "\033[1;4m" . $string . "\033[0m";
     }
 
-    public static function listRoutesCommand(): void
+    public static function listRoutesCommand($type = false): void
     {
-
         $list = [];
 
         foreach (self::$beforeRoutes as $method => $routes) {
@@ -55,21 +55,31 @@ class Router extends \Soanix\Router\Router
             return strcmp($a['url'], $b['url']);
         });
 
-        $longestMethod = max(array_map(fn($a) => strlen($a['method'] . ''. ($a['middleware'] ? ' (M)' : '')), $list));
+        $longestMethod = max(array_map(fn($a) => strlen($a['method'] . '' . ($a['middleware'] ? ' (M)' : '')), $list));
 
-        $longestUrl = max(array_map(fn($a) => strlen($a['url']), $list));
 
-        $currentRoute = '';
-        foreach ($list as $route) {
-            if ($currentRoute != $route['url']) {
-                $currentRoute = $route['url'];
-                Console::show(PHP_EOL . self::blackyMethod($route['url']), Console::PROGRESS);
+        if ($type === 'simple') {
+            $currentRoute = '';
+            foreach ($list as $route) {
+                if ($currentRoute != $route['url']) {
+                    $currentRoute = $route['url'];
+                    Console::show($route['url'], Console::PROGRESS);
+                }
             }
-            Console::show(
-                self::colorizeMethod($route['method'], str_pad($route['method'] . ''. ($route['middleware'] ? ' (M)' : ''), $longestMethod, ' ')) . "  " .
-                (is_string($route['fn']) ? $route['fn'] : 'function'),
-                Console::PROGRESS
-            );
+        } elseif(!$type || $type === 'complete') {
+            $currentRoute = '';
+
+            foreach ($list as $route) {
+                if ($currentRoute != $route['url']) {
+                    $currentRoute = $route['url'];
+                    Console::show(PHP_EOL . self::blackyMethod($route['url']), Console::PROGRESS);
+                }
+                Console::show(
+                    self::colorizeMethod($route['method'], str_pad($route['method'] . '' . ($route['middleware'] ? ' (M)' : ''), $longestMethod, ' ')) . "  " .
+                    (is_string($route['fn']) ? $route['fn'] : 'function'),
+                    Console::PROGRESS
+                );
+            }
         }
 
     }

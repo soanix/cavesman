@@ -119,9 +119,25 @@ class Console
 
     public static function listRoutesCommand(): void
     {
+        $list = [];
         foreach (self::$afterRoutes as $method => $routes) {
             foreach ($routes as $route)
-                Console::show('[' . $method . '] ' . $route['pattern'], Console::PROGRESS);
+                $list[] = [
+                    'url' => $route['pattern'],
+                    'fn' => $route['fn'],
+                    'description' => $route['description'],
+                ];
+        }
+        usort($list, function ($a, $b) {
+            return strcmp($a['url'], $b['url']);
+        });
+        $longestUrl = max(array_map(fn($a) => strlen($a['url']), $list));
+        foreach ($list as $route) {
+            Console::show(
+                str_pad($route['url'], $longestUrl, ' ', STR_PAD_RIGHT) . "\t" .
+                $route['description'] ,
+                Console::PROGRESS
+            );
         }
     }
 
@@ -152,7 +168,7 @@ class Console
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function match($methods, $pattern, $fn)
+    public static function match($methods, $pattern, $fn, $description = '')
     {
         $pattern = self::$baseRoute . trim($pattern, ':');
         $pattern = self::$baseRoute ? rtrim($pattern, ':') : $pattern;
@@ -161,6 +177,7 @@ class Console
             self::$afterRoutes[$method][] = array(
                 'pattern' => $pattern,
                 'fn' => $fn,
+                'description' => $description
             );
         }
     }
@@ -172,10 +189,10 @@ class Console
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function command($pattern, $fn)
+    public static function command($pattern, $fn, $description = '')
     {
         if (php_sapi_name() === 'cli') {
-            self::match('COMMAND', $pattern, $fn);
+            self::match('COMMAND', $pattern, $fn, $description);
         }
     }
 

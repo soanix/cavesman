@@ -32,7 +32,10 @@ class Cavesman
 
 Console::command('cavesman:install', function () {
     include __DIR__ . '/Command/Install.php';
-});
+}, 'Install filesystem (Only first run)');
 
-Console::command('command:list', Console::class . '@listRoutesCommand');
-Console::command('route:list', Router::class . '@listRoutesCommand');
+Console::command('--help', Console::class . '@listRoutesCommand', 'Show all commands');
+Console::command('route:list', Router::class . '@listRoutesCommand', 'List All routes with methods');
+
+/** @see Router::listRoutesCommand() */
+Console::command('route:list:(simple|complete)', Router::class . '@listRoutesCommand', 'List all url patterns with or wothout methods');
