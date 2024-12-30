@@ -1,4 +1,5 @@
 <?php
+
 namespace Cavesman;
 
 class Cavesman
@@ -29,4 +30,8 @@ class Cavesman
     }
 }
 
-?>
+Console::command('cavesman:install', function () {
+    include __DIR__ . '/Command/Install.php';
+});
+
+Console::command('router:list', Console::class . '@listRoutesCommand');

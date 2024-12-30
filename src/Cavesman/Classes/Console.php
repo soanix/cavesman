@@ -117,6 +117,21 @@ class Console
 
     }
 
+    public static function listRoutesCommand() {
+
+        Console::show('MIDDLEWARE');
+
+        foreach(self::$beforeRoutes as $method =>  $route) {
+            Console::show('[' . $method . '] ' . $route['route'], Console::PROGRESS);
+        }
+
+        Console::show('ROUTES');
+        foreach(self::$afterRoutes as $method =>  $route) {
+            Console::show('[' . $method . '] ' . $route['route'], Console::PROGRESS);
+        }
+
+    }
+
     /**
      * Store a before middleware route and a handling function to be executed when accessed using one of the specified methods.
      *
