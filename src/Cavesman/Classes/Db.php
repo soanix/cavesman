@@ -29,7 +29,7 @@ class Db
             return self::$oConnection[$key];
         }
 
-        $directories = scandir(_MODULES_);
+
         $paths = [];
         if (is_dir(_ROOT_ . "/src/Entity"))
             $paths[] = _ROOT_ . "/src/Entity";
@@ -38,6 +38,7 @@ class Db
                 $paths[] = _ROOT_ . "/src/EntityAux";
         }
         if (is_dir(_MODULES_)) {
+            $directories = scandir(_MODULES_);
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
