@@ -2,8 +2,8 @@
 
 namespace Cavesman;
 
-use App\Twig\ConfigExtension;
-use App\Twig\PathExtension;
+use Cavesman\Twig\ConfigExtension;
+use Cavesman\Twig\PathExtension;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
