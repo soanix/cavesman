@@ -2,6 +2,8 @@
 
 namespace Cavesman;
 
+use App\Twig\ConfigExtension;
+use App\Twig\PathExtension;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -31,6 +33,8 @@ class Twig
             $loader = new FilesystemLoader([_THEME_ . '/templates']);
             self::$instance = new Environment($loader);
             self::$instance->addExtension(new StringLoaderExtension());
+            self::$instance->addExtension(new ConfigExtension());
+            self::$instance->addExtension(new PathExtension());
         }
         return self::$instance;
     }
