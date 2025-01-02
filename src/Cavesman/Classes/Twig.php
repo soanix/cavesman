@@ -25,7 +25,7 @@ class Twig
      *
      * @return Environment
      */
-    private static function getInstance(): Environment
+    protected static function getInstance(): Environment
     {
         if ((self::$instance instanceof self) === false) {
             $loader = new FilesystemLoader([_THEME_ . '/templates']);
