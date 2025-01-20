@@ -724,8 +724,17 @@ class Console
 
     }
 
-    public static function setCurrentJob($currentProgress)
-    {
+    /**
+     * Request value to cli
+     *
+     * @param $name
+     * @return string
+     */
+    public static function requestValue($name): string {
+        return trim(fgets(STDIN));
+    }
+    
+    public static function setCurrentJob($currentProgress) {
         self::$currentProgress = $currentProgress;
     }
 }
