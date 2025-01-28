@@ -30,6 +30,9 @@ class Router extends \Soanix\Router\Router
                 ];
         }
 
+        if (!$list)
+            return;
+
         usort($list, function ($a, $b) {
             return strcmp($a['url'], $b['url']);
         });
