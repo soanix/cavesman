@@ -4,11 +4,11 @@
 
 PHP framework
 
-Version: 0.3.x
+Version: 0.5
 
 ## Requeriments
 
-- PHP >= 8.3
+- PHP >= 8.4
 
 ## How to Install
 
