@@ -33,7 +33,7 @@ if (!file_exists(Fs::PUBLIC_DIR . "/.htaccess")) {
 if (!file_exists(Fs::SRC_DIR . "/Routes/Base.php")) {
     $fp = fopen(Fs::SRC_DIR . "/Routes/Base.php", "w+");
     $htaccess = '<?php' . PHP_EOL;
-    $htaccess .= 'Cavesman\\Router::get(\'/\', fn() => new Cavesman\Http\JsonResponse([\'message\' => \'Welcome to Launcher Framework!\']));';
+    $htaccess .= 'Cavesman\\Router::get(\'/\', fn() => new Cavesman\Http\JsonResponse([\'message\' => \'Welcome to Cavesman Framework!\']));';
     fwrite($fp, $htaccess);
     fclose($fp);
 }
