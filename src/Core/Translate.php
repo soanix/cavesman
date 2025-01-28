@@ -2,12 +2,17 @@
 
 namespace Cavesman;
 
+use Cavesman\Enum\Directory;
+
 class Translate
 {
-    const string FILE = FileSystem::appDir() . '/locale/messages.json';
 
     public static string $currentLanguage = 'en';
     public static array $strings = [];
+
+    public static function getFile(): string {
+        return FileSystem::getPath(Directory::LOCALE). '/messages.json';
+    }
 
     /**
      * Get locale list
@@ -55,7 +60,7 @@ class Translate
      */
     private static function getLanguage($lang): array
     {
-        $file = FileSystem::appDir() . "/locale/messages.$lang.json";
+        $file = FileSystem::getPath(Directory::LOCALE). "/messages.$lang.json";
         self::$strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
         return self::$strings;
@@ -74,7 +79,7 @@ class Translate
 
         self::checkDirectory();
 
-        $json = file_exists(self::FILE) ? json_decode(file_get_contents(self::FILE), true) : [];
+        $json = file_exists(self::getFile()) ? json_decode(file_get_contents(self::getFile()), true) : [];
 
 
         if (isset($json[$item['string']])) {
@@ -88,7 +93,7 @@ class Translate
 
         $json[$item['string']] = ['message' => "", 'replace' => $item['replace']];
 
-        $fp = fopen(self::FILE, 'w+');
+        $fp = fopen(self::getFile(), 'w+');
         fwrite($fp, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         fclose($fp);
 
@@ -103,8 +108,8 @@ class Translate
      */
     private static function checkDirectory(): void
     {
-        if (!is_dir(dirname(self::FILE)))
-            mkdir(dirname(self::FILE), 0644, true);
+        if (!is_dir(dirname(self::getFile())))
+            mkdir(dirname(self::getFile()), 0644, true);
     }
 
     /**
@@ -114,11 +119,11 @@ class Translate
      */
     public static function merge(): void
     {
-        $messages = file_exists(self::FILE) ? json_decode(file_get_contents(self::FILE), true) : [];
+        $messages = file_exists(self::getFile()) ? json_decode(file_get_contents(self::getFile()), true) : [];
 
         foreach (Config::get('locale.languages') as $lang) {
 
-            $file = FileSystem::appDir() . "/locale/messages.$lang.json";
+            $file = FileSystem::getPath(Directory::LOCALE). "/messages.$lang.json";
 
             $messages_locale = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 

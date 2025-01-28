@@ -13,7 +13,7 @@ class Request
      *
      * @return  string|array|null|mixed
      */
-    public static function post($string = '', $default = '')
+    public static function post(string $string = '', ?string $default = null): mixed
     {
         return $_POST[$string] ?? $default;
     }
@@ -21,12 +21,12 @@ class Request
     /**
      * Get GET value by key
      *
-     * @param string $string Text string to search in GET key
+     * @param string $value
      * @param string $default Default value if key is not defined
      *
      * @return string|array|null|mixed
      */
-    public static function get($value = '', $default = '')
+    public static function get(string $value = '', ?string $default = null): mixed
     {
         return $_GET[$value] ?? $default;
     }
@@ -34,12 +34,12 @@ class Request
     /**
      * Get FILES value by key
      *
-     * @param string $string Text string to search in GET key
+     * @param string $value
      * @param string|null $default Default value if key is not defined
      *
      * @return string|array|null|mixed
      */
-    public static function files($value = '', ?string $default = null): mixed
+    public static function files(string $value = '', ?string $default = null): mixed
     {
         return $_FILES[$value] ?? $default;
     }

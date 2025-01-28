@@ -2,7 +2,7 @@
 
 namespace Cavesman\Twig;
 
-use App\Tool\Fs;
+use Cavesman\FileSystem;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -11,12 +11,12 @@ class PathExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('path', [$this, 'getConfig']),
+            new TwigFunction('path', [$this, 'getPath']),
         ];
     }
 
-    public function getConfig(string $path)
+    public function getPath(string $path)
     {
-        return Fs::getAbsolutePath($path);
+        return FileSystem::getPath($path);
     }
 }

@@ -8,7 +8,7 @@ Console::show('Entity Value', Console::INFO);
 $entityName = ucfirst(Console::requestValue('Entity name in CammleCase (Upper):'));
 
 $extends = strtolower(Console::requestValue('Class Extends (optional)'));
-$file = FileSystem::srcDir() . '/Entity/' . $entityName . '.php';
+$file = FileSystem::getPath(\Cavesman\Enum\Directory::ENTITY) . '/' . $entityName . '.php';
 
 $fields = [];
 

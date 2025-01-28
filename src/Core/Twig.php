@@ -2,6 +2,7 @@
 
 namespace Cavesman;
 
+use Cavesman\Enum\Directory;
 use Cavesman\Twig\ConfigExtension;
 use Cavesman\Twig\PathExtension;
 use Twig\Environment;
@@ -45,7 +46,7 @@ class Twig
     protected static function getInstance(): Environment
     {
         if ((self::$instance instanceof self) === false) {
-            $loader = new FilesystemLoader([FileSystem::viewsDir() . '/public/templates']);
+            $loader = new FilesystemLoader([FileSystem::getPath(Directory::VIEWS) . '/' . Config::get('params.theme') . '/templates']);
             self::$instance = new Environment($loader);
             self::$instance->addExtension(new StringLoaderExtension());
             self::$instance->addExtension(new ConfigExtension());

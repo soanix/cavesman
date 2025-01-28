@@ -3,6 +3,7 @@
 namespace Cavesman;
 
 
+use Cavesman\Enum\Directory;
 use DateInterval;
 use DateMalformedIntervalStringException;
 use DateTime;
@@ -177,7 +178,7 @@ class Console
         if (!in_array($type, [self::PROGRESS, self::INFO]))
             self::$log .= $text;
 
-        self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.import.debug', true);
+        self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.log.debug', true);
 
         if ($text && (self::$debug || in_array($type, [self::PROGRESS, self::INFO])))
             echo $text;
@@ -188,7 +189,7 @@ class Console
 
     private static function log($message, $type): void
     {
-        self::$logEnabled = !is_null(self::$logEnabled) ? self::$logEnabled : Config::get('params.import.log', true);
+        self::$logEnabled = !is_null(self::$logEnabled) ? self::$logEnabled : Config::get('params.log.enabled', true);
 
         if (!self::$logEnabled) {
             return;
@@ -209,10 +210,10 @@ class Console
 
         $text .= PHP_EOL;
 
-        if (!is_dir(FileSystem::appDir() . '/log/import'))
-            mkdir(FileSystem::appDir() . '/log/import', 0777, true);
+        if (!is_dir(FileSystem::getPath(Directory::LOG)))
+            mkdir(FileSystem::getPath(Directory::LOG), 0777, true);
 
-        $fp = @fopen(FileSystem::appDir() . '/log/import/' . date('d-m-Y') . '.log', 'a+');
+        $fp = @fopen(FileSystem::getPath(Directory::LOG). '/' . date('d-m-Y') . '.log', 'a+');
         @fwrite($fp, $text);
         @fclose($fp);
     }

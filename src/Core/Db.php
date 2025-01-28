@@ -2,6 +2,7 @@
 
 namespace Cavesman;
 
+use Cavesman\Enum\Directory;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -31,31 +32,27 @@ class Db
 
 
         $paths = [];
-        if (is_dir(_ROOT_ . "/src/Entity"))
-            $paths[] = _ROOT_ . "/src/Entity";
+        if (is_dir(FileSystem::getPath(Directory::ENTITY)))
+            $paths[] = FileSystem::getPath(Directory::ENTITY);
         if (Config::get('params.db.global_aux', false)) {
-            if (is_dir(_ROOT_ . "/src/EntityAux"))
-                $paths[] = _ROOT_ . "/src/EntityAux";
+            if (is_dir(FileSystem::getPath(Directory::SRC) . '/EntityAux'))
+                $paths[] = FileSystem::getPath(Directory::SRC) . '/EntityAux';
         }
-        if (is_dir(Modules::MODULE_DIR)) {
-            $directories = scandir(Modules::MODULE_DIR);
+        if (is_dir(FileSystem::getPath(Directory::MODULE))) {
+            $directories = scandir(FileSystem::getPath(Directory::MODULE));
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
 
-                    $config = json_decode(file_get_contents(Modules::MODULE_DIR . "/" . $directory . "/config.json"), true);
+                    $config = json_decode(file_get_contents(FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/config.json"), true);
                     if ($config['active']) {
 
-                        if (is_dir(Modules::MODULE_DIR . "/" . $directory . "/Abstract"))
-                            foreach (glob(Modules::MODULE_DIR . "/" . $directory . "/Abstract/*.php") as $filename)
-                                require_once $filename;
-
-                        if (is_dir(Modules::MODULE_DIR . "/" . $directory . "/Entity"))
-                            $paths[] = Modules::MODULE_DIR . "/" . $directory . "/Entity";
+                        if (is_dir(FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/Entity"))
+                            $paths[] = FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/Entity";
 
                         if (Config::get('params.db.global_aux', false))
-                            if (is_dir(Modules::MODULE_DIR . "/" . $directory . "/EntityAux"))
-                                $paths[] = Modules::MODULE_DIR . "/" . $directory . "/EntityAux";
+                            if (is_dir(FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/EntityAux"))
+                                $paths[] =FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/EntityAux";
 
                     }
                 }

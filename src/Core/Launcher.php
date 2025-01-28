@@ -5,15 +5,7 @@ namespace Cavesman;
 class Launcher
 {
 
-    public static function getInstance($module): object
-    {
-        if (($module::$instance instanceof $module) === false) {
-            $module::$instance = new $module();
-        }
-        return $module::$instance;
-    }
-
-    public static function run(string $env = 'dev'): void
+    public static function run(): void
     {
 
         date_default_timezone_set(Config::get('params.timezone', 'Europe/Madrid'));

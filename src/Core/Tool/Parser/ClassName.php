@@ -10,7 +10,7 @@ class ClassName
      * @param $namespace
      * @return array
      */
-    public static function listInNamespace($namespace)
+    public static function listInNamespace($namespace): array
     {
         $namespace .= '\\';
         $myClasses = array_filter(get_declared_classes(), fn($item) => str_starts_with($item, $namespace));
@@ -36,7 +36,7 @@ class ClassName
     /**
      * Convert CamleCase to snake_case
      *
-     * @param string $classname
+     * @param string $camleCase
      * @return string
      */
     public static function camle2Snake(string $camleCase): string

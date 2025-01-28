@@ -4,17 +4,15 @@ namespace Cavesman;
 
 use Cavesman\Tool\Parser\ClassName;
 
-class Modules
+class Module
 {
-    const string MODULE_DIR = _ROOT_ . "/src/Modules";
-
     /**
      * Autoload Modules
      * @return void
      */
     public static function autoload(): void
     {
-        foreach (ClassName::listInNamespace('\\App\\Modules') as $module) {
+        foreach (ClassName::listInNamespace('\\App\\Module') as $module) {
             if (method_exists($module, 'autoload'))
                 $module::autoload();
 

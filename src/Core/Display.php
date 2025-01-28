@@ -2,30 +2,30 @@
 
 namespace Cavesman;
 
-final class Display
-{
+use Cavesman\Enum\Directory;
 
-    public static $instance;
+class Display
+{
 
     /**
      * Init function to load Smarty
      */
     public static function init(): void
     {
-        if (is_dir(FileSystem::srcDir() . "/Routes"))
-            foreach (glob(FileSystem::srcDir() . "/Routes/*.php") as $routeFile)
+        if (is_dir(FileSystem::getPath(Directory::ROUTES)))
+            foreach (glob(FileSystem::getPath(Directory::ROUTES) . "/*.php") as $routeFile)
                 require_once $routeFile;
-        Modules::autoload();
+        Module::autoload();
 
     }
 
     public static function initCli(): void
     {
 
-        if (is_dir(FileSystem::srcDir() . "/Commands"))
-            foreach (glob(FileSystem::srcDir() . "/Commands/*.php") as $routeFile)
+        if (is_dir(FileSystem::getPath(Directory::COMMANDS)))
+            foreach (glob(FileSystem::getPath(Directory::COMMANDS) . "/*.php") as $routeFile)
                 require_once $routeFile;
 
-        Modules::autoload();
+        Module::autoload();
     }
 }
