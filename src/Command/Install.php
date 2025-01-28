@@ -94,14 +94,8 @@ if (!is_dir(Fs::VIEWS_DIR))
     throw new Exception("Imposible crear el directorio de temas", 1);
 if (!is_dir(Fs::VIEWS_DIR . "/public"))
     throw new Exception("Imposible crear el directorio de temas default", 1);
-if (!is_dir(Fs::VIEWS_DIR . "/public/tpl"))
-    throw new Exception("Imposible crear el directorio de temas tpl", 1);
-if (!is_dir(Fs::APP_DIR . "/cache"))
-    throw new Exception("Imposible crear el directorio cache", 1);
 if (!is_dir(Fs::APP_DIR . "/config"))
     throw new Exception("Imposible crear el directorio de configuracion", 1);
-if (!is_dir(Fs::SRC_DIR . "/Modules"))
-    throw new Exception("Imposible crear el directorio de modulos", 1);
 
 if (Launcher::isCli()) {
     Console::show('Install successfully', Console::SUCCESS);
