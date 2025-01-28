@@ -21,7 +21,10 @@ class Display
 
     public static function initCli(): void
     {
-
+        if (is_dir(FileSystem::getPath(Directory::ROUTES)))
+            foreach (glob(FileSystem::getPath(Directory::ROUTES) . "/*.php") as $routeFile)
+                require_once $routeFile;
+        
         if (is_dir(FileSystem::getPath(Directory::COMMANDS)))
             foreach (glob(FileSystem::getPath(Directory::COMMANDS) . "/*.php") as $routeFile)
                 require_once $routeFile;
