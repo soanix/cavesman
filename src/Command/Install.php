@@ -33,7 +33,7 @@ if (!file_exists(Fs::PUBLIC_DIR . "/.htaccess")) {
 if (!file_exists(Fs::SRC_DIR . "/Routes/Base.php")) {
     $fp = fopen(Fs::SRC_DIR . "/Routes/Base.php", "w+");
     $htaccess = '<?php' . PHP_EOL;
-    $htaccess = '\Launcher\Router::get(\'/\', fn() => new JsonResponse([\'message\' => \'Welcome to Launcher Framework!\']));';
+    $htaccess = '\Cavesman\Router::get(\'/\', fn() => new JsonResponse([\'message\' => \'Welcome to Launcher Framework!\']));';
     fwrite($fp, $htaccess);
     fclose($fp);
 }
@@ -54,7 +54,7 @@ if (!file_exists(Fs::APP_DIR . "/config/params.json")) {
 if (!file_exists(Fs::VIEWS_DIR . "/public/index.php")) {
     $fp = fopen(Fs::VIEWS_DIR . "/public/index.php", "w+");
     $indexphp = '<?php' . PHP_EOL
-        . 'Launcher\Router::run();';
+        . 'Cavesman\Router::run();';
     fwrite($fp, $indexphp);
     fclose($fp);
 }
@@ -63,7 +63,7 @@ if (!file_exists(Fs::PUBLIC_DIR . "/index.php")) {
     $fp = fopen(Fs::PUBLIC_DIR . "/index.php", "w+");
     $routesphp = '<?php' . PHP_EOL
         . 'require __DIR__ . \'/../vendor/autoload.php\';' . PHP_EOL
-        . 'Launcher\Launcher::run();' . PHP_EOL
+        . 'Cavesman\Launcher::run();' . PHP_EOL
         . '?>';
     fwrite($fp, $routesphp);
     fclose($fp);
