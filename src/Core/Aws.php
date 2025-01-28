@@ -57,7 +57,7 @@ class Aws
      * @param string $file
      * @return string
      */
-    public static function download($bucket, string $file): string
+    public static function download(string $bucket, string $file): string
     {
         $s3 = new S3Client([
             'version' => Config::get('aws.s3.version', 'latest'),
@@ -83,7 +83,7 @@ class Aws
      * @param string $file
      * @return string
      */
-    public static function delete(string $file): string
+    public static function delete(string $bucket, string $file): string
     {
         $s3 = new S3Client([
             'version' => Config::get('aws.s3.version', 'latest'),
@@ -95,7 +95,7 @@ class Aws
         ]);
 
         return $s3->deleteObject([
-            'Bucket' => Config::get('aws.s3.bucket', 'strong-bucket'),
+            'Bucket' => $bucket,
             'Key' => $file
         ]);
 
