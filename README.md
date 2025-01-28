@@ -26,13 +26,15 @@ Version: 0.5
 
 2. Execute install command from bin-dir
 
-```bash
-vendor/bin/cavesman install
-```
-or
-```bash
-bin/cavesman install
-```
+   ```bash
+   vendor/bin/cavesman install
+   ```
+   or
+   ```bash
+   bin/cavesman install
+   ```
+   
+  
 3. Cavesman is installed
 
 # CHANGE LOG
@@ -48,8 +50,8 @@ bin/cavesman install
 
 ### 0.4 MAJOR UPDATE
 
-UPDATE Doctrine 2 to Doctrine 3
-DB class now is named Db
-Smarty Class Deprecated
+- Migrate from Doctrine 2 to Doctrine 3
+- DB class now is named Db
+- Smarty Class Deprecated
 
 
