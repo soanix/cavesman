@@ -209,10 +209,10 @@ class Console
 
         $text .= PHP_EOL;
 
-        if (!is_dir(Fs::APP_DIR . '/log/import'))
-            mkdir(Fs::APP_DIR . '/log/import', 0777, true);
+        if (!is_dir(FileSystem::appDir() . '/log/import'))
+            mkdir(FileSystem::appDir() . '/log/import', 0777, true);
 
-        $fp = @fopen(Fs::APP_DIR . '/log/import/' . date('d-m-Y') . '.log', 'a+');
+        $fp = @fopen(FileSystem::appDir() . '/log/import/' . date('d-m-Y') . '.log', 'a+');
         @fwrite($fp, $text);
         @fclose($fp);
     }

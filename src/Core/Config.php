@@ -19,7 +19,7 @@ class Config
         if (isset(self::$data[$params[0]]))
             $config = self::$data[$params[0]];
         else {
-            $file = Fs::APP_DIR . "/config/" . $params[0] . ".json";
+            $file = FileSystem::appDir() . "/config/" . $params[0] . ".json";
             $config = [];
             if (!is_dir(dirname($file)))
                 mkdir(dirname($file), 0777, true);
@@ -29,7 +29,7 @@ class Config
             }
 
             // Env config
-            $file = Fs::APP_DIR . "/config/" . $params[0] . "." . self::getEnv() . ".json";
+            $file = FileSystem::appDir() . "/config/" . $params[0] . "." . self::getEnv() . ".json";
 
             if (file_exists($file)) {
                 $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
@@ -67,7 +67,7 @@ class Config
      */
     public static function getEnv(): string
     {
-        $file = Fs::APP_DIR . "/config/main.json";
+        $file = FileSystem::appDir() . "/config/main.json";
         if (file_exists($file)) {
             $main = json_decode(file_get_contents($file), true);
         }
@@ -86,7 +86,7 @@ class Config
     {
         $default_array = self::getDefaultArray($params, $default);
         $config = array_replace_recursive($config, $default_array);
-        $fp = fopen(Fs::APP_DIR . "/config/" . $params[0] . ".json", "w+");
+        $fp = fopen(FileSystem::appDir() . "/config/" . $params[0] . ".json", "w+");
         fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         fclose($fp);
         return $default;

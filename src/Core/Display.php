@@ -12,8 +12,8 @@ final class Display
      */
     public static function init(): void
     {
-        if (is_dir(Fs::SRC_DIR . "/Routes"))
-            foreach (glob(Fs::SRC_DIR . "/Routes/*.php") as $routeFile)
+        if (is_dir(FileSystem::srcDir() . "/Routes"))
+            foreach (glob(FileSystem::srcDir() . "/Routes/*.php") as $routeFile)
                 require_once $routeFile;
         Modules::autoload();
 
@@ -22,8 +22,8 @@ final class Display
     public static function initCli(): void
     {
 
-        if (is_dir(Fs::SRC_DIR . "/Commands"))
-            foreach (glob(Fs::SRC_DIR . "/Commands/*.php") as $routeFile)
+        if (is_dir(FileSystem::srcDir() . "/Commands"))
+            foreach (glob(FileSystem::srcDir() . "/Commands/*.php") as $routeFile)
                 require_once $routeFile;
 
         Modules::autoload();

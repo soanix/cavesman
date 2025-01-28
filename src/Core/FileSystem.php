@@ -2,15 +2,31 @@
 
 namespace Cavesman;
 
-class Fs
+class FileSystem
 {
-    const string SRC_DIR = _ROOT_ . '/src';
-    const string APP_DIR = _ROOT_ . '/app';
-    const string PUBLIC_DIR = _ROOT_ . '/public';
-    const string VIEWS_DIR = _ROOT_ . '/src/Views';
+    public static function srcDir(): string
+    {
+        return self::documentRoot() . '/src';
+    }
+    public static function appDir(): string
+    {
+        return self::documentRoot() . '/app';
+    }
+    public static function publicDir(): string
+    {
+        return self::documentRoot() . '/public';
+    }
+    public static function viewsDir(): string
+    {
+        return self::srcDir() . '/views';
+    }
 
+    public static function getPath($relativePath = ''): string {
+        if(!file_exists(self::documentRoot() . $relativePath))
+            return self::documentRoot() . $relativePath;
+    }
 
-    public static function getRootDir()
+    public static function documentRoot()
     {
         //config dir of app
         if (is_dir($_SERVER['DOCUMENT_ROOT'] . "/../vendor"))

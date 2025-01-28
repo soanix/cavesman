@@ -4,7 +4,7 @@ namespace Cavesman;
 
 class Translate
 {
-    const string FILE = Fs::APP_DIR . '/locale/messages.json';
+    const string FILE = FileSystem::appDir() . '/locale/messages.json';
 
     public static string $currentLanguage = 'en';
     public static array $strings = [];
@@ -55,7 +55,7 @@ class Translate
      */
     private static function getLanguage($lang): array
     {
-        $file = Fs::APP_DIR . "/locale/messages.$lang.json";
+        $file = FileSystem::appDir() . "/locale/messages.$lang.json";
         self::$strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
         return self::$strings;
@@ -118,7 +118,7 @@ class Translate
 
         foreach (Config::get('locale.languages') as $lang) {
 
-            $file = Fs::APP_DIR . "/locale/messages.$lang.json";
+            $file = FileSystem::appDir() . "/locale/messages.$lang.json";
 
             $messages_locale = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 

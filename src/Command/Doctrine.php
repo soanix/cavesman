@@ -1,14 +1,14 @@
 <?php
 
 use Cavesman\Console;
-use Cavesman\Fs;
+use Cavesman\FileSystem;
 use Cavesman\Tool\Parser\ClassName;
 
 Console::show('Entity Value', Console::INFO);
 $entityName = ucfirst(Console::requestValue('Entity name in CammleCase (Upper):'));
 
 $extends = strtolower(Console::requestValue('Class Extends (optional)'));
-$file = Fs::SRC_DIR . '/Entity/' . $entityName . '.php';
+$file = FileSystem::srcDir() . '/Entity/' . $entityName . '.php';
 
 $fields = [];
 

@@ -2,27 +2,27 @@
 
 use Cavesman\Config;
 use Cavesman\Console;
-use Cavesman\Fs;
+use Cavesman\FileSystem;
 use Cavesman\Launcher;
 
-if (!is_dir(Fs::SRC_DIR))
-    mkdir(Fs::SRC_DIR);
-if (!is_dir(Fs::APP_DIR))
-    mkdir(Fs::APP_DIR);
-if (!is_dir(Fs::PUBLIC_DIR))
-    mkdir(Fs::PUBLIC_DIR);
-if (!is_dir(Fs::VIEWS_DIR . "/public"))
-    mkdir(Fs::VIEWS_DIR . "/public", 0777, true);
-if (!is_dir(Fs::APP_DIR . "/config"))
-    mkdir(Fs::APP_DIR . "/config");
-if (!is_dir(Fs::SRC_DIR . "/Controller"))
-    mkdir(Fs::SRC_DIR . "/Controller");
-if (!is_dir(Fs::SRC_DIR . "/Routes"))
-    mkdir(Fs::SRC_DIR . "/Routes");
-if (!is_dir(Fs::SRC_DIR . "/Test"))
-    mkdir(Fs::SRC_DIR . "/Test");
-if (!file_exists(Fs::PUBLIC_DIR . "/.htaccess")) {
-    $fp = fopen(Fs::PUBLIC_DIR . "/.htaccess", "w+");
+if (!is_dir(FileSystem::srcDir()))
+    mkdir(FileSystem::srcDir());
+if (!is_dir(FileSystem::appDir()))
+    mkdir(FileSystem::appDir());
+if (!is_dir(FileSystem::publicDir()))
+    mkdir(FileSystem::publicDir());
+if (!is_dir(FileSystem::viewsDir() . "/public"))
+    mkdir(FileSystem::viewsDir() . "/public", 0777, true);
+if (!is_dir(FileSystem::appDir() . "/config"))
+    mkdir(FileSystem::appDir() . "/config");
+if (!is_dir(FileSystem::srcDir() . "/Controller"))
+    mkdir(FileSystem::srcDir() . "/Controller");
+if (!is_dir(FileSystem::srcDir() . "/Routes"))
+    mkdir(FileSystem::srcDir() . "/Routes");
+if (!is_dir(FileSystem::srcDir() . "/Test"))
+    mkdir(FileSystem::srcDir() . "/Test");
+if (!file_exists(FileSystem::publicDir() . "/.htaccess")) {
+    $fp = fopen(FileSystem::publicDir() . "/.htaccess", "w+");
     $htaccess = 'RewriteEngine On' . PHP_EOL
         . 'RewriteCond %{REQUEST_FILENAME} !-f' . PHP_EOL
         . 'RewriteCond %{REQUEST_FILENAME} !-d' . PHP_EOL
@@ -30,37 +30,37 @@ if (!file_exists(Fs::PUBLIC_DIR . "/.htaccess")) {
     fwrite($fp, $htaccess);
     fclose($fp);
 }
-if (!file_exists(Fs::SRC_DIR . "/Routes/Base.php")) {
-    $fp = fopen(Fs::SRC_DIR . "/Routes/Base.php", "w+");
+if (!file_exists(FileSystem::srcDir() . "/Routes/Base.php")) {
+    $fp = fopen(FileSystem::srcDir() . "/Routes/Base.php", "w+");
     $htaccess = '<?php' . PHP_EOL;
     $htaccess .= 'Cavesman\\Router::get(\'/\', fn() => new Cavesman\Http\JsonResponse([\'message\' => \'Welcome to Cavesman Framework!\']));';
     fwrite($fp, $htaccess);
     fclose($fp);
 }
-if (!file_exists(Fs::APP_DIR . "/config/main.json")) {
-    $fp = fopen(Fs::APP_DIR . "/config/main.json", "w+");
+if (!file_exists(FileSystem::appDir() . "/config/main.json")) {
+    $fp = fopen(FileSystem::appDir() . "/config/main.json", "w+");
     fwrite($fp, json_encode(["env" => "dev"], JSON_PRETTY_PRINT));
     fclose($fp);
 } else {
     Config::get("main.env", "dev");
 }
 
-if (!file_exists(Fs::APP_DIR . "/config/params.json")) {
-    $fp = fopen(Fs::APP_DIR . "/config/params.json", "w+");
+if (!file_exists(FileSystem::appDir() . "/config/params.json")) {
+    $fp = fopen(FileSystem::appDir() . "/config/params.json", "w+");
     fwrite($fp, json_encode(["debug" => true, "theme" => "public"], JSON_PRETTY_PRINT));
     fclose($fp);
 }
 
-if (!file_exists(Fs::VIEWS_DIR . "/public/index.php")) {
-    $fp = fopen(Fs::VIEWS_DIR . "/public/index.php", "w+");
+if (!file_exists(FileSystem::viewsDir() . "/public/index.php")) {
+    $fp = fopen(FileSystem::viewsDir() . "/public/index.php", "w+");
     $indexphp = '<?php' . PHP_EOL
         . 'Cavesman\Router::run();';
     fwrite($fp, $indexphp);
     fclose($fp);
 }
 
-if (!file_exists(Fs::PUBLIC_DIR . "/index.php")) {
-    $fp = fopen(Fs::PUBLIC_DIR . "/index.php", "w+");
+if (!file_exists(FileSystem::publicDir() . "/index.php")) {
+    $fp = fopen(FileSystem::publicDir() . "/index.php", "w+");
     $routesphp = '<?php' . PHP_EOL
         . 'require __DIR__ . \'/../vendor/autoload.php\';' . PHP_EOL
         . 'Cavesman\Launcher::run();' . PHP_EOL
@@ -70,7 +70,7 @@ if (!file_exists(Fs::PUBLIC_DIR . "/index.php")) {
 }
 
 // Ruta al archivo composer.json
-$composerFile = Fs::getRootDir() . '/composer.json';
+$composerFile = FileSystem::documentRoot() . '/composer.json';
 
 // Leer el contenido del archivo composer.json
 $composerContent = file_get_contents($composerFile);
@@ -90,11 +90,11 @@ $newComposerContent = json_encode($composerData, JSON_PRETTY_PRINT | JSON_UNESCA
 // Guardar el contenido actualizado en composer.json
 file_put_contents($composerFile, $newComposerContent);
 
-if (!is_dir(Fs::VIEWS_DIR))
+if (!is_dir(FileSystem::viewsDir()))
     throw new Exception("Imposible crear el directorio de temas", 1);
-if (!is_dir(Fs::VIEWS_DIR . "/public"))
+if (!is_dir(FileSystem::viewsDir() . "/public"))
     throw new Exception("Imposible crear el directorio de temas default", 1);
-if (!is_dir(Fs::APP_DIR . "/config"))
+if (!is_dir(FileSystem::appDir() . "/config"))
     throw new Exception("Imposible crear el directorio de configuracion", 1);
 
 if (Launcher::isCli()) {

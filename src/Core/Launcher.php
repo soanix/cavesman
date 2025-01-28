@@ -16,9 +16,6 @@ class Launcher
     public static function run(string $env = 'dev'): void
     {
 
-
-        define('_ROOT_', Fs::getRootDir());
-
         date_default_timezone_set(Config::get('params.timezone', 'Europe/Madrid'));
 
         if (Config::get('params.debug', true)) {
