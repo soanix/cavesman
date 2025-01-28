@@ -14,24 +14,42 @@ Version: 0.3.x
 
 1. Create your project
 
+    ```bash
+    composer require soanix/cavesman
+    ```
+    or
+    ```bash
+    composer init
+    ```
+    Use `soanix/cavesman` as require dependency  
+  
+
+2. Execute install command from bin-dir
+
 ```bash
-composer require soanix/cavesman
+vendor/bin/cavesman install
 ```
-
-2. Create install.php with autoloader
-
-```php
-require_once 'vendor/autoload.php';
+or
+```bash
+bin/cavesman install
 ```
-
-3. Running first request will generate project structure
-4. Now you can start develope
+3. Cavesman is installed
 
 # CHANGE LOG
 
-### 0.3.4 BREAK
+### 0.5 Major update
+
+- Install is now a run command `bin/cavesman install`
+- Display all command list running `bin/cavesman --help`
+- Entity generator by running `bin/cavesman cavesman:doctrine:entity`
+- Refactor all Classes namespace to Core
+- Removed Smarty Class (deprecated in Cavesman 0.4)
+
+
+### 0.4 MAJOR UPDATE
 
 UPDATE Doctrine 2 to Doctrine 3
 DB class now is named Db
+Smarty Class Deprecated
 
 

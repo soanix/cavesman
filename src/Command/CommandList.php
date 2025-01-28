@@ -3,11 +3,11 @@
 use Cavesman\Console;
 use Cavesman\Router;
 
-Console::command('cavesman:install', function () {
+Console::command('install', function () {
     include __DIR__ . '/Install.php';
 }, 'Install filesystem (Only first run)');
 
-Console::command('cavesman:doctrine:entity', function () {
+Console::command('doctrine:entity', function () {
     include __DIR__ . '/Doctrine.php';
 }, 'Create entity step by step');
 
