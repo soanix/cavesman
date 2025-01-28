@@ -21,6 +21,12 @@ class Menu
         }
     }
 
+    private static function isAssoc(array $arr)
+    {
+        if (array() === $arr) return false;
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
     private static function processMenu($name, $menu): void
     {
         if (!isset(self::$items[$name])) {
@@ -43,7 +49,7 @@ class Menu
                             );
                         }
                     }
-                }else{
+                } else {
                     if (isset($menuItem['childs']) && $menuItem['childs']) {
                         $m = array_filter(
                             $menuItem['childs']['items'],
@@ -60,12 +66,6 @@ class Menu
     {
         $configKey = "menu.$menuName.items.{$menuItem['name']}.visible";
         return Config::get($configKey, true) && ($menuItem['visible'] ?? true);
-    }
-
-    private static function isAssoc(array $arr)
-    {
-        if (array() === $arr) return false;
-        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     public static function render(array $params = array(), $smarty = null): string

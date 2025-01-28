@@ -3,6 +3,7 @@
 use Cavesman\Console;
 use Cavesman\Fs;
 use Cavesman\Tool\Parser\ClassName;
+
 Console::show('Entity Value', Console::INFO);
 $entityName = ucfirst(Console::requestValue('Entity name in CammleCase (Upper):'));
 

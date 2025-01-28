@@ -2,9 +2,9 @@
 
 namespace Cavesman\Twig;
 
+use Cavesman\Config;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Cavesman\Config;
 
 class ConfigExtension extends AbstractExtension
 {

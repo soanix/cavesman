@@ -1,7 +1,7 @@
 {
     "name": "soanix/cavesman",
     "description": "PHP Framework",
-    "bin" : [
+    "bin": [
         "bin/cavesman",
         "bin/doctrine"
     ],

@@ -5,7 +5,6 @@ namespace Cavesman\Twig;
 use App\Tool\Fs;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Cavesman\Config;
 
 class PathExtension extends AbstractExtension
 {

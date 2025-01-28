@@ -26,52 +26,14 @@ class Console
     const string SUCCESS = 'success';
     const string INFO = 'info';
     const string PROGRESS = 'progress';
-
-    /**
-     * @var array The route patterns and their handling functions
-     */
-    private static array $afterRoutes = [];
-
-    /**
-     * @var array The before middleware route patterns and their handling functions
-     */
-    private static array $beforeRoutes = [];
-
-    /**
-     * @var array [object|callable] The function to be executed when no route has been matched
-     */
-    protected static array $notFoundCallback = [];
-
-    /**
-     * @var string Current base route, used for (sub)route mounting
-     */
-    private static string $baseRoute = '';
-
-    /**
-     * @var string The Request Method that needs to be handled
-     */
-    private static string $requestedMethod = 'COMMAND';
-
-    /**
-     * @var ?string The Server Base Path for Router Execution
-     */
-    private static ?string $serverBasePath = null;
-
-    /**
-     * @var string Default Controllers Namespace
-     */
-    private static string $namespace = '';
-
     /**
      * @var string Log string of all display
      */
     public static string $log = '';
-
     /**
      * @var float Last percent recorded
      */
     public static float $lastPercent = -1;
-
     /**
      * @var ?DateTime Start Time
      */
@@ -80,27 +42,22 @@ class Console
      * @var ?DateTime Last update time
      */
     public static ?DateTime $lastUpdate = null;
-
     /**
      * @var array List of errors
      */
     public static array $errors = [];
-
     /**
      * @var string Current job in progress
      */
     public static string $currentProgress = 'Generic';
-
     /**
      * @var bool List of errors
      */
     public static ?bool $updateAlways = null;
-
     /**
      * @var ?int List of errors
      */
     public static ?int $percentPrecision = null;
-
     /**
      * @var bool Enable Log
      */
@@ -109,7 +66,34 @@ class Console
      * @var bool Enable Log
      */
     public static ?bool $debug = null;
-
+    /**
+     * @var array [object|callable] The function to be executed when no route has been matched
+     */
+    protected static array $notFoundCallback = [];
+    /**
+     * @var array The route patterns and their handling functions
+     */
+    private static array $afterRoutes = [];
+    /**
+     * @var array The before middleware route patterns and their handling functions
+     */
+    private static array $beforeRoutes = [];
+    /**
+     * @var string Current base route, used for (sub)route mounting
+     */
+    private static string $baseRoute = '';
+    /**
+     * @var string The Request Method that needs to be handled
+     */
+    private static string $requestedMethod = 'COMMAND';
+    /**
+     * @var ?string The Server Base Path for Router Execution
+     */
+    private static ?string $serverBasePath = null;
+    /**
+     * @var string Default Controllers Namespace
+     */
+    private static string $namespace = '';
 
     public static function clear(): void
     {
@@ -147,6 +131,92 @@ class Console
         }
     }
 
+    public static function show($message = '', $type = '', $exit = false)
+    {
+        self::print($message, $type, $exit);
+    }
+
+    /**
+     * @param string $message
+     * @param string $type
+     * @param false $exit
+     * @return void
+     */
+    public static function print(string $message = '', string $type = '', false $exit = false): void
+    {
+        self::log($message, $type);
+
+        $text = '';
+        if (PHP_SAPI !== 'cli')
+            return;
+        if (!in_array($type, [self::PROGRESS, self::INFO]))
+            $text .= "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
+        switch ($type) {
+            case self::PROGRESS:
+            case self::INFO:
+                $text .= $message;
+                break;
+
+            case self::ERROR:
+                self::$errors[] = $text . " " . $message;
+                $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
+
+                break;
+            case self::WARNING:
+                $text .= "\e[0;33m[WARNING] \e[m\t" . $message;
+                break;
+            case self::SUCCESS:
+                $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
+                break;
+            default:
+                $text .= "\e[1;36m[GENERAL] \e[m\t" . $message;
+        }
+
+        $text .= PHP_EOL;
+
+        if (!in_array($type, [self::PROGRESS, self::INFO]))
+            self::$log .= $text;
+
+        self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.import.debug', true);
+
+        if ($text && (self::$debug || in_array($type, [self::PROGRESS, self::INFO])))
+            echo $text;
+
+        if ($exit)
+            exit();
+    }
+
+    private static function log($message, $type): void
+    {
+        self::$logEnabled = !is_null(self::$logEnabled) ? self::$logEnabled : Config::get('params.import.log', true);
+
+        if (!self::$logEnabled) {
+            return;
+        }
+
+        if (in_array($type, [self::PROGRESS, self::INFO])) {
+            return;
+        }
+
+        $text = "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
+
+        $text .= match ($type) {
+            self::ERROR => "[ERROR] \t" . $message,
+            self::WARNING => "[WARNING] \t" . $message,
+            self::SUCCESS => "[SUCCESS] \t" . $message,
+            default => "[INFO]\t" . $message,
+        };
+
+        $text .= PHP_EOL;
+
+        if (!is_dir(Fs::APP_DIR . '/log/import'))
+            mkdir(Fs::APP_DIR . '/log/import', 0777, true);
+
+        $fp = @fopen(Fs::APP_DIR . '/log/import/' . date('d-m-Y') . '.log', 'a+');
+        @fwrite($fp, $text);
+        @fclose($fp);
+    }
+
     /**
      * Store a before middleware route and a handling function to be executed when accessed using one of the specified methods.
      *
@@ -164,6 +234,19 @@ class Console
                 'pattern' => $pattern,
                 'fn' => $fn,
             );
+        }
+    }
+
+    /**
+     * Shorthand for a route accessed using COMMAND.
+     *
+     * @param string $pattern A route pattern such as /about/system
+     * @param callable|object|string $fn The handling function to be executed
+     */
+    public static function command(string $pattern, callable|object|string $fn, $description = ''): void
+    {
+        if (php_sapi_name() === 'cli') {
+            self::match('COMMAND', $pattern, $fn, $description);
         }
     }
 
@@ -186,20 +269,6 @@ class Console
                 'fn' => $fn,
                 'description' => $description
             );
-        }
-    }
-
-
-    /**
-     * Shorthand for a route accessed using COMMAND.
-     *
-     * @param string $pattern A route pattern such as /about/system
-     * @param callable|object|string $fn The handling function to be executed
-     */
-    public static function command(string $pattern, callable|object|string $fn, $description = ''): void
-    {
-        if (php_sapi_name() === 'cli') {
-            self::match('COMMAND', $pattern, $fn, $description);
         }
     }
 
@@ -258,14 +327,6 @@ class Console
     }
 
     /**
-     * @return void
-     */
-    public static function clean(): void
-    {
-        echo chr(27) . chr(91) . 'H' . chr(27) . chr(91) . 'J';
-    }
-
-    /**
      * Get the request method used, taking overrides into account.
      *
      * @return string The Request method to handle
@@ -273,26 +334,6 @@ class Console
     public static function getRequestMethod(): string
     {
         return 'COMMAND';
-    }
-
-    /**
-     * Set a Default Lookup Namespace for Callable methods.
-     *
-     * @param string $namespace A given namespace
-     */
-    public static function setNamespace(string $namespace): void
-    {
-        self::$namespace = $namespace;
-    }
-
-    /**
-     * Get the given Namespace before.
-     *
-     * @return string The given Namespace if exists
-     */
-    public static function getNamespace(): string
-    {
-        return self::$namespace;
     }
 
     /**
@@ -328,91 +369,6 @@ class Console
 
         // Return true if a route was handled, false otherwise
         return $numHandled !== 0;
-    }
-
-    /**
-     * Set the 404 handling function.
-     *
-     * @param callable|object|string $match_fn The function to be executed
-     * @param callable|object|string|null $fn The function to be executed
-     */
-    public static function set404(callable|object|string $match_fn, callable|object|string|null $fn = null): void
-    {
-        if (!is_null($fn)) {
-            self::$notFoundCallback[$match_fn] = $fn;
-        } else {
-            self::$notFoundCallback[':'] = $match_fn;
-        }
-    }
-
-    /**
-     * Triggers 404 response
-     */
-    public static function trigger404(): void
-    {
-
-        // Counter to keep track of the number of routes we've handled
-        $numHandled = 0;
-
-        // handle 404 pattern
-        if (count(self::$notFoundCallback) > 0) {
-            // loop fallback-routes
-            foreach (self::$notFoundCallback as $route_pattern => $route_callable) {
-
-                // matches result
-                $matches = [];
-
-                // check if there is a match and get matches as $matches (pointer)
-                $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches);
-
-                // is fallback route match?
-                if ($is_match) {
-
-                    // Rework matches to only contain the matches, not the orig string
-                    $matches = array_slice($matches, 1);
-
-                    // Extract the matched URL parameters (and only the parameters)
-                    array_map(function ($match, $index) use ($matches) {
-
-                        // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
-                        if (isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
-                            if ($matches[$index + 1][0][1] > -1) {
-                                return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), ':');
-                            }
-                        } // We have no following parameters: return the lot
-
-                        return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], ':') : null;
-                    }, $matches, array_keys($matches));
-
-                    self::invoke($route_callable);
-
-                    ++$numHandled;
-                }
-            }
-            if ($numHandled == 0 and self::$notFoundCallback[':']) {
-                self::invoke(self::$notFoundCallback[':']);
-            } elseif ($numHandled == 0) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            }
-        }
-    }
-
-    /**
-     * Replace all curly braces matches {} into word patterns (like Laravel)
-     * Checks if there is a routing match
-     *
-     * @param $pattern
-     * @param $uri
-     * @param $matches
-     * @return bool -> is match yes/no
-     */
-    private static function patternMatches($pattern, $uri, &$matches): bool
-    {
-        // Replace all curly braces matches {} into word patterns (like Laravel)
-        $pattern = preg_replace('/:{(.*?)}/', ':(.*?)', $pattern);
-
-        // we may have a match!
-        return boolval(preg_match_all('#^' . $pattern . '$#', $uri, $matches, PREG_OFFSET_CAPTURE));
     }
 
     /**
@@ -474,6 +430,38 @@ class Console
     }
 
     /**
+     * Define the current relative URI.
+     *
+     * @return string
+     */
+    public static function getCurrentUri(): string
+    {
+        // Get the current Request URI and remove rewrite base path from it (= allows one to run the router in a sub folder)
+        $uri = $argv[1] ?? ($_SERVER['argv'][1] ?? '');
+
+        // Remove trailing slash + enforce a slash at the start
+        return trim($uri, ':');
+    }
+
+    /**
+     * Replace all curly braces matches {} into word patterns (like Laravel)
+     * Checks if there is a routing match
+     *
+     * @param $pattern
+     * @param $uri
+     * @param $matches
+     * @return bool -> is match yes/no
+     */
+    private static function patternMatches($pattern, $uri, &$matches): bool
+    {
+        // Replace all curly braces matches {} into word patterns (like Laravel)
+        $pattern = preg_replace('/:{(.*?)}/', ':(.*?)', $pattern);
+
+        // we may have a match!
+        return boolval(preg_match_all('#^' . $pattern . '$#', $uri, $matches, PREG_OFFSET_CAPTURE));
+    }
+
+    /**
      * @param $fn
      * @param array $params
      * @return void
@@ -518,17 +506,90 @@ class Console
     }
 
     /**
-     * Define the current relative URI.
+     * Get the given Namespace before.
      *
-     * @return string
+     * @return string The given Namespace if exists
      */
-    public static function getCurrentUri(): string
+    public static function getNamespace(): string
     {
-        // Get the current Request URI and remove rewrite base path from it (= allows one to run the router in a sub folder)
-        $uri = $argv[1] ?? ($_SERVER['argv'][1] ?? '');
+        return self::$namespace;
+    }
 
-        // Remove trailing slash + enforce a slash at the start
-        return trim($uri, ':');
+    /**
+     * Set a Default Lookup Namespace for Callable methods.
+     *
+     * @param string $namespace A given namespace
+     */
+    public static function setNamespace(string $namespace): void
+    {
+        self::$namespace = $namespace;
+    }
+
+    /**
+     * Triggers 404 response
+     */
+    public static function trigger404(): void
+    {
+
+        // Counter to keep track of the number of routes we've handled
+        $numHandled = 0;
+
+        // handle 404 pattern
+        if (count(self::$notFoundCallback) > 0) {
+            // loop fallback-routes
+            foreach (self::$notFoundCallback as $route_pattern => $route_callable) {
+
+                // matches result
+                $matches = [];
+
+                // check if there is a match and get matches as $matches (pointer)
+                $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches);
+
+                // is fallback route match?
+                if ($is_match) {
+
+                    // Rework matches to only contain the matches, not the orig string
+                    $matches = array_slice($matches, 1);
+
+                    // Extract the matched URL parameters (and only the parameters)
+                    array_map(function ($match, $index) use ($matches) {
+
+                        // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
+                        if (isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
+                            if ($matches[$index + 1][0][1] > -1) {
+                                return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), ':');
+                            }
+                        } // We have no following parameters: return the lot
+
+                        return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], ':') : null;
+                    }, $matches, array_keys($matches));
+
+                    self::invoke($route_callable);
+
+                    ++$numHandled;
+                }
+            }
+            if ($numHandled == 0 and self::$notFoundCallback[':']) {
+                self::invoke(self::$notFoundCallback[':']);
+            } elseif ($numHandled == 0) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            }
+        }
+    }
+
+    /**
+     * Set the 404 handling function.
+     *
+     * @param callable|object|string $match_fn The function to be executed
+     * @param callable|object|string|null $fn The function to be executed
+     */
+    public static function set404(callable|object|string $match_fn, callable|object|string|null $fn = null): void
+    {
+        if (!is_null($fn)) {
+            self::$notFoundCallback[$match_fn] = $fn;
+        } else {
+            self::$notFoundCallback[':'] = $match_fn;
+        }
     }
 
     /**
@@ -555,92 +616,6 @@ class Console
     public static function setBasePath(string $serverBasePath): void
     {
         self::$serverBasePath = $serverBasePath;
-    }
-
-    private static function log($message, $type): void
-    {
-        self::$logEnabled = !is_null(self::$logEnabled) ? self::$logEnabled : Config::get('params.import.log', true);
-
-        if (!self::$logEnabled) {
-            return;
-        }
-
-        if (in_array($type, [self::PROGRESS, self::INFO])) {
-            return;
-        }
-
-        $text = "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
-
-        $text .= match ($type) {
-            self::ERROR => "[ERROR] \t" . $message,
-            self::WARNING => "[WARNING] \t" . $message,
-            self::SUCCESS => "[SUCCESS] \t" . $message,
-            default => "[INFO]\t" . $message,
-        };
-
-        $text .= PHP_EOL;
-
-        if (!is_dir(Fs::APP_DIR . '/log/import'))
-            mkdir(Fs::APP_DIR . '/log/import', 0777, true);
-
-        $fp = @fopen(Fs::APP_DIR . '/log/import/' . date('d-m-Y') . '.log', 'a+');
-        @fwrite($fp, $text);
-        @fclose($fp);
-    }
-
-    /**
-     * @param string $message
-     * @param string $type
-     * @param false $exit
-     * @return void
-     */
-    public static function print(string $message = '', string $type = '', false $exit = false): void
-    {
-        self::log($message, $type);
-
-        $text = '';
-        if (PHP_SAPI !== 'cli')
-            return;
-        if (!in_array($type, [self::PROGRESS, self::INFO]))
-            $text .= "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
-        switch ($type) {
-            case self::PROGRESS:
-            case self::INFO:
-                $text .= $message;
-                break;
-
-            case self::ERROR:
-                self::$errors[] = $text . " " . $message;
-                $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
-
-                break;
-            case self::WARNING:
-                $text .= "\e[0;33m[WARNING] \e[m\t" . $message;
-                break;
-            case self::SUCCESS:
-                $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
-                break;
-            default:
-                $text .= "\e[1;36m[GENERAL] \e[m\t" . $message;
-        }
-
-        $text .= PHP_EOL;
-
-        if (!in_array($type, [self::PROGRESS, self::INFO]))
-            self::$log .= $text;
-
-        self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.import.debug', true);
-
-        if ($text && (self::$debug || in_array($type, [self::PROGRESS, self::INFO])))
-            echo $text;
-
-        if ($exit)
-            exit();
-    }
-
-    public static function show($message = '', $type = '', $exit = false)
-    {
-        self::print($message, $type, $exit);
     }
 
     /**
@@ -736,17 +711,27 @@ class Console
     }
 
     /**
+     * @return void
+     */
+    public static function clean(): void
+    {
+        echo chr(27) . chr(91) . 'H' . chr(27) . chr(91) . 'J';
+    }
+
+    /**
      * Request value to cli
      *
      * @param $name
      * @return string
      */
-    public static function requestValue($name): string {
+    public static function requestValue($name): string
+    {
         self::show($name, Console::INFO);
         return trim(fgets(STDIN));
     }
-    
-    public static function setCurrentJob($currentProgress) {
+
+    public static function setCurrentJob($currentProgress)
+    {
         self::$currentProgress = $currentProgress;
     }
 }

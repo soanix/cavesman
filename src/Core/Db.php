@@ -70,7 +70,6 @@ class Db
         );
 
 
-
         if ($database)
             $connectionParams['dbname'] = $database;
 

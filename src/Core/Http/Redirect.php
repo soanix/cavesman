@@ -4,7 +4,8 @@ namespace Cavesman\Http;
 
 use JetBrains\PhpStorm\NoReturn;
 
-class Redirect {
+class Redirect
+{
     #[NoReturn]
     public function __construct(string $url, int $code = 200)
     {

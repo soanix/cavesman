@@ -14,8 +14,9 @@ class Mail
 {
     public static $instance;
 
-    public static function getInstance(): PHPMailer {
-        if(!self::$instance instanceof self) {
+    public static function getInstance(): PHPMailer
+    {
+        if (!self::$instance instanceof self) {
             self::generate();
 
         }
@@ -23,7 +24,8 @@ class Mail
     }
 
 
-    public static function generate(): PHPMailer {
+    public static function generate(): PHPMailer
+    {
         self::$instance = new PHPMailer(true);
         self::$instance->CharSet = 'UTF-8';
 
@@ -54,13 +56,12 @@ class Mail
      * @return bool
      * @throws Exception
      */
-    public static function send(string|array $to, string $subject = '', string|array  $body = '', array $files = [], array $embedImages = []): bool
+    public static function send(string|array $to, string $subject = '', string|array $body = '', array $files = [], array $embedImages = []): bool
     {
         // Instantiation and passing `true` enables exceptions
-        if(!self::$instance instanceof PHPMailer) {
+        if (!self::$instance instanceof PHPMailer) {
             self::generate();
         }
-
 
 
         // Add address y $to is an email address
@@ -97,9 +98,9 @@ class Mail
         self::$instance->Subject = $subject;
 
         self::$instance->isHTML();
-        if(is_string($body))
+        if (is_string($body))
             self::$instance->msgHTML($body);
-        elseif(is_array($body)) {
+        elseif (is_array($body)) {
             self::$instance->Body = $body['html'];
             self::$instance->AltBody = self::$instance->html2text($body['text']);
         }

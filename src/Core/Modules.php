@@ -7,6 +7,7 @@ use Cavesman\Tool\Parser\ClassName;
 class Modules
 {
     const string MODULE_DIR = _ROOT_ . "/src/Modules";
+
     /**
      * Autoload Modules
      * @return void

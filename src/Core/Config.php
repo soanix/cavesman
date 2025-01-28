@@ -16,7 +16,7 @@ class Config
     {
         $params = explode(".", $config);
 
-        if(isset(self::$data[$params[0]]))
+        if (isset(self::$data[$params[0]]))
             $config = self::$data[$params[0]];
         else {
             $file = Fs::APP_DIR . "/config/" . $params[0] . ".json";
@@ -34,7 +34,7 @@ class Config
             if (file_exists($file)) {
                 $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
             }
-            
+
             self::$data[$params[0]] = $config;
         }
 
@@ -62,8 +62,8 @@ class Config
     /**
      * Returns current environment
      *
-     * @example dev, prod
      * @return string
+     * @example dev, prod
      */
     public static function getEnv(): string
     {
@@ -74,6 +74,22 @@ class Config
         if (isset($main['env']))
             return $main['env'];
         return 'dev';
+    }
+
+    /**
+     * @param array $params
+     * @param mixed $default
+     * @param mixed $config
+     * @return mixed
+     */
+    public static function getValue(array $params, mixed $default, mixed $config): mixed
+    {
+        $default_array = self::getDefaultArray($params, $default);
+        $config = array_replace_recursive($config, $default_array);
+        $fp = fopen(Fs::APP_DIR . "/config/" . $params[0] . ".json", "w+");
+        fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        fclose($fp);
+        return $default;
     }
 
     /**
@@ -130,21 +146,5 @@ class Config
             $a[$keys[$i]] = $value;
         }
         return $a;
-    }
-
-    /**
-     * @param array $params
-     * @param mixed $default
-     * @param mixed $config
-     * @return mixed
-     */
-    public static function getValue(array $params, mixed $default, mixed $config): mixed
-    {
-        $default_array = self::getDefaultArray($params, $default);
-        $config = array_replace_recursive($config, $default_array);
-        $fp = fopen(Fs::APP_DIR . "/config/" . $params[0] . ".json", "w+");
-        fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        fclose($fp);
-        return $default;
     }
 }

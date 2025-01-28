@@ -23,6 +23,21 @@ class Twig
     public static ?Environment $instance = null;
 
     /**
+     * Render twig template
+     *
+     * @param string $string
+     * @param array $context
+     * @return string
+     * @throws LoaderError
+     * @throws SyntaxError
+     */
+    public static function renderFromString(string $string, array $context = []): string
+    {
+        $template = self::getInstance()->createTemplate($string);
+        return $template->render($context);
+    }
+
+    /**
      * Create Instance
      *
      * @return Environment
@@ -52,21 +67,6 @@ class Twig
     public static function render($name, array $context = []): string
     {
         return self::getInstance()->render($name, $context);
-    }
-
-    /**
-     * Render twig template
-     *
-     * @param string $string
-     * @param array $context
-     * @return string
-     * @throws LoaderError
-     * @throws SyntaxError
-     */
-    public static function renderFromString(string $string, array $context = []): string
-    {
-        $template = self::getInstance()->createTemplate($string);
-        return $template->render($context);
     }
 }
 

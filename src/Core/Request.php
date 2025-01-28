@@ -65,7 +65,7 @@ class Request
 
     /**
      * Get current request domain
-     * 
+     *
      * @return string|null
      */
     public static function getDomain(): ?string

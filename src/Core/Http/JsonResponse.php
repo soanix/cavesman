@@ -4,7 +4,8 @@ namespace Cavesman\Http;
 
 use JetBrains\PhpStorm\NoReturn;
 
-class JsonResponse {
+class JsonResponse
+{
     #[NoReturn]
     public function __construct(mixed $message, int $code = 200, $flags = null)
     {

@@ -10,6 +10,21 @@ class Translate
     public static array $strings = [];
 
     /**
+     * Get locale list
+     *
+     * @return array
+     */
+    public static function list(): array
+    {
+        $list = [];
+        foreach (Config::get('locale.languages') as $lang) {
+            $list[$lang] = self::getLanguage($lang);
+        }
+
+        return $list;
+    }
+
+    /**
      * @param $string
      * @param array $replace
      * @return string
@@ -33,18 +48,63 @@ class Translate
     }
 
     /**
-     * Get locale list
+     * Return language array
      *
+     * @param $lang
      * @return array
      */
-    public static function list(): array
+    private static function getLanguage($lang): array
     {
-        $list = [];
-        foreach (Config::get('locale.languages') as $lang) {
-            $list[$lang] = self::getLanguage($lang);
+        $file = Fs::APP_DIR . "/locale/messages.$lang.json";
+        self::$strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+
+        return self::$strings;
+    }
+
+    /**
+     * Create locale file if not exists
+     *
+     * @param $item
+     * @return boolean
+     */
+    public static function check($item): bool
+    {
+        if (empty($item['string']))
+            return true;
+
+        self::checkDirectory();
+
+        $json = file_exists(self::FILE) ? json_decode(file_get_contents(self::FILE), true) : [];
+
+
+        if (isset($json[$item['string']])) {
+            if (!empty($json[$item['string']]['message']) && !isset(self::$strings[$item['string']])) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
-        return $list;
+
+        $json[$item['string']] = ['message' => "", 'replace' => $item['replace']];
+
+        $fp = fopen(self::FILE, 'w+');
+        fwrite($fp, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        fclose($fp);
+
+
+        return false;
+    }
+
+    /**
+     * Create directory if not exists
+     *
+     * @return void
+     */
+    private static function checkDirectory(): void
+    {
+        if (!is_dir(dirname(self::FILE)))
+            mkdir(dirname(self::FILE), 0644, true);
     }
 
     /**
@@ -72,67 +132,6 @@ class Translate
             fclose($fp);
         }
 
-    }
-
-    /**
-     * Create locale file if not exists
-     *
-     * @param $item
-     * @return boolean
-     */
-    public static function check($item): bool
-    {
-        if (empty($item['string']))
-            return true;
-
-        self::checkDirectory();
-
-        $json = file_exists(self::FILE) ? json_decode(file_get_contents(self::FILE), true) : [];
-
-
-        if (isset($json[$item['string']])) {
-            if(!empty($json[$item['string']]['message']) && !isset(self::$strings[$item['string']])) {
-                return false;
-            }else{
-                return true;
-            }
-        }
-
-
-
-        $json[$item['string']] = ['message' => "", 'replace' => $item['replace']];
-
-        $fp = fopen(self::FILE, 'w+');
-        fwrite($fp, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        fclose($fp);
-
-
-        return false;
-    }
-
-    /**
-     * Create directory if not exists
-     *
-     * @return void
-     */
-    private static function checkDirectory(): void
-    {
-        if (!is_dir(dirname(self::FILE)))
-            mkdir(dirname(self::FILE), 0644, true);
-    }
-
-    /**
-     * Return language array
-     *
-     * @param $lang
-     * @return array
-     */
-    private static function getLanguage($lang): array
-    {
-        $file = Fs::APP_DIR . "/locale/messages.$lang.json";
-        self::$strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
-
-        return self::$strings;
     }
 
 }

@@ -5,27 +5,6 @@ namespace Cavesman;
 
 class Router extends \Soanix\Router\Router
 {
-    public static function colorizeMethod($method, $string)
-    {
-        $colors = [
-            'GET' => "\033[1;32m",       // Negrita + Verde
-            'POST' => "\033[1;33m",      // Negrita + Amarillo
-            'PUT' => "\033[1;34m",       // Negrita + Azul
-            'DELETE' => "\033[1;31m",    // Negrita + Rojo
-            'PATCH' => "\033[1;35m",     // Negrita + Lila
-            'HEAD' => "\033[1;32m",      // Negrita + Verde
-            'OPTIONS' => "\033[1;95m"    // Negrita + Rosa
-        ];
-
-        $reset = "\033[0m"; // Reset de color
-        return isset($colors[$method]) ? $colors[$method] . $string . $reset : $string;
-    }
-
-    public static function blackyMethod($string)
-    {
-        return "\033[1;4m" . $string . "\033[0m";
-    }
-
     public static function listRoutesCommand($type = false): void
     {
         $list = [];
@@ -66,7 +45,7 @@ class Router extends \Soanix\Router\Router
                     Console::show($route['url'], Console::PROGRESS);
                 }
             }
-        } elseif(!$type || $type === 'complete') {
+        } elseif (!$type || $type === 'complete') {
             $currentRoute = '';
 
             foreach ($list as $route) {
@@ -82,5 +61,26 @@ class Router extends \Soanix\Router\Router
             }
         }
 
+    }
+
+    public static function blackyMethod($string)
+    {
+        return "\033[1;4m" . $string . "\033[0m";
+    }
+
+    public static function colorizeMethod($method, $string)
+    {
+        $colors = [
+            'GET' => "\033[1;32m",       // Negrita + Verde
+            'POST' => "\033[1;33m",      // Negrita + Amarillo
+            'PUT' => "\033[1;34m",       // Negrita + Azul
+            'DELETE' => "\033[1;31m",    // Negrita + Rojo
+            'PATCH' => "\033[1;35m",     // Negrita + Lila
+            'HEAD' => "\033[1;32m",      // Negrita + Verde
+            'OPTIONS' => "\033[1;95m"    // Negrita + Rosa
+        ];
+
+        $reset = "\033[0m"; // Reset de color
+        return isset($colors[$method]) ? $colors[$method] . $string . $reset : $string;
     }
 }

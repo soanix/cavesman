@@ -4,7 +4,7 @@ namespace Cavesman;
 
 final class Display
 {
-   
+
     public static $instance;
 
     /**
@@ -18,6 +18,7 @@ final class Display
         Modules::autoload();
 
     }
+
     public static function initCli(): void
     {
 

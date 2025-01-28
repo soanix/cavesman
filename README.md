@@ -6,7 +6,6 @@ PHP framework
 
 Version: 0.3.x
 
-
 ## Requeriments
 
 - PHP >= 8.3
