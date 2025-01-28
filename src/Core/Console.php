@@ -3,7 +3,11 @@
 namespace Cavesman;
 
 
+use DateInterval;
+use DateMalformedIntervalStringException;
 use DateTime;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * @author      Bram(us) Van Damme <bramus@bram.us>, Pedro Soanix Oliver <soanix91@gmail.com>
@@ -64,9 +68,9 @@ class Console
     public static string $log = '';
 
     /**
-     * @var int Last percent recorded
+     * @var float Last percent recorded
      */
-    public static int $lastPercent = -1;
+    public static float $lastPercent = -1;
 
     /**
      * @var ?DateTime Start Time
@@ -314,7 +318,7 @@ class Console
 
         // If no route was handled, trigger the 404 (if any)
         if ($numHandled === 0) {
-            self::trigger404(self::$afterRoutes[self::$requestedMethod] ?? []);
+            self::trigger404();
         } // If a route was handled, perform the finish callback (if any)
         else {
             if ($callback && is_callable($callback)) {
@@ -359,7 +363,7 @@ class Console
                 $matches = [];
 
                 // check if there is a match and get matches as $matches (pointer)
-                $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches, PREG_OFFSET_CAPTURE);
+                $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches);
 
                 // is fallback route match?
                 if ($is_match) {
@@ -431,7 +435,7 @@ class Console
         foreach ($routes as $route) {
 
             // get routing matches
-            $is_match = self::patternMatches($route['pattern'], $uri, $matches, PREG_OFFSET_CAPTURE);
+            $is_match = self::patternMatches($route['pattern'], $uri, $matches);
 
             // is there a valid match?
             if ($is_match) {
@@ -491,7 +495,7 @@ class Console
 
             try {
 
-                $reflectedMethod = new \ReflectionMethod($controller, $method);
+                $reflectedMethod = new ReflectionMethod($controller, $method);
                 // Make sure it's callable
                 if ($reflectedMethod->isPublic() && (!$reflectedMethod->isAbstract())) {
 
@@ -500,13 +504,13 @@ class Console
                         forward_static_call_array(array($controller, $method), $params);
                     } else {
                         // Make sure we have an instance, because a non-static method must not be called statically
-                        if (\is_string($controller)) {
+                        if (is_string($controller)) {
                             $controller = new $controller();
                         }
                         call_user_func_array(array($controller, $method), $params);
                     }
                 }
-            } catch (\ReflectionException $reflectionException) {
+            } catch (ReflectionException $reflectionException) {
                 echo $reflectionException->getMessage();
                 // The controller class is not available or the class does not have the method $method
             }
@@ -576,10 +580,10 @@ class Console
 
         $text .= PHP_EOL;
 
-        if (!is_dir(\Cavesman\Fs::APP_DIR . '/log/import'))
-            mkdir(\Cavesman\Fs::APP_DIR . '/log/import', 0777, true);
+        if (!is_dir(Fs::APP_DIR . '/log/import'))
+            mkdir(Fs::APP_DIR . '/log/import', 0777, true);
 
-        $fp = @fopen(\Cavesman\Fs::APP_DIR . '/log/import/' . date('d-m-Y') . '.log', 'a+');
+        $fp = @fopen(Fs::APP_DIR . '/log/import/' . date('d-m-Y') . '.log', 'a+');
         @fwrite($fp, $text);
         @fclose($fp);
     }
@@ -642,9 +646,10 @@ class Console
     /**
      * @param int $current Current
      * @param int $total
-     * @return false|void
+     * @return void
+     * @throws DateMalformedIntervalStringException
      */
-    public static function progress($current, $total)
+    public static function progress(int $current, int $total): void
     {
 
         self::$updateAlways = !is_null(self::$updateAlways) ? self::$updateAlways : Config::get('params.console.progress.update_always', false);
@@ -657,8 +662,7 @@ class Console
         if (!self::$lastUpdate)
             self::$lastUpdate = new DateTime();
         if (self::$updateAlways || self::$lastPercent !== $percent) {
-            $since_start = (new DateTime())->diff(self::$startProgress);
-            $diff = (new DateTime())->diff(self::$lastUpdate);
+            $since_start = new DateTime()->diff(self::$startProgress);
 
             self::$lastUpdate = new DateTime();
 
@@ -672,9 +676,9 @@ class Console
                 $seconds = 0;
             }
 
-            $estimated = (new DateTime())->add(new \DateInterval('PT' . round(abs($seconds)) . 'S'));
+            $estimated = new DateTime()->add(new DateInterval('PT' . round(abs($seconds)) . 'S'));
 
-            $diffEnd = (new DateTime())->diff($estimated);
+            $diffEnd = new DateTime()->diff($estimated);
 
             Console::clean();
 

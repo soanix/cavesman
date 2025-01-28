@@ -6,7 +6,9 @@ class Fs
 {
     const string SRC_DIR = _ROOT_ . '/src';
     const string APP_DIR = _ROOT_ . '/app';
+    const string PUBLIC_DIR = _ROOT_ . '/public';
     const string VIEWS_DIR = _ROOT_ . '/src/Views';
+
 
     public static function getRootDir()
     {
@@ -23,5 +25,7 @@ class Fs
             return getcwd() . "/..";
         elseif (is_dir(getcwd() . "/vendor"))
             return getcwd();
+
+        return $_SERVER['DOCUMENT_ROOT'];
     }
 }

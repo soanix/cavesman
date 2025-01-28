@@ -56,9 +56,9 @@ class Menu
         }
     }
 
-    private static function isMenuItemVisible($menuName, $menuItem)
+    private static function isMenuItemVisible($menuName, $menuItem): bool
     {
-        $configKey = "menu.{$menuName}.items.{$menuItem['name']}.visible";
+        $configKey = "menu.$menuName.items.{$menuItem['name']}.visible";
         return Config::get($configKey, true) && ($menuItem['visible'] ?? true);
     }
 
@@ -71,8 +71,8 @@ class Menu
     public static function render(array $params = array(), $smarty = null): string
     {
         $template_dir = Smarty::getInstance()->template_dir[0];
-        $file = isset($params['file']) ? $params['file'] : false;
-        $menu = isset($params['name']) ? $params['name'] : 'main';
+        $file = $params['file'] ?? false;
+        $menu = $params['name'] ?? 'main';
         if ($file && file_exists($template_dir . "/" . $file)) {
             $file = $template_dir . "/" . $file;
         } elseif (file_exists($file)) {

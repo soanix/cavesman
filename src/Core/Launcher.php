@@ -48,4 +48,9 @@ class Launcher
             Console::run();
         }
     }
+
+    public static function isCli(): bool
+    {
+        return PHP_SAPI === 'cli';
+    }
 }

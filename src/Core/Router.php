@@ -75,7 +75,7 @@ class Router extends \Soanix\Router\Router
                     Console::show(PHP_EOL . self::blackyMethod($route['url']), Console::PROGRESS);
                 }
                 Console::show(
-                    self::colorizeMethod($route['method'], str_pad($route['method'] . '' . ($route['middleware'] ? ' (M)' : ''), $longestMethod, ' ')) . "  " .
+                    self::colorizeMethod($route['method'], str_pad($route['method'] . '' . ($route['middleware'] ? ' (M)' : ''), $longestMethod)) . "  " .
                     (is_string($route['fn']) ? $route['fn'] : 'function'),
                     Console::PROGRESS
                 );

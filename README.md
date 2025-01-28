@@ -26,7 +26,6 @@ require_once 'vendor/autoload.php';
 ```
 
 3. Running first request will generate project structure
-
 4. Now you can start develope
 
 # CHANGE LOG

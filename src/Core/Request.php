@@ -15,7 +15,7 @@ class Request
      */
     public static function post($string = '', $default = '')
     {
-        return isset($_POST[$string]) ? $_POST[$string] : $default;
+        return $_POST[$string] ?? $default;
     }
 
     /**
@@ -28,31 +28,31 @@ class Request
      */
     public static function get($value = '', $default = '')
     {
-        return isset($_GET[$value]) ? $_GET[$value] : $default;
+        return $_GET[$value] ?? $default;
     }
 
     /**
      * Get FILES value by key
      *
      * @param string $string Text string to search in GET key
-     * @param string $default Default value if key is not defined
+     * @param string|null $default Default value if key is not defined
      *
      * @return string|array|null|mixed
      */
-    public static function files($value = '', $default = null)
+    public static function files($value = '', ?string $default = null): mixed
     {
-        return isset($_FILES[$value]) ? $_FILES[$value] : $default;
+        return $_FILES[$value] ?? $default;
     }
 
     /**
      * Get HEADER value by key
      *
-     * @param string $string Text string to search in HEADER key
-     * @param string $default Default value if key is not defined
+     * @param string $key
+     * @param string|null $default Default value if key is not defined
      *
      * @return string|array|null|mixed
      */
-    public static function header($key = '', $default = null)
+    public static function header(string $key = '', ?string $default = null): mixed
     {
         $headers = apache_request_headers();
 

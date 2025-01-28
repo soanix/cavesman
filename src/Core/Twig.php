@@ -30,7 +30,7 @@ class Twig
     protected static function getInstance(): Environment
     {
         if ((self::$instance instanceof self) === false) {
-            $loader = new FilesystemLoader([_THEME_ . '/templates']);
+            $loader = new FilesystemLoader([Fs::VIEWS_DIR . '/public/templates']);
             self::$instance = new Environment($loader);
             self::$instance->addExtension(new StringLoaderExtension());
             self::$instance->addExtension(new ConfigExtension());
