@@ -4,12 +4,18 @@ namespace Cavesman;
 
 use Aws\S3\S3Client;
 
+/**
+ * Amazon S3 Client Service
+ *
+ * @uses S3Client
+ */
 class Aws
 {
 
     /**
      * Upload file to S3
      *
+     * @param string $bucket
      * @param int $id
      * @param string $file
      * @param string $type
@@ -47,6 +53,7 @@ class Aws
     /**
      * Download File to S3
      *
+     * @param $bucket
      * @param string $file
      * @return string
      */
@@ -95,7 +102,8 @@ class Aws
     }
 
     /**
-     * generate S3 url
+     * Generate S3 url
+     *
      * @param string $file
      * @return string
      */

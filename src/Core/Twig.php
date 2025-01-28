@@ -15,7 +15,7 @@ use Twig\Loader\FilesystemLoader;
 /**
  * Twig Class
  * <code>
- *     Cavesman\Twig::getInstance()
+ *     Launcher\Twig::getInstance()
  * </code>
  */
 class Twig

@@ -30,7 +30,7 @@ class Request
     {
         return isset($_GET[$value]) ? $_GET[$value] : $default;
     }
-    
+
     /**
      * Get FILES value by key
      *
@@ -43,7 +43,7 @@ class Request
     {
         return isset($_FILES[$value]) ? $_FILES[$value] : $default;
     }
-    
+
     /**
      * Get HEADER value by key
      *
@@ -52,14 +52,39 @@ class Request
      *
      * @return string|array|null|mixed
      */
-    public static function header($key = '', $default = null) {
+    public static function header($key = '', $default = null)
+    {
         $headers = apache_request_headers();
 
-        if(!empty($headers[$key]))
+        if (!empty($headers[$key]))
             return $headers[$key];
         elseif (!empty($headers[mb_strtolower($key)]))
             return $headers[mb_strtolower($key)];
         return $default;
     }
-    
+
+    /**
+     * Get current request domain
+     * 
+     * @return string|null
+     */
+    public static function getDomain(): ?string
+    {
+        /** RELATIVE PATHS**/
+        if (PHP_SAPI !== 'cli') {
+            if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+                $protocol = 'https';
+            } else {
+                if (isset($_SERVER['HTTPS'])) {
+                    $protocol = ($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != "off") ? "https" : "http";
+                } else {
+                    $protocol = 'http';
+                }
+            }
+            return $protocol . "://" . $_SERVER['HTTP_HOST'];
+        }
+
+        return null;
+    }
+
 }

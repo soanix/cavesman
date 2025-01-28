@@ -91,7 +91,7 @@ if (class_exists('\Smarty')) {
         {
             $name = isset($params['name']) ? $params['name'] : '';
             include_once(_CLASSES_ . "/modules.class.php");
-            $modules = Cavesman::getInstance(Modules::class);
+            $modules = Launcher::getInstance(Modules::class);
             $plugin_info = $modules->list[str_replace(".tpl", "", $name)];
             if (file_exists($plugin_info['directory'] . "/" . $name))
                 return self::partial($plugin_info['directory'] . "/" . $name);
@@ -104,7 +104,7 @@ if (class_exists('\Smarty')) {
             foreach ($params as $key => $param) {
                 self::set($key, $param);
             }
-            return Cavesman::getInstance(Modules::class)->hooks($params['name']);
+            return Launcher::getInstance(Modules::class)->hooks($params['name']);
         }
 
         public static function smartyCss($params, $smarty)

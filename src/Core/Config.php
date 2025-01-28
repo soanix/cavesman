@@ -5,21 +5,21 @@ namespace Cavesman;
 class Config
 {
 
-    private static $data = [];
+    private static array $data = [];
 
     /**
      * @param string $config
      * @param $default
-     * @return array|mixed|null
+     * @return mixed
      */
-    public static function get(string $config = '', $default = NULL)
+    public static function get(string $config = '', $default = NULL): mixed
     {
         $params = explode(".", $config);
 
         if(isset(self::$data[$params[0]]))
             $config = self::$data[$params[0]];
         else {
-            $file = _APP_ . "/config/" . $params[0] . ".json";
+            $file = Fs::APP_DIR . "/config/" . $params[0] . ".json";
             $config = [];
             if (!is_dir(dirname($file)))
                 mkdir(dirname($file), 0777, true);
@@ -29,7 +29,7 @@ class Config
             }
 
             // Env config
-            $file = _APP_ . "/config/" . $params[0] . "." . self::getEnv() . ".json";
+            $file = Fs::APP_DIR . "/config/" . $params[0] . "." . self::getEnv() . ".json";
 
             if (file_exists($file)) {
                 $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
@@ -59,9 +59,15 @@ class Config
         return $array;
     }
 
-    public static function getEnv()
+    /**
+     * Returns current environment
+     *
+     * @example dev, prod
+     * @return string
+     */
+    public static function getEnv(): string
     {
-        $file = _APP_ . "/config/main.json";
+        $file = Fs::APP_DIR . "/config/main.json";
         if (file_exists($file)) {
             $main = json_decode(file_get_contents($file), true);
         }
@@ -70,7 +76,14 @@ class Config
         return 'dev';
     }
 
-    private static function getDefaultArray($params = [], $value = null)
+    /**
+     * Retrieve default config
+     *
+     * @param array $params
+     * @param $value
+     * @return array
+     */
+    private static function getDefaultArray(array $params = [], $value = null): array
     {
         $str = '';
         foreach ($params as $key => $param) {
@@ -80,7 +93,7 @@ class Config
         $arr = [];
 
         // Note: a different approach would be using explode() instead
-        preg_match_all('/\[([^\]]*)\]/', $str, $has_keys, PREG_PATTERN_ORDER);
+        preg_match_all('/\[([^]]*)]/', $str, $has_keys, PREG_PATTERN_ORDER);
 
         if (isset($has_keys[1])) {
 
@@ -100,7 +113,15 @@ class Config
         return $arr;
     }
 
-    private static function walk_keys($keys, $i, $value)
+    /**
+     * Walk through all array config keys
+     *
+     * @param $keys
+     * @param $i
+     * @param $value
+     * @return array
+     */
+    private static function walk_keys($keys, $i, $value): array
     {
         $a = [];
         if (isset($keys[$i + 1])) {
@@ -121,7 +142,7 @@ class Config
     {
         $default_array = self::getDefaultArray($params, $default);
         $config = array_replace_recursive($config, $default_array);
-        $fp = fopen($file = _APP_ . "/config/" . $params[0] . ".json", "w+");
+        $fp = fopen(Fs::APP_DIR . "/config/" . $params[0] . ".json", "w+");
         fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         fclose($fp);
         return $default;

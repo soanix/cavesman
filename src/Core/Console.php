@@ -3,6 +3,8 @@
 namespace Cavesman;
 
 
+use DateTime;
+
 /**
  * @author      Bram(us) Van Damme <bramus@bram.us>, Pedro Soanix Oliver <soanix91@gmail.com>
  * @copyright   Copyright (c), 2013 Bram(us) Van Damme
@@ -39,22 +41,22 @@ class Console
     /**
      * @var string Current base route, used for (sub)route mounting
      */
-    private static $baseRoute = '';
+    private static string $baseRoute = '';
 
     /**
      * @var string The Request Method that needs to be handled
      */
-    private static $requestedMethod = 'COMMAND';
+    private static string $requestedMethod = 'COMMAND';
 
     /**
-     * @var string The Server Base Path for Router Execution
+     * @var ?string The Server Base Path for Router Execution
      */
-    private static $serverBasePath = null;
+    private static ?string $serverBasePath = null;
 
     /**
      * @var string Default Controllers Namespace
      */
-    private static $namespace = '';
+    private static string $namespace = '';
 
     /**
      * @var string Log string of all display
@@ -64,16 +66,16 @@ class Console
     /**
      * @var int Last percent recorded
      */
-    public static float $lastPercent = -1;
+    public static int $lastPercent = -1;
 
     /**
-     * @var \DateTime Start Time
+     * @var ?DateTime Start Time
      */
-    public static ?\DateTime $startProgress = null;
+    public static ?DateTime $startProgress = null;
     /**
-     * @var \DateTime Last update time
+     * @var ?DateTime Last update time
      */
-    public static ?\DateTime $lastUpdate = null;
+    public static ?DateTime $lastUpdate = null;
 
     /**
      * @var array List of errors
@@ -91,7 +93,7 @@ class Console
     public static ?bool $updateAlways = null;
 
     /**
-     * @var bool List of errors
+     * @var ?int List of errors
      */
     public static ?int $percentPrecision = null;
 
@@ -105,7 +107,7 @@ class Console
     public static ?bool $debug = null;
 
 
-    public static function clear()
+    public static function clear(): void
     {
         self::$baseRoute = '';
         self::$requestedMethod = '';
@@ -114,28 +116,28 @@ class Console
         self::$beforeRoutes = [];
         self::$notFoundCallback = [];
         self::$namespace = '';
-
     }
 
     public static function listRoutesCommand(): void
     {
         $list = [];
-        foreach (self::$afterRoutes as $method => $routes) {
+
+        foreach (self::$afterRoutes as $routes)
             foreach ($routes as $route)
                 $list[] = [
                     'url' => $route['pattern'],
                     'fn' => $route['fn'],
                     'description' => $route['description'],
                 ];
-        }
+
         usort($list, function ($a, $b) {
             return strcmp($a['url'], $b['url']);
         });
         $longestUrl = max(array_map(fn($a) => strlen($a['url']), $list));
         foreach ($list as $route) {
             Console::show(
-                str_pad($route['url'], $longestUrl, ' ', STR_PAD_RIGHT) . "\t" .
-                $route['description'] ,
+                str_pad($route['url'], $longestUrl) . "\t" .
+                $route['description'],
                 Console::PROGRESS
             );
         }
@@ -146,9 +148,9 @@ class Console
      *
      * @param string $methods Allowed methods, | delimited
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
-    public static function middleware($methods, $pattern, $fn)
+    public static function middleware(string $methods, string $pattern, callable|object|string $fn): void
     {
         $pattern = self::$baseRoute . trim($pattern, ':');
         $pattern = self::$baseRoute ? rtrim($pattern, ':') : $pattern;
@@ -166,9 +168,10 @@ class Console
      *
      * @param string $methods Allowed methods, | delimited
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
+     * @param string $description
      */
-    public static function match($methods, $pattern, $fn, $description = '')
+    public static function match(string $methods, string $pattern, callable|object|string $fn, string $description = ''): void
     {
         $pattern = self::$baseRoute . trim($pattern, ':');
         $pattern = self::$baseRoute ? rtrim($pattern, ':') : $pattern;
@@ -187,9 +190,9 @@ class Console
      * Shorthand for a route accessed using COMMAND.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
-    public static function command($pattern, $fn, $description = '')
+    public static function command(string $pattern, callable|object|string $fn, $description = ''): void
     {
         if (php_sapi_name() === 'cli') {
             self::match('COMMAND', $pattern, $fn, $description);
@@ -200,9 +203,9 @@ class Console
      * Mounts a collection of callbacks onto a base route.
      *
      * @param string $baseRoute The route sub pattern to mount the callbacks on
-     * @param callable $fn The callback method
+     * @param callable|object|string $fn The callback method
      */
-    public static function mount($baseRoute, $fn)
+    public static function mount(string $baseRoute, callable|object|string $fn): void
     {
         // Track current base route
         $curBaseRoute = self::$baseRoute;
@@ -222,9 +225,8 @@ class Console
      *
      * @return array The request headers
      */
-    public static function getRequestHeaders()
+    public static function getRequestHeaders(): array
     {
-        $headers = [];
 
         // If getallheaders() is available, use that
         if (function_exists('getallheaders')) {
@@ -236,10 +238,15 @@ class Console
             }
         }
 
-        // Method getallheaders() not available or went wrong: manually extract 'm
+
+        $headers = [];
         foreach ($_SERVER as $name => $value) {
-            if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
-                $headers[str_replace(array(' ', 'Http'), array('-', 'HTTP'), ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            if ((str_starts_with($name, 'HTTP_')) || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
+                $headers[str_replace(
+                    [' ', 'Http'],
+                    ['-', 'HTTP'],
+                    ucwords(strtolower(str_replace('_', ' ', substr($name, 5))))
+                )] = $value;
             }
         }
 
@@ -249,7 +256,7 @@ class Console
     /**
      * @return void
      */
-    public static function clean()
+    public static function clean(): void
     {
         echo chr(27) . chr(91) . 'H' . chr(27) . chr(91) . 'J';
     }
@@ -259,7 +266,7 @@ class Console
      *
      * @return string The Request method to handle
      */
-    public static function getRequestMethod()
+    public static function getRequestMethod(): string
     {
         return 'COMMAND';
     }
@@ -269,11 +276,9 @@ class Console
      *
      * @param string $namespace A given namespace
      */
-    public static function setNamespace($namespace)
+    public static function setNamespace(string $namespace): void
     {
-        if (is_string($namespace)) {
-            self::$namespace = $namespace;
-        }
+        self::$namespace = $namespace;
     }
 
     /**
@@ -281,7 +286,7 @@ class Console
      *
      * @return string The given Namespace if exists
      */
-    public static function getNamespace()
+    public static function getNamespace(): string
     {
         return self::$namespace;
     }
@@ -289,11 +294,11 @@ class Console
     /**
      * Execute the router: Loop all defined before middleware's and routes, and execute the handling function if a match was found.
      *
-     * @param object|callable $callback Function to be executed after a matching route was handled (= after router middleware)
+     * @param callable|object|string|null $callback Function to be executed after a matching route was handled (= after router middleware)
      *
      * @return bool
      */
-    public static function run($callback = null)
+    public static function run(callable|object|string|null $callback = null): bool
     {
         // Handle all before middlewares
         if (isset(self::$beforeRoutes[self::$requestedMethod])) {
@@ -324,10 +329,10 @@ class Console
     /**
      * Set the 404 handling function.
      *
-     * @param object|callable|string $match_fn The function to be executed
-     * @param object|callable $fn The function to be executed
+     * @param callable|object|string $match_fn The function to be executed
+     * @param callable|object|string|null $fn The function to be executed
      */
-    public static function set404($match_fn, $fn = null)
+    public static function set404(callable|object|string $match_fn, callable|object|string|null $fn = null): void
     {
         if (!is_null($fn)) {
             self::$notFoundCallback[$match_fn] = $fn;
@@ -338,10 +343,8 @@ class Console
 
     /**
      * Triggers 404 response
-     *
-     * @param string $pattern A route pattern such as /about/system
      */
-    public static function trigger404($match = null)
+    public static function trigger404(): void
     {
 
         // Counter to keep track of the number of routes we've handled
@@ -365,14 +368,14 @@ class Console
                     $matches = array_slice($matches, 1);
 
                     // Extract the matched URL parameters (and only the parameters)
-                    $params = array_map(function ($match, $index) use ($matches) {
+                    array_map(function ($match, $index) use ($matches) {
 
                         // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
-                        if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
+                        if (isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
                             if ($matches[$index + 1][0][1] > -1) {
                                 return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), ':');
                             }
-                        } // We have no following parameters: return the whole lot
+                        } // We have no following parameters: return the lot
 
                         return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], ':') : null;
                     }, $matches, array_keys($matches));
@@ -397,28 +400,26 @@ class Console
      * @param $pattern
      * @param $uri
      * @param $matches
-     * @param $flags
-     *
      * @return bool -> is match yes/no
      */
-    private static function patternMatches($pattern, $uri, &$matches, $flags)
+    private static function patternMatches($pattern, $uri, &$matches): bool
     {
         // Replace all curly braces matches {} into word patterns (like Laravel)
-        $pattern = preg_replace('/\:{(.*?)}/', ':(.*?)', $pattern);
+        $pattern = preg_replace('/:{(.*?)}/', ':(.*?)', $pattern);
 
         // we may have a match!
         return boolval(preg_match_all('#^' . $pattern . '$#', $uri, $matches, PREG_OFFSET_CAPTURE));
     }
 
     /**
-     * Handle a a set of routes: if a match is found, execute the relating handling function.
+     * Handle a set of routes: if a match is found, execute the relating handling function.
      *
      * @param array $routes Collection of route patterns and their handling functions
      * @param bool $quitAfterRun Does the handle function need to quit after one route was matched?
      *
      * @return int The number of routes handled
      */
-    private static function handle($routes, $quitAfterRun = false)
+    private static function handle(array $routes, bool $quitAfterRun = false): int
     {
         // Counter to keep track of the number of routes we've handled
         $numHandled = 0;
@@ -442,7 +443,7 @@ class Console
                 $params = array_map(function ($match, $index) use ($matches) {
 
                     // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
-                    if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
+                    if (isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
                         if ($matches[$index + 1][0][1] > -1) {
                             return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), ':');
                         }
@@ -468,7 +469,12 @@ class Console
         return $numHandled;
     }
 
-    private static function invoke($fn, $params = [])
+    /**
+     * @param $fn
+     * @param array $params
+     * @return void
+     */
+    private static function invoke($fn, array $params = []): void
     {
 
         if (is_callable($fn)) {
@@ -512,7 +518,7 @@ class Console
      *
      * @return string
      */
-    public static function getCurrentUri()
+    public static function getCurrentUri(): string
     {
         // Get the current Request URI and remove rewrite base path from it (= allows one to run the router in a sub folder)
         $uri = $argv[1] ?? ($_SERVER['argv'][1] ?? '');
@@ -540,64 +546,65 @@ class Console
      * Explicilty sets the server base path. To be used when your entry script path differs from your entry URLs.
      * @see https://github.com/bramus/router/issues/82#issuecomment-466956078
      *
-     * @param string
+     * @param string $serverBasePath
      */
-    public static function setBasePath($serverBasePath)
+    public static function setBasePath(string $serverBasePath): void
     {
         self::$serverBasePath = $serverBasePath;
     }
 
-    private static function log($message, $type)
+    private static function log($message, $type): void
     {
         self::$logEnabled = !is_null(self::$logEnabled) ? self::$logEnabled : Config::get('params.import.log', true);
 
-        if (!self::$logEnabled)
-            return false;
-
-        if (in_array($type, [self::PROGRESS]))
-            return false;
-
-        $text = '';
-
-        $text .= "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
-
-        switch ($type) {
-            case self::ERROR:
-                $text .= "[ERROR] \t" . $message;
-                break;
-            case self::WARNING:
-                $text .= "[WARNING] \t" . $message;
-                break;
-            case self::SUCCESS:
-                $text .= "[SUCCESS] \t" . $message;
-                break;
-            default:
-                $text .= "[INFO]\t" . $message;
+        if (!self::$logEnabled) {
+            return;
         }
+
+        if (in_array($type, [self::PROGRESS, self::INFO])) {
+            return;
+        }
+
+        $text = "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
+
+        $text .= match ($type) {
+            self::ERROR => "[ERROR] \t" . $message,
+            self::WARNING => "[WARNING] \t" . $message,
+            self::SUCCESS => "[SUCCESS] \t" . $message,
+            default => "[INFO]\t" . $message,
+        };
 
         $text .= PHP_EOL;
 
-        if (!is_dir(_APP_ . '/log/import'))
-            mkdir(_APP_ . '/log/import', 0777, true);
+        if (!is_dir(\Cavesman\Fs::APP_DIR . '/log/import'))
+            mkdir(\Cavesman\Fs::APP_DIR . '/log/import', 0777, true);
 
-        $fp = @fopen(_APP_ . '/log/import/' . date('d-m-Y') . '.log', 'a+');
+        $fp = @fopen(\Cavesman\Fs::APP_DIR . '/log/import/' . date('d-m-Y') . '.log', 'a+');
         @fwrite($fp, $text);
         @fclose($fp);
     }
 
-    public static function print($message = '', $type = '', $exit = false)
+    /**
+     * @param string $message
+     * @param string $type
+     * @param false $exit
+     * @return void
+     */
+    public static function print(string $message = '', string $type = '', false $exit = false): void
     {
         self::log($message, $type);
 
         $text = '';
         if (PHP_SAPI !== 'cli')
-            return false;
-        if (!in_array($type, [self::PROGRESS]))
-            $text .= "[" . (new \DateTime())->format('Y-m-d H:i:s') . "]";
+            return;
+        if (!in_array($type, [self::PROGRESS, self::INFO]))
+            $text .= "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
         switch ($type) {
             case self::PROGRESS:
+            case self::INFO:
                 $text .= $message;
                 break;
+
             case self::ERROR:
                 self::$errors[] = $text . " " . $message;
                 $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
@@ -610,17 +617,17 @@ class Console
                 $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
                 break;
             default:
-                $text .= "\e[1;36m[INFO] \e[m\t" . $message;
+                $text .= "\e[1;36m[GENERAL] \e[m\t" . $message;
         }
 
         $text .= PHP_EOL;
 
-        if (!in_array($type, [self::PROGRESS]))
+        if (!in_array($type, [self::PROGRESS, self::INFO]))
             self::$log .= $text;
 
         self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.import.debug', true);
 
-        if ($text && (self::$debug || in_array($type, [self::PROGRESS])))
+        if ($text && (self::$debug || in_array($type, [self::PROGRESS, self::INFO])))
             echo $text;
 
         if ($exit)
@@ -646,14 +653,14 @@ class Console
         $percent = round(($current / $total) * 100, self::$percentPrecision);
 
         if (!self::$startProgress)
-            self::$startProgress = new \DateTime();
+            self::$startProgress = new DateTime();
         if (!self::$lastUpdate)
-            self::$lastUpdate = new \DateTime();
+            self::$lastUpdate = new DateTime();
         if (self::$updateAlways || self::$lastPercent !== $percent) {
-            $since_start = (new \DateTime())->diff(self::$startProgress);
-            $diff = (new \DateTime())->diff(self::$lastUpdate);
+            $since_start = (new DateTime())->diff(self::$startProgress);
+            $diff = (new DateTime())->diff(self::$lastUpdate);
 
-            self::$lastUpdate = new \DateTime();
+            self::$lastUpdate = new DateTime();
 
             self::$lastPercent = $percent;
 
@@ -665,9 +672,9 @@ class Console
                 $seconds = 0;
             }
 
-            $estimated = (new \DateTime())->add(new \DateInterval('PT' . round(abs($seconds)) . 'S'));
+            $estimated = (new DateTime())->add(new \DateInterval('PT' . round(abs($seconds)) . 'S'));
 
-            $diffEnd = (new \DateTime())->diff($estimated);
+            $diffEnd = (new DateTime())->diff($estimated);
 
             Console::clean();
 
@@ -731,6 +738,7 @@ class Console
      * @return string
      */
     public static function requestValue($name): string {
+        self::show($name, Console::INFO);
         return trim(fgets(STDIN));
     }
     

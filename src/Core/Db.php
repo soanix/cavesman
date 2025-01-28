@@ -37,25 +37,25 @@ class Db
             if (is_dir(_ROOT_ . "/src/EntityAux"))
                 $paths[] = _ROOT_ . "/src/EntityAux";
         }
-        if (is_dir(_MODULES_)) {
-            $directories = scandir(_MODULES_);
+        if (is_dir(Modules::MODULE_DIR)) {
+            $directories = scandir(Modules::MODULE_DIR);
             foreach ($directories as $directory) {
                 $module = str_replace('directory/', '', $directory);
                 if ($module !== '.' && $module != '..') {
 
-                    $config = json_decode(file_get_contents(_MODULES_ . "/" . $directory . "/config.json"), true);
+                    $config = json_decode(file_get_contents(Modules::MODULE_DIR . "/" . $directory . "/config.json"), true);
                     if ($config['active']) {
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/Abstract"))
-                            foreach (glob(_MODULES_ . "/" . $directory . "/Abstract/*.php") as $filename)
+                        if (is_dir(Modules::MODULE_DIR . "/" . $directory . "/Abstract"))
+                            foreach (glob(Modules::MODULE_DIR . "/" . $directory . "/Abstract/*.php") as $filename)
                                 require_once $filename;
 
-                        if (is_dir(_MODULES_ . "/" . $directory . "/Entity"))
-                            $paths[] = _MODULES_ . "/" . $directory . "/Entity";
+                        if (is_dir(Modules::MODULE_DIR . "/" . $directory . "/Entity"))
+                            $paths[] = Modules::MODULE_DIR . "/" . $directory . "/Entity";
 
                         if (Config::get('params.db.global_aux', false))
-                            if (is_dir(_MODULES_ . "/" . $directory . "/EntityAux"))
-                                $paths[] = _MODULES_ . "/" . $directory . "/EntityAux";
+                            if (is_dir(Modules::MODULE_DIR . "/" . $directory . "/EntityAux"))
+                                $paths[] = Modules::MODULE_DIR . "/" . $directory . "/EntityAux";
 
                     }
                 }

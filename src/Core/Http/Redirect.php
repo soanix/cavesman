@@ -2,7 +2,6 @@
 
 namespace Cavesman\Http;
 
-use Cavesman\Http;
 use JetBrains\PhpStorm\NoReturn;
 
 class Redirect {

@@ -14,22 +14,15 @@
     "license": "MIT",
     "require": {
         "php": ">=8.4",
-        "ext-pdo": "*",
         "soanix/router": "^1.7",
         "ext-mbstring": "*"
     },
-    "require-dev": {
-        "doctrine/orm": "3.3.0"
-    },
     "autoload": {
         "files": [
-            "src/Cavesman/Config/Defines.php",
-            "src/Cavesman/Config/Config.php",
-            "src/Cavesman/Cavesman.php"
+            "src/Command/CommandList.php"
         ],
         "psr-4": {
-            "Cavesman\\": "src/Cavesman/Classes",
-            "Cavesman\\Http\\": "src/Cavesman/Http"
+            "Cavesman\\": "src/Core/"
         }
     }
 }
