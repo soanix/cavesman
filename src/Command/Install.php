@@ -105,7 +105,7 @@ if (!is_dir(Fs::SRC_DIR . "/Modules"))
 
 if (Launcher::isCli()) {
     Console::show('Install successfully', Console::SUCCESS);
-    Console::show('php -s localhost:80 -t public', Console::SUCCESS);
+    Console::show('php -S localhost:80 -t public', Console::SUCCESS);
 
 } else {
     ?>
