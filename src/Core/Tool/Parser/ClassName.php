@@ -47,6 +47,10 @@ class ClassName
                         if (preg_match('/class\s+([^\s{]+)/', $fileContent, $classMatches)) {
                             $className = $fileNamespace . '\\' . $classMatches[1];
                             $classes[] = '\\' . $className;
+
+                            // Is posible that class not included (psr-4 behavior)
+                            if(!class_exists('\\' . $className))
+                                require_once $file->getPathname();
                         }
                     }
                 }
