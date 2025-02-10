@@ -2,6 +2,9 @@
 
 namespace Cavesman\Tool\Parser;
 
+use Cavesman\Enum\Directory;
+use Cavesman\FileSystem;
+
 class ClassName
 {
 
@@ -12,14 +15,45 @@ class ClassName
      */
     public static function listInNamespace($namespace): array
     {
-        $namespace .= '\\';
-        $myClasses = array_filter(get_declared_classes(), fn($item) => str_starts_with($item, $namespace));
-        $theClasses = [];
-        foreach ($myClasses as $class) {
-            $theParts = explode('\\', $class);
-            $theClasses[] = $class;
+
+        if(str_starts_with($namespace, '\\'))
+            $namespace = substr($namespace, 1);
+        // Convertir el namespace en una ruta de directorio
+        $namespacePath = str_replace('\\', '/', $namespace);
+
+        // Obtener la ruta base del namespace
+        $basePath = FileSystem::getPath(Directory::SRC); // Ajusta __DIR__ según tu estructura de directorios
+
+        // Inicializar un array para almacenar las clases
+        $classes = [];
+
+        // Crear un iterador recursivo para explorar el directorio
+        $directoryIterator = new \RecursiveDirectoryIterator($basePath);
+        $iterator = new \RecursiveIteratorIterator($directoryIterator);
+
+        // Recorrer todos los archivos PHP en el directorio
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                // Obtener el contenido del archivo
+                $fileContent = file_get_contents($file->getPathname());
+
+                // Buscar el namespace declarado en el archivo
+                if (preg_match('/namespace\s+([^\s;]+)/', $fileContent, $matches)) {
+                    $fileNamespace = $matches[1];
+
+                    // Verificar si el namespace del archivo coincide con el buscado
+                    if ($fileNamespace === $namespace) {
+                        // Obtener el nombre de la clase
+                        if (preg_match('/class\s+([^\s{]+)/', $fileContent, $classMatches)) {
+                            $className = $fileNamespace . '\\' . $classMatches[1];
+                            $classes[] = '\\' . $className;
+                        }
+                    }
+                }
+            }
         }
-        return $theClasses;
+
+        return $classes;
     }
 
     /**
