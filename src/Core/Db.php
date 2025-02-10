@@ -14,11 +14,11 @@ class Db
     /** @var array $oConnection */
     protected static array $oConnection = [];
 
-    public static function getCli(): void
+    public static function getCli($server = 'cli', ?string $database = null, ?string $file = 'db'): void
     {
 
         ConsoleRunner::run(
-            new SingleManagerProvider(self::getManager('cli'))
+            new SingleManagerProvider(self::getManager($server, $database, $file))
         );
     }
 
@@ -30,31 +30,24 @@ class Db
             return self::$oConnection[$key];
         }
 
+        $directories = Config::get($file . '.' . $server . '.entities', ['Entity']);
 
         $paths = [];
         if (is_dir(FileSystem::getPath(Directory::ENTITY)))
             $paths[] = FileSystem::getPath(Directory::ENTITY);
-        if (Config::get('params.db.global_aux', false)) {
-            if (is_dir(FileSystem::getPath(Directory::SRC) . '/EntityAux'))
-                $paths[] = FileSystem::getPath(Directory::SRC) . '/EntityAux';
-        }
+
+        foreach ($directories as $directory)
+            if (file_exists(FileSystem::getPath(Directory::SRC) . '/' . $directory))
+                $paths[] = FileSystem::getPath(Directory::SRC) . '/' . $directory;
+
         if (is_dir(FileSystem::getPath(Directory::MODULE))) {
             $directories = scandir(FileSystem::getPath(Directory::MODULE));
-            foreach ($directories as $directory) {
-                $module = str_replace('directory/', '', $directory);
+            foreach ($directories as $moduleDir) {
+                $module = str_replace('directory/', '', $moduleDir);
                 if ($module !== '.' && $module != '..') {
-
-                    $config = json_decode(file_get_contents(FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/config.json"), true);
-                    if ($config['active']) {
-
-                        if (is_dir(FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/Entity"))
-                            $paths[] = FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/Entity";
-
-                        if (Config::get('params.db.global_aux', false))
-                            if (is_dir(FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/EntityAux"))
-                                $paths[] =FileSystem::getPath(Directory::MODULE) . "/" . $directory . "/EntityAux";
-
-                    }
+                    foreach ($directories as $directory)
+                        if (file_exists(FileSystem::getPath(Directory::MODULE) . "/" . $moduleDir . "/" . $directory))
+                            $paths[] = FileSystem::getPath(Directory::MODULE) . "/" . $moduleDir . "/" . $directory;
                 }
             }
         }

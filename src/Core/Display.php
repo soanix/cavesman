@@ -12,15 +12,19 @@ class Display
      */
     public static function init(): void
     {
+        Module::autoload();
+
         if (is_dir(FileSystem::getPath(Directory::ROUTES)))
             foreach (glob(FileSystem::getPath(Directory::ROUTES) . "/*.php") as $routeFile)
                 require_once $routeFile;
-        Module::autoload();
+
 
     }
 
     public static function initCli(): void
     {
+        Module::autoload();
+
         if (is_dir(FileSystem::getPath(Directory::ROUTES)))
             foreach (glob(FileSystem::getPath(Directory::ROUTES) . "/*.php") as $routeFile)
                 require_once $routeFile;
@@ -29,6 +33,6 @@ class Display
             foreach (glob(FileSystem::getPath(Directory::COMMANDS) . "/*.php") as $routeFile)
                 require_once $routeFile;
 
-        Module::autoload();
+
     }
 }
