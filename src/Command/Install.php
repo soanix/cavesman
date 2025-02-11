@@ -77,6 +77,10 @@ $newComposerContent = json_encode($composerData, JSON_PRETTY_PRINT | JSON_UNESCA
 // Guardar el contenido actualizado en composer.json
 file_put_contents($composerFile, $newComposerContent);
 
+foreach(glob(FileSystem::getPath(\Cavesman\Enum\Directory::INSTALL ) . '/*.php') as $file)
+    include $file;
+
+
 if (Launcher::isCli()) {
     Console::show('Install successfully', Console::SUCCESS);
     Console::show('php -S localhost:80 -t public', Console::SUCCESS);
