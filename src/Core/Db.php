@@ -3,6 +3,7 @@
 namespace Cavesman;
 
 use Cavesman\Enum\Directory;
+use Cavesman\Exception\ModuleException;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -22,6 +23,9 @@ class Db
         );
     }
 
+    /**
+     * @throws ModuleException
+     */
     public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db')
     {
         $key = $server . ':' . $database;
@@ -33,12 +37,25 @@ class Db
         $directories = Config::get($file . '.' . $server . '.entities', ['Entity']);
 
         $paths = [];
-        if (is_dir(FileSystem::getPath(Directory::ENTITY)))
-            $paths[] = FileSystem::getPath(Directory::ENTITY);
 
         foreach ($directories as $directory)
             if (file_exists(FileSystem::getPath(Directory::SRC) . '/' . $directory))
                 $paths[] = FileSystem::getPath(Directory::SRC) . '/' . $directory;
+
+        foreach (glob(FileSystem::getPath(Directory::MODULE) . '/*', GLOB_ONLYDIR) as $path) {
+
+
+            $config = json_decode(file_get_contents($path . '/config.json'), true);
+
+            if(!$config)
+                throw new ModuleException('Module config file is empty or corrupt');
+
+            $currentConfig = Config::get('modules.' . $config['name'], $config);
+
+            if(!$currentConfig['active'])
+                continue;
+
+        }
 
         if (is_dir(FileSystem::getPath(Directory::MODULE))) {
             $directories = scandir(FileSystem::getPath(Directory::MODULE));

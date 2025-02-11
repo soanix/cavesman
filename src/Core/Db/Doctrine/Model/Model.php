@@ -2,6 +2,8 @@
 
 namespace Cavesman\Db\Doctrine\Model;
 
+use Cavesman\Model\Base;
+
 /**
  * Used when model requires ID
  */

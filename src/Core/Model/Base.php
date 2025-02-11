@@ -1,9 +1,9 @@
 <?php
 
-namespace Cavesman\Db\Doctrine\Model;
+namespace Cavesman\Model;
 
 
-use BackedEnum;
+use Cavesman\Tool\Parser\ClassName;
 
 /**
  * Includes only construct and base methods
@@ -22,10 +22,10 @@ abstract class Base
 
                 $className = "\\App\\Model\\Api\\" . $modelName;
 
-                $enumName = "\\App\\Enum\\" . ucfirst(\App\Tool\Str::namespace2Basename(static::class));
+                $enumName = "\\App\\Enum\\" . ucfirst(ClassName::namespace2Basename(static::class));
                 $enumModelName = "\\App\\Enum\\" . ucfirst($modelName);
-                $enumModelParentName = "\\App\\Enum\\" . \App\Tool\Str::namespace2Basename(static::class) . ucfirst($property);
-                $enumModelParentNameSingular = "\\App\\Enum\\" . \App\Tool\Str::namespace2Basename(static::class) . ucfirst($modelName);
+                $enumModelParentName = "\\App\\Enum\\" . ClassName::namespace2Basename(static::class) . ucfirst($property);
+                $enumModelParentNameSingular = "\\App\\Enum\\" . ClassName::namespace2Basename(static::class) . ucfirst($modelName);
 
                 $this->{$property} = $this->resolveValue($value, $className, [
                     $enumModelName,
