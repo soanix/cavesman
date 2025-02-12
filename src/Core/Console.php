@@ -143,7 +143,7 @@ class Console
      * @param false $exit
      * @return void
      */
-    public static function print(string $message = '', string $type = '', false $exit = false): void
+    public static function print(string $message = '', string $type = '', bool $exit = false): void
     {
         self::log($message, $type);
 
