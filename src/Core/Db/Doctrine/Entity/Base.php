@@ -38,5 +38,5 @@ abstract class Base
      * @return Base|null
      * @throws ReflectionException
      */
-    abstract function model(): ?Db\Doctrine\Model\Base;
+    abstract function model(): ?\Cavesman\Model\Base;
 }
