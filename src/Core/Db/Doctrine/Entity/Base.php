@@ -2,8 +2,9 @@
 
 namespace Cavesman\Db\Doctrine\Entity;
 
+use Cavesman\Config;
 use Cavesman\Db;
-use Doctrine\Common\Collections\Collection;
+use Cavesman\Exception\ModuleException;
 use Doctrine\ORM\Mapping as ORM;
 use ReflectionException;
 
@@ -11,11 +12,11 @@ use ReflectionException;
 #[ORM\HasLifecycleCallbacks]
 abstract class Base
 {
-
     /**
      * @param array $criteria
      * @param array|null $orderBy
      * @return static|null
+     * @throws ModuleException
      */
     public static function findOneBy(array $criteria, ?array $orderBy = null): ?static
     {
@@ -28,6 +29,7 @@ abstract class Base
      * @param int|null $limit
      * @param int|null $offset
      * @return array|static[]
+     * @throws ModuleException
      */
     public static function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
@@ -35,51 +37,42 @@ abstract class Base
     }
 
     /**
-     * @return Base|null
      * @throws ReflectionException
+     * @throws \Exception
      */
-    public function model(): ?\Cavesman\Model\Base
+    public function model(Db\Doctrine\Model\Base|string $entityClass): ?Db\Doctrine\Model\Base
     {
-        $entityClass = get_class($this); // Ej: App\Entity\Enterprise
-        $modelClass = str_replace('App\\Entity', 'App\\Model', $entityClass); // App\Model\Enterprise
 
-        if (!class_exists($modelClass)) {
-            return null;
-        }
-
-        $modelInstance = new $modelClass();
+        $entity = new $entityClass();
 
         $reflection = new \ReflectionClass($this);
-        foreach ($reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PUBLIC) as $property) {
-            $property->setAccessible(true);
+        foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+
             $value = $property->getValue($this);
 
-            // Si es una instancia de Base, convertirla a modelo
-            if ($value instanceof \Cavesman\Db\Doctrine\Entity\Base) {
-                $value = $value->model();
-            }
+            // Sí es una instancia de Base del modelo, convertirla a entidad
+            if ($value instanceof Base)
+                continue;
 
-            // Si es un array o ArrayCollection, mapear los elementos si son instancia de Base
+            // Si es array o Traversable, mapear elementos si implementan entity()
             elseif (is_array($value) || $value instanceof \Traversable) {
                 $mapped = [];
                 foreach ($value as $key => $item) {
-                    if ($item instanceof \Cavesman\Db\Doctrine\Entity\Base) {
-                        $mapped[$key] = $item->model();
-                    } else {
-                        $mapped[$key] = $item;
-                    }
+                    if ($item instanceof Base)
+                        continue;
+
+                    $mapped[$key] = $item;
                 }
                 $value = $mapped;
             }
 
-            // Asignar valor si existe en el modelo
-            if (property_exists($modelInstance, $property->getName())) {
-                $modelProperty = new \ReflectionProperty($modelInstance, $property->getName());
-                $modelProperty->setAccessible(true);
-                $modelProperty->setValue($modelInstance, $value);
+            // Asignar valor si existe la propiedad en la entidad
+            if (property_exists($entity, $property->getName())) {
+                $entityProperty = new \ReflectionProperty($entity, $property->getName());
+                $entityProperty->setValue($entity, $value);
             }
         }
 
-        return $modelInstance;
+        return $entity;
     }
 }

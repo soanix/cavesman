@@ -5,6 +5,9 @@
         "bin/cavesman",
         "bin/doctrine"
     ],
+    "scripts": {
+        "test": "vendor/bin/phpunit --testdox src"
+    },
     "authors": [
         {
             "name": "Soanix",
@@ -17,12 +20,18 @@
         "soanix/router": "^1.7",
         "ext-mbstring": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^12.1",
+        "doctrine/orm": "^3.3",
+        "symfony/cache": "^7.1"
+    },
     "autoload": {
         "files": [
             "src/Command/CommandList.php"
         ],
         "psr-4": {
-            "Cavesman\\": "src/Core/"
+            "Cavesman\\": "src/Core/",
+            "Cavesman\\Test\\": "src/Test/"
         }
     }
 }
