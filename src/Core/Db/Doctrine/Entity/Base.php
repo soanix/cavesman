@@ -60,14 +60,18 @@ abstract class Base implements Db\Doctrine\Interface\Entity
 
                 if ($value instanceof Collection) {
                     $submodelClassname = $model->typeOfCollection($propName);
-                    $items = [];
-                    foreach ($value as $item) {
-                        $items[] = method_exists($item, 'model') ? $item->model($submodelClassname) : $item;
+                    if($submodelClassname) {
+                        $items = [];
+                        foreach ($value as $item) {
+                            $items[] = method_exists($item, 'model') ? $item->model($submodelClassname) : $item;
+                        }
+                        $model->{$propName} = $items;
                     }
-                    $model->{$propName} = $items;
                 } elseif ($value instanceof Base) {
-                    $submodelClassname = $model->typeOfCollection($propName);
-                    $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
+                    if($submodelClassname) {
+                        $submodelClassname = $model->typeOfCollection($propName);
+                        $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
+                    }
                 } else {
                     $model->{$propName} = $value;
                 }
