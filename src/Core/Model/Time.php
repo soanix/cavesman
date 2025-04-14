@@ -2,6 +2,7 @@
 
 namespace Cavesman\Model;
 
+use Cavesman\Config;
 use DateTime;
 use DateTimeZone;
 
@@ -12,10 +13,10 @@ class Time extends DateTime
         string $datetime = 'now',
         DateTimeZone|null $timezone = null
     ) {
-        parent::__construct($datetime, $timezone);
+        parent::__construct('0000-00-00T' . $datetime, $timezone);
     }
-    public function toString($seconds = false): string
+    public function toString(): string
     {
-        return $this->format('H:i' . ($seconds ? ' :s' : ''));
+        return $this->format(Config::get('params.core.time.format', 'H:i'));
     }
 }

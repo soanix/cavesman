@@ -45,7 +45,10 @@ abstract class Base
                             }
                         }
                     }elseif ($type instanceof ReflectionNamedType) {
-                        if ($type->getName() === DateTime::class) {
+                        if ($type->getName() === Time::class) {
+                            $this->{$property} = new Time($value);
+                            continue;
+                        }elseif ($type->getName() === DateTime::class) {
                             $this->{$property} = new DateTime($value);
                             continue;
                         }
@@ -123,7 +126,9 @@ abstract class Base
             if ($modelReflection->hasProperty($propName)) {
                 $value = $modelReflection->getProperty($propName)->getValue($this);
 
-                if ($value instanceof \DateTime) {
+                if ($value instanceof Time) {
+                    $this->{$propName} = $value->toString();
+                }elseif ($value instanceof \DateTime) {
                     $this->{$propName} = $value->format('Y-m-d\TH:i:s');
                 }
             }
