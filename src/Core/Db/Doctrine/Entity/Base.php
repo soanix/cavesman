@@ -5,13 +5,17 @@ namespace Cavesman\Db\Doctrine\Entity;
 use Cavesman\Config;
 use Cavesman\Db;
 use Cavesman\Exception\ModuleException;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
+use ReflectionClass;
 use ReflectionException;
 
 #[ORM\MappedSuperclass]
 #[ORM\HasLifecycleCallbacks]
-abstract class Base
+abstract class Base implements Db\Doctrine\Interface\Entity
 {
+
     /**
      * @param array $criteria
      * @param array|null $orderBy
@@ -38,41 +42,39 @@ abstract class Base
 
     /**
      * @throws ReflectionException
-     * @throws \Exception
      */
-    public function model(Db\Doctrine\Model\Base|string $entityClass): ?Db\Doctrine\Model\Base
+    public function model(string $modelClass): ?Db\Doctrine\Model\Base
     {
+        /** @var ?Db\Doctrine\Model\Base $model */
+        $model = new $modelClass();
+        $entityReflection = new ReflectionClass($this);
+        $modelReflection = new ReflectionClass($model);
 
-        $entity = new $entityClass();
+        foreach ($modelReflection->getProperties() as $modelProp) {
+            $propName = $modelProp->getName();
 
-        $reflection = new \ReflectionClass($this);
-        foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            if ($entityReflection->hasProperty($propName)) {
+                $entityProp = $entityReflection->getProperty($propName);
+                $entityProp->setAccessible(true);
+                $value = $entityProp->getValue($this);
 
-            $value = $property->getValue($this);
-
-            // Sí es una instancia de Base del modelo, convertirla a entidad
-            if ($value instanceof Base)
-                continue;
-
-            // Si es array o Traversable, mapear elementos si implementan entity()
-            elseif (is_array($value) || $value instanceof \Traversable) {
-                $mapped = [];
-                foreach ($value as $key => $item) {
-                    if ($item instanceof Base)
-                        continue;
-
-                    $mapped[$key] = $item;
+                if ($value instanceof Collection) {
+                    $submodelClassname = $model->typeOfCollection($propName);
+                    $items = [];
+                    foreach ($value as $item) {
+                        $items[] = method_exists($item, 'model') ? $item->model($submodelClassname) : $item;
+                    }
+                    $model->{$propName} = $items;
+                } elseif ($value instanceof Base) {
+                    $submodelClassname = $model->typeOfCollection($propName);
+                    $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
+                } else {
+                    $model->{$propName} = $value;
                 }
-                $value = $mapped;
-            }
-
-            // Asignar valor si existe la propiedad en la entidad
-            if (property_exists($entity, $property->getName())) {
-                $entityProperty = new \ReflectionProperty($entity, $property->getName());
-                $entityProperty->setValue($entity, $value);
             }
         }
 
-        return $entity;
+        return $model;
     }
+
 }

@@ -2,7 +2,7 @@
 
 namespace Cavesman\Test\Entity;
 
-use Cavesman\Db\Doctrine\Entity\Base;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,6 +18,10 @@ class Entity extends \Cavesman\Db\Doctrine\Entity\Entity
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     public ?self $parent = null;
 
+
+    #[ORM\Column(name: 'date', type: 'datetime', nullable: true)]
+    public ?DateTime $date = null;
+
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
     public Collection $children;
 
@@ -26,12 +30,5 @@ class Entity extends \Cavesman\Db\Doctrine\Entity\Entity
         $this->children = new ArrayCollection();
     }
 
-    public function model(\Cavesman\Db\Doctrine\Model\Base|string $entityClass): ?\Cavesman\Db\Doctrine\Model\Base
-    {
-        $model =  parent::model($entityClass);
 
-        $model->children = $this->children->map(fn (Base $child) => $child->model(get_class($child)))->toArray();
-
-        return $model;
-    }
 }

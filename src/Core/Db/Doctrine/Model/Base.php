@@ -2,56 +2,59 @@
 
 namespace Cavesman\Db\Doctrine\Model;
 
-use Cavesman\Db\Doctrine\Interface\Entity;
-use Cavesman\Exception\ModuleException;
+use Cavesman\Db\Doctrine\Interface\Model;
 use Cavesman\Model\Base as BaseModel;
+use Doctrine\Common\Collections\ArrayCollection;
+use ReflectionClass;
 use ReflectionException;
 
 /**
  * Used when model requires ID
  */
-abstract class Base extends BaseModel implements Entity
+abstract class Base extends BaseModel implements Model
 {
 
     /**
      * @throws ReflectionException
-     * @throws ModuleException
-     * @throws \Exception
      */
-    public function entity(\Cavesman\Db\Doctrine\Entity\Base|string $entityClass, bool $update = false): ?\Cavesman\Db\Doctrine\Entity\Base
+    public function entity(bool $update = false): \Cavesman\Db\Doctrine\Entity\Base
     {
+        $className = static::ENTITY;
 
-        if (property_exists($this, 'id') && $this->id) {
-            $entity = $entityClass::findOneBy(['id' => $this->id, 'deletedOn' => null]);
-            if (!$entity)
-                throw new \Exception('item.error.not-found', 404);
+        $entity = new $className();
 
-            if (!$update)
-                return $entity;
-        } else
-            $entity = new $entityClass();
+        $modelReflection = new ReflectionClass($this);
+        $entityReflection = new ReflectionClass($entity);
 
-        $reflection = new \ReflectionClass($this);
-        foreach ($reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($entityReflection->getProperties() as $entityProp) {
+            $propName = $entityProp->getName();
 
-            $value = $property->getValue($this);
+            if ($modelReflection->hasProperty($propName)) {
+                $modelProp = $modelReflection->getProperty($propName);
+                $modelProp->setAccessible(true);
+                $value = $modelProp->getValue($this);
 
-            // Sí es una instancia de Base del modelo, convertirla a entidad
-            if ($value instanceof Base)
-                continue;
-
-            // Si es array o Traversable, mapear elementos si implementan entity()
-            elseif (is_array($value)) {
-               continue;
-            }
-
-            // Asignar valor si existe la propiedad en la entidad
-            if (property_exists($entity, $property->getName())) {
-                $entityProperty = new \ReflectionProperty($entity, $property->getName());
-                $entityProperty->setValue($entity, $value);
+                if (is_array($value)) {
+                    $items = [];
+                    foreach ($value as $item) {
+                        $items[] = method_exists($item, 'entity') ? $item->entity() : $item;
+                    }
+                    $entity->{$propName} = new ArrayCollection($items);
+                } elseif ($value instanceof Base) {
+                    $entity->{$propName} = method_exists($value, 'entity') ? $value->entity() : $value;
+                } else {
+                    $entity->{$propName} = $value;
+                }
             }
         }
 
         return $entity;
+    }
+
+    public function typeOfCollection(string $property): string
+    {
+        return match ($property) {
+            default => throw new \RuntimeException('No model mapping for ' . $property),
+        };
     }
 }

@@ -1,25 +1,32 @@
 <?php
 
 namespace Cavesman\Test\Model;
+
 use Cavesman\Db\Doctrine\Model\Base;
-use Doctrine\Common\Collections\ArrayCollection;
+use Cavesman\Test\Entity\Entity;
+use DateTime;
 
 class Model extends Base
 {
+    const \Cavesman\Db\Doctrine\Entity\Base|string ENTITY = Entity::class;
+
     public string $name = '';
+    public DateTime|string|null $date = null;
 
     /**
      * @var Model[]
      */
     public array $children = [];
 
-    public function entity(\Cavesman\Db\Doctrine\Entity\Base|string $entityClass, bool $update = false): ?\Cavesman\Db\Doctrine\Entity\Base
-    {
-        $entity = parent::entity($entityClass, $update);
-        $entity->children = new ArrayCollection(
-            array_map(fn(Base $child) => $child->entity(get_class($child)), $this->children)
-        );
 
-        return $entity;
+    public function typeOfCollection(string $property): string
+    {
+        return match ($property) {
+
+            'children' => Model::class,
+            // Agrega tus casos aquí
+            default => throw new \RuntimeException('No model mapping for ' . $property),
+        };
     }
+
 }
