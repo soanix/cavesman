@@ -51,10 +51,8 @@ abstract class Base extends BaseModel implements Model
         return $entity;
     }
 
-    public function typeOfCollection(string $property): string
+    public function typeOfCollection(string $property): ?string
     {
-        return match ($property) {
-            default => throw new \RuntimeException('No model mapping for ' . $property),
-        };
+        return null;
     }
 }
