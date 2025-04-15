@@ -91,6 +91,9 @@ abstract class Base
 
         // Intentar crear una instancia de enum
         foreach ($enumNames as $enumName) {
+            if($value instanceof $enumName)
+                return $value;
+
             if (enum_exists($enumName)) {
                 return $enumName::tryFrom($value);
             }
