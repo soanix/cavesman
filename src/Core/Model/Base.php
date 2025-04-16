@@ -26,7 +26,7 @@ abstract class Base
                     $modelName = substr($property, 0, -1);
                 }
 
-                $className = "\\App\\Model\\Api\\" . $modelName;
+                $className = "\\App\\Model\\" . $modelName;
 
                 $enumName = "\\App\\Enum\\" . ucfirst(ClassName::namespace2Basename(static::class));
                 $enumModelName = "\\App\\Enum\\" . ucfirst($modelName);
@@ -75,7 +75,6 @@ abstract class Base
             if (empty($value)) {
                 return [];
             }
-
             // Comprobar si es un array de objetos
             if (array_is_list($value)) {
                 return array_map(function ($item) use ($className, $enumNames) {
@@ -127,12 +126,29 @@ abstract class Base
             $propName = $modelProp->getName();
 
             if ($modelReflection->hasProperty($propName)) {
-                $value = $modelReflection->getProperty($propName)->getValue($this);
+                $property = $modelReflection->getProperty($propName);
+                $value = $property->getValue($this);
+                $type = $property->getType();
 
-                if ($value instanceof Time) {
+                if ($type instanceof ReflectionUnionType) {
+                    foreach ($type->getTypes() as $unionType) {
+                        if ($unionType instanceof ReflectionNamedType && $unionType->getName() === Time::class) {
+                            $time = new Time($value->format('H:i:s'));
+                            $this->{$propName} = $time->toString();
+                        }elseif ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
+                            $this->{$propName} = $value->format('Y-m-d\TH:i:s');
+                        }
+                    }
+                }elseif ($value instanceof Time) {
                     $this->{$propName} = $value->toString();
                 }elseif ($value instanceof \DateTime) {
                     $this->{$propName} = $value->format('Y-m-d\TH:i:s');
+                }elseif ($value instanceof Base) {
+                    $this->{$propName} = $value->json();
+                }elseif(is_array($value) && $value && reset($value) instanceof Base){
+                    array_map(fn(Base $o) => $o->json(), $value);
+                }else{
+                    $this->{$propName} = $value;
                 }
             }
         }

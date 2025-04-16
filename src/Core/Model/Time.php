@@ -15,8 +15,9 @@ class Time extends DateTime
     ) {
         parent::__construct('0000-00-00T' . $datetime, $timezone);
     }
-    public function toString(): string
+    public function toString(?string $format): string
     {
-        return $this->format(Config::get('params.core.time.format', 'H:i'));
+        $format = $format ?? Config::get('params.core.time.format', 'H:i');
+        return $this->format($format);
     }
 }
