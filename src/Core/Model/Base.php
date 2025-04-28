@@ -6,7 +6,6 @@ namespace Cavesman\Model;
 use Cavesman\Tool\Parser\ClassName;
 use DateMalformedStringException;
 use DateTime;
-use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
@@ -44,11 +43,11 @@ abstract class Base
                                 continue 2;
                             }
                         }
-                    }elseif ($type instanceof ReflectionNamedType) {
+                    } elseif ($type instanceof ReflectionNamedType) {
                         if ($type->getName() === Time::class) {
                             $this->{$property} = new Time($value);
                             continue;
-                        }elseif ($type->getName() === DateTime::class) {
+                        } elseif ($type->getName() === DateTime::class) {
                             $this->{$property} = new DateTime($value);
                             continue;
                         }
@@ -90,7 +89,7 @@ abstract class Base
 
         // Intentar crear una instancia de enum
         foreach ($enumNames as $enumName) {
-            if($value instanceof $enumName)
+            if ($value instanceof $enumName)
                 return $value;
 
             if (enum_exists($enumName)) {
@@ -118,6 +117,9 @@ abstract class Base
         return new static($request);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function json(): static
     {
         $modelReflection = new ReflectionClass($this);
@@ -133,21 +135,24 @@ abstract class Base
                 if ($type instanceof ReflectionUnionType) {
                     foreach ($type->getTypes() as $unionType) {
                         if ($unionType instanceof ReflectionNamedType && $unionType->getName() === Time::class) {
-                            $time = new Time($value->format('H:i:s'));
-                            $this->{$propName} = $time->toString();
-                        }elseif ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
-                            $this->{$propName} = $value->format('Y-m-d\TH:i:s');
+                            if($value) {
+                                $time = new Time($value->format('H:i:s'));
+                                $this->{$propName} = $time->toString();
+                            }
+                        } elseif ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
+                            if ($value)
+                                $this->{$propName} = $value->format('Y-m-d\TH:i:s');
                         }
                     }
-                }elseif ($value instanceof Time) {
+                } elseif ($value instanceof Time) {
                     $this->{$propName} = $value->toString();
-                }elseif ($value instanceof \DateTime) {
+                } elseif ($value instanceof \DateTime) {
                     $this->{$propName} = $value->format('Y-m-d\TH:i:s');
-                }elseif ($value instanceof Base) {
+                } elseif ($value instanceof Base) {
                     $this->{$propName} = $value->json();
-                }elseif(is_array($value) && $value && reset($value) instanceof Base){
+                } elseif (is_array($value) && $value && reset($value) instanceof Base) {
                     array_map(fn(Base $o) => $o->json(), $value);
-                }else{
+                } else {
                     $this->{$propName} = $value;
                 }
             }
