@@ -157,6 +157,7 @@ abstract class Base
                         $this->{$propName} = $value;
                     else
                         get_class($this)::${$propName} = $value;
+
                 }
             }
         }
