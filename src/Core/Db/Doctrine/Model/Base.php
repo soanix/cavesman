@@ -40,7 +40,10 @@ abstract class Base extends BaseModel implements Model
                 if (is_array($value)) {
                     $items = [];
                     foreach ($value as $item) {
-                        $items[] = method_exists($item, 'entity') ? $item->entity() : $item;
+                        if (is_array($item)) {
+                            $items[] = array_map(fn ($it) => $it->entity(), $item);
+                        } else
+                            $items[] = method_exists($item, 'entity') ? $item->entity() : $item;
                     }
                     $entity->{$propName} = new ArrayCollection($items);
                 } elseif ($value instanceof Base) {
