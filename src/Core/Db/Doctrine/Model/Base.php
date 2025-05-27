@@ -15,13 +15,16 @@ abstract class Base extends BaseModel implements Model
 {
 
     /**
+     * @param \Cavesman\Db\Doctrine\Entity\Base|null $entity
+     * @return \Cavesman\Db\Doctrine\Entity\Base
      * @throws ReflectionException
      */
-    public function entity(bool $update = false): \Cavesman\Db\Doctrine\Entity\Base
+    public function entity(?\Cavesman\Db\Doctrine\Entity\Base $entity = null): \Cavesman\Db\Doctrine\Entity\Base
     {
         $className = static::ENTITY;
 
-        $entity = new $className();
+        if (!$entity)
+            $entity = new $className();
 
         $modelReflection = new ReflectionClass($this);
         $entityReflection = new ReflectionClass($entity);

@@ -7,5 +7,5 @@ use Cavesman\Db\Doctrine\Entity\Base;
 interface Model {
     const Base|string ENTITY = '';
 
-    public function entity(bool $update = false): ?Base;
+    public function entity(?Base $entity = null): ?Base;
 }
