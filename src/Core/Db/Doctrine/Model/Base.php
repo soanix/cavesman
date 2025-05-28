@@ -2,9 +2,13 @@
 
 namespace Cavesman\Db\Doctrine\Model;
 
+use Cavesman\Db;
 use Cavesman\Db\Doctrine\Interface\Model;
+use Cavesman\Exception\ModuleException;
 use Cavesman\Model\Base as BaseModel;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use ReflectionClass;
 use ReflectionException;
 
@@ -15,16 +19,26 @@ abstract class Base extends BaseModel implements Model
 {
 
     /**
-     * @param \Cavesman\Db\Doctrine\Entity\Base|null $entity
-     * @return \Cavesman\Db\Doctrine\Entity\Base
+     * @param EntityManager|null $em
+     * @return Db\Doctrine\Entity\Base
+     * @throws ORMException
      * @throws ReflectionException
+     * @throws ModuleException
      */
-    public function entity(?\Cavesman\Db\Doctrine\Entity\Base $entity = null): \Cavesman\Db\Doctrine\Entity\Base
+    public function entity(?EntityManager $em = null): Db\Doctrine\Entity\Base
     {
         $className = static::ENTITY;
 
+        if(!$em)
+            $em = Db::getManager();
+
+        $entity = null;
+        if($em && $this->id)
+            $entity = $em->getReference($className, $this->id);
+
         if (!$entity)
             $entity = new $className();
+
 
         $modelReflection = new ReflectionClass($this);
         $entityReflection = new ReflectionClass($entity);
@@ -41,11 +55,11 @@ abstract class Base extends BaseModel implements Model
                     $items = [];
                     foreach ($value as $item) {
                         if (!is_array($item))
-                            $items[] = method_exists($item, 'entity') ? $item->entity() : $item;
+                            $items[] = method_exists($item, 'entity') ? $item->entity($em) : $item;
                     }
                     $entity->{$propName} = new ArrayCollection($items);
                 } elseif ($value instanceof Base) {
-                    $entity->{$propName} = method_exists($value, 'entity') ? $value->entity() : $value;
+                    $entity->{$propName} = method_exists($value, 'entity') ? $value->entity($em) : $value;
                 } else {
                     $entity->{$propName} = $value;
                 }
