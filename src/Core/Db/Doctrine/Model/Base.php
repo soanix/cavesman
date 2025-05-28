@@ -33,8 +33,15 @@ abstract class Base extends BaseModel implements Model
             $em = Db::getManager();
 
         $entity = null;
-        if($em && $this->id)
-            $entity = $em->getReference($className, $this->id);
+
+        /** @var ClassMetadata $metadata */
+        $metadata = $em->getClassMetadata($className);
+
+        // Obtener las propiedades que son clave primaria
+        $identifierFields = $metadata->getIdentifierFieldNames();
+
+        if($em && $identifierFields && $this->{$identifierFields[0]})
+            $entity = $em->getReference($className, $this->{$identifierFields[0]});
 
         if (!$entity)
             $entity = new $className();
