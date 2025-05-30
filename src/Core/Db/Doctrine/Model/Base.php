@@ -7,6 +7,7 @@ use Cavesman\Db\Doctrine\Interface\Model;
 use Cavesman\Exception\ModuleException;
 use Cavesman\Model\Base as BaseModel;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use ReflectionClass;
@@ -58,7 +59,7 @@ abstract class Base extends BaseModel implements Model
                 $modelProp->setAccessible(true);
                 $value = $modelProp->getValue($this);
 
-                if (is_array($value)) {
+                if ($value instanceof Collection){
                     $items = [];
                     foreach ($value as $item) {
                         if (!is_array($item))
