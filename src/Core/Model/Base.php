@@ -39,16 +39,19 @@ abstract class Base
                     if ($type instanceof ReflectionUnionType) {
                         foreach ($type->getTypes() as $unionType) {
                             if ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
-                                $this->{$property} = new DateTime($value);
+                                if ($value)
+                                    $this->{$property} = new DateTime($value);
                                 continue 2;
                             }
                         }
                     } elseif ($type instanceof ReflectionNamedType) {
                         if ($type->getName() === Time::class) {
-                            $this->{$property} = new Time($value);
+                            if ($value)
+                                $this->{$property} = new Time($value);
                             continue;
                         } elseif ($type->getName() === DateTime::class) {
-                            $this->{$property} = new DateTime($value);
+                            if ($value)
+                                $this->{$property} = new DateTime($value);
                             continue;
                         }
                     }
@@ -135,7 +138,7 @@ abstract class Base
                 if ($type instanceof ReflectionUnionType) {
                     foreach ($type->getTypes() as $unionType) {
                         if ($unionType instanceof ReflectionNamedType && $unionType->getName() === Time::class) {
-                            if($value) {
+                            if ($value) {
                                 $time = new Time($value->format('H:i:s'));
                                 $this->{$propName} = $time->toString();
                             }
@@ -153,7 +156,7 @@ abstract class Base
                 } elseif (is_array($value) && $value && reset($value) instanceof Base) {
                     array_map(fn(Base $o) => $o->json(), $value);
                 } else {
-                    if(!$property->isStatic())
+                    if (!$property->isStatic())
                         $this->{$propName} = $value;
                     else
                         get_class($this)::${$propName} = $value;
