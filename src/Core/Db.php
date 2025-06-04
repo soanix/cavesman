@@ -81,6 +81,15 @@ class Db
             $connectionParams['dbname'] = $database;
 
         $connection = DriverManager::getConnection($connectionParams);
+        $match = Config::get($file . '.' . $server . '.schema_filter', null);
+        $connection->getConfiguration()->setSchemaAssetsFilter(static function (string|AbstractAsset $assetName) use ($match): bool {
+            if ($assetName instanceof AbstractAsset) {
+                $assetName = $assetName->getName();
+            }
+            if(!$match)
+                return true;
+            return (bool) preg_match($match, $assetName);
+        });
 
         self::$oConnection[$key] = new EntityManager($connection, $config);
 
