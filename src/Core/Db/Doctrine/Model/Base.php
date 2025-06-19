@@ -7,7 +7,6 @@ use Cavesman\Db\Doctrine\Interface\Model;
 use Cavesman\Exception\ModuleException;
 use Cavesman\Model\Base as BaseModel;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use ReflectionClass;
@@ -30,18 +29,17 @@ abstract class Base extends BaseModel implements Model
     {
         $className = static::ENTITY;
 
-        if(!$em)
+        if (!$em)
             $em = Db::getManager();
 
         $entity = null;
 
-        /** @var ClassMetadata $metadata */
         $metadata = $em->getClassMetadata($className);
 
         // Obtener las propiedades que son clave primaria
         $identifierFields = $metadata->getIdentifierFieldNames();
 
-        if($em && $identifierFields && $this->{$identifierFields[0]})
+        if ($em && $identifierFields && $this->{$identifierFields[0]})
             $entity = $em->getReference($className, $this->{$identifierFields[0]});
 
         if (!$entity)
@@ -59,7 +57,7 @@ abstract class Base extends BaseModel implements Model
                 $modelProp->setAccessible(true);
                 $value = $modelProp->getValue($this);
 
-                if ($value instanceof Collection){
+                if ($value && is_array($value) && reset($value) instanceof BaseModel) {
                     $items = [];
                     foreach ($value as $item) {
                         if (!is_array($item))
