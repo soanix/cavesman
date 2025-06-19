@@ -56,6 +56,7 @@ abstract class Base extends BaseModel implements Model
                 $modelProp = $modelReflection->getProperty($propName);
                 $modelProp->setAccessible(true);
                 $value = $modelProp->getValue($this);
+                $classNameChild = static::typeOfCollection($propName);
 
                 if ($value && is_array($value) && reset($value) instanceof BaseModel) {
                     $items = [];
@@ -63,6 +64,14 @@ abstract class Base extends BaseModel implements Model
                         if (!is_array($item))
                             $items[] = method_exists($item, 'entity') ? $item->entity($em) : $item;
                     }
+                    $entity->{$propName} = new ArrayCollection($items);
+                }elseif ($value && is_array($value) && $classNameChild) {
+
+                    $items = [];
+                    foreach ($value as $item) {
+                        $items[] = new $classNameChild($item);
+                    }
+
                     $entity->{$propName} = new ArrayCollection($items);
                 } elseif ($value instanceof Base) {
                     $entity->{$propName} = method_exists($value, 'entity') ? $value->entity($em) : $value;
@@ -73,10 +82,5 @@ abstract class Base extends BaseModel implements Model
         }
 
         return $entity;
-    }
-
-    public function typeOfCollection(string $property): ?string
-    {
-        return null;
     }
 }

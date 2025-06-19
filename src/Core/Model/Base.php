@@ -3,7 +3,6 @@
 namespace Cavesman\Model;
 
 
-use Cavesman\Tool\Parser\ClassName;
 use DateMalformedStringException;
 use DateTime;
 use ReflectionClass;
@@ -25,12 +24,6 @@ abstract class Base
                     $modelName = substr($property, 0, -1);
                 }
 
-                $className = "\\App\\Model\\" . $modelName;
-
-                $enumName = "\\App\\Enum\\" . ucfirst(ClassName::namespace2Basename(static::class));
-                $enumModelName = "\\App\\Enum\\" . ucfirst($modelName);
-                $enumModelParentName = "\\App\\Enum\\" . ClassName::namespace2Basename(static::class) . ucfirst($property);
-                $enumModelParentNameSingular = "\\App\\Enum\\" . ClassName::namespace2Basename(static::class) . ucfirst($modelName);
                 try {
                     $modelReflection = new ReflectionClass($this);
                     $propertyInstance = $modelReflection->getProperty($property);
@@ -59,19 +52,18 @@ abstract class Base
 
                 }
 
-                $this->{$property} = $this->resolveValue($value, $className, [
-                    $enumModelName,
-                    $enumModelParentName,
-                    $enumModelParentNameSingular,
-                    $enumName
-                ]);
+                $this->{$property} = $this->resolveValue($value, $property);
             }
         }
     }
 
-    private function resolveValue(mixed $value, string $className, array $enumNames)
+    private function resolveValue(mixed $value, string $property)
     {
 
+        $className = static::typeOfEnum($property);
+
+        if (!$className)
+            $className = static::typeOfCollection($property);
 
         if (is_array($value)) {
             if (empty($value)) {
@@ -79,9 +71,7 @@ abstract class Base
             }
             // Comprobar si es un array de objetos
             if (array_is_list($value)) {
-                return array_map(function ($item) use ($className, $enumNames) {
-                    return $this->resolveValue($item, $className, $enumNames);
-                }, $value);
+                return array_map(fn($item) => $this->resolveValue($item, $property), $value);
             } else {
                 if (class_exists($className)) {
                     return new $className($value);
@@ -90,17 +80,15 @@ abstract class Base
             }
         }
 
-        // Intentar crear una instancia de enum
-        foreach ($enumNames as $enumName) {
-            if ($value instanceof $enumName)
-                return $value;
+        if ($value instanceof \BackedEnum)
+            return $value;
 
-            if (enum_exists($enumName)) {
-                return $enumName::tryFrom($value);
-            }
+        if ($className && enum_exists($className) && $value) {
+            return $className::tryFrom($value);
         }
 
-        if (class_exists($className) && $value) {
+
+        if ($className && class_exists($className) && $value) {
             return new $className($value);
         }
 
@@ -167,5 +155,16 @@ abstract class Base
 
         return $this;
     }
+
+    public function typeOfEnum($name): \BackedEnum|string|null
+    {
+        return null;
+    }
+
+    public function typeOfCollection(string $property): ?string
+    {
+        return null;
+    }
+
 
 }

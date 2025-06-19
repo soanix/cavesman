@@ -1,6 +1,6 @@
 .idea
-app/config/main.json
-app/config/*.*.json
 /vendor/
 composer.phar
 composer.lock
+/app/
+/public/
