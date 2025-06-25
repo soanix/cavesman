@@ -3,6 +3,7 @@
 namespace Cavesman;
 
 
+use Cavesman\Enum\Console\Type;
 use Cavesman\Enum\Directory;
 use DateInterval;
 use DateMalformedIntervalStringException;
@@ -22,11 +23,6 @@ use ReflectionMethod;
 class Console
 {
 
-    const string ERROR = 'error';
-    const string WARNING = 'warning';
-    const string SUCCESS = 'success';
-    const string INFO = 'info';
-    const string PROGRESS = 'progress';
     /**
      * @var string Log string of all display
      */
@@ -124,67 +120,63 @@ class Console
         });
         $longestUrl = max(array_map(fn($a) => strlen($a['url']), $list));
         foreach ($list as $route) {
-            Console::show(
-                str_pad($route['url'], $longestUrl) . "\t" .
-                $route['description'],
-                Console::PROGRESS
-            );
+            Console::output(str_pad($route['url'], $longestUrl) . "\t" . $route['description'], Type::PROGRESS);
         }
-    }
-
-    public static function show($message = '', $type = '', $exit = false)
-    {
-        self::print($message, $type, $exit);
     }
 
     /**
-     * @param string $message
-     * @param string $type
-     * @param false $exit
+     * @param string|array $data
+     * @param Type|null $type
      * @return void
      */
-    public static function print(string $message = '', string $type = '', bool $exit = false): void
+    public static function output(string|array $data, ?Type $type = null): void
     {
-        self::log($message, $type);
+        $array = [];
+        if (is_string($data))
+            $array[] = $data;
+        else
+            $array = $data;
 
-        $text = '';
-        if (PHP_SAPI !== 'cli')
-            return;
-        if (!in_array($type, [self::PROGRESS, self::INFO]))
-            $text .= "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
-        switch ($type) {
-            case self::PROGRESS:
-            case self::INFO:
-                $text .= $message;
-                break;
 
-            case self::ERROR:
-                self::$errors[] = $text . " " . $message;
-                $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
+        foreach ($array as $message) {
+            self::log($message, $type);
 
-                break;
-            case self::WARNING:
-                $text .= "\e[0;33m[WARNING] \e[m\t" . $message;
-                break;
-            case self::SUCCESS:
-                $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
-                break;
-            default:
-                $text .= "\e[1;36m[GENERAL] \e[m\t" . $message;
+            $text = '';
+            if (PHP_SAPI !== 'cli')
+                return;
+            if (!in_array($type, [Type::PROGRESS, Type::INFO]))
+                $text .= "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
+            switch ($type) {
+                case Type::PROGRESS:
+                case Type::INFO:
+                    $text .= $message;
+                    break;
+
+                case Type::ERROR:
+                    self::$errors[] = $text . " " . $message;
+                    $text .= "\e[0;31m[ERROR] \e[m\t" . $message;
+
+                    break;
+                case Type::WARNING:
+                    $text .= "\e[0;33m[WARNING] \e[m\t" . $message;
+                    break;
+                case Type::SUCCESS:
+                    $text .= "\e[0;32m[SUCCESS] \e[m\t" . $message;
+                    break;
+                default:
+                    $text .= "\e[1;36m[GENERAL] \e[m\t" . $message;
+            }
+
+            $text .= PHP_EOL;
+
+            if (!in_array($type, [Type::PROGRESS, Type::INFO]))
+                self::$log .= $text;
+
+            self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.log.debug', true);
+
+            if ($text && (self::$debug || in_array($type, [Type::PROGRESS, Type::INFO])))
+                echo $text;
         }
-
-        $text .= PHP_EOL;
-
-        if (!in_array($type, [self::PROGRESS, self::INFO]))
-            self::$log .= $text;
-
-        self::$debug = !is_null(self::$debug) ? self::$debug : Config::get('params.log.debug', true);
-
-        if ($text && (self::$debug || in_array($type, [self::PROGRESS, self::INFO])))
-            echo $text;
-
-        if ($exit)
-            exit();
     }
 
     private static function log($message, $type): void
@@ -195,16 +187,16 @@ class Console
             return;
         }
 
-        if (in_array($type, [self::PROGRESS, self::INFO])) {
+        if (in_array($type, [Type::PROGRESS, Type::INFO])) {
             return;
         }
 
         $text = "[" . new DateTime()->format('Y-m-d H:i:s') . "]";
 
         $text .= match ($type) {
-            self::ERROR => "[ERROR] \t" . $message,
-            self::WARNING => "[WARNING] \t" . $message,
-            self::SUCCESS => "[SUCCESS] \t" . $message,
+            Type::ERROR => "[ERROR] \t" . $message,
+            Type::WARNING => "[WARNING] \t" . $message,
+            Type::SUCCESS => "[SUCCESS] \t" . $message,
             default => "[INFO]\t" . $message,
         };
 
@@ -213,7 +205,7 @@ class Console
         if (!is_dir(FileSystem::getPath(Directory::LOG)))
             mkdir(FileSystem::getPath(Directory::LOG), 0777, true);
 
-        $fp = @fopen(FileSystem::getPath(Directory::LOG). '/' . date('d-m-Y') . '.log', 'a+');
+        $fp = @fopen(FileSystem::getPath(Directory::LOG) . '/' . date('d-m-Y') . '.log', 'a+');
         @fwrite($fp, $text);
         @fclose($fp);
     }
@@ -273,69 +265,6 @@ class Console
         }
     }
 
-    /**
-     * Mounts a collection of callbacks onto a base route.
-     *
-     * @param string $baseRoute The route sub pattern to mount the callbacks on
-     * @param callable|object|string $fn The callback method
-     */
-    public static function mount(string $baseRoute, callable|object|string $fn): void
-    {
-        // Track current base route
-        $curBaseRoute = self::$baseRoute;
-
-        // Build new base route string
-        self::$baseRoute .= $baseRoute;
-
-        // Call the callable
-        call_user_func($fn);
-
-        // Restore original base route
-        self::$baseRoute = $curBaseRoute;
-    }
-
-    /**
-     * Get all request headers.
-     *
-     * @return array The request headers
-     */
-    public static function getRequestHeaders(): array
-    {
-
-        // If getallheaders() is available, use that
-        if (function_exists('getallheaders')) {
-            $headers = getallheaders();
-
-            // getallheaders() can return false if something went wrong
-            if ($headers !== false) {
-                return $headers;
-            }
-        }
-
-
-        $headers = [];
-        foreach ($_SERVER as $name => $value) {
-            if ((str_starts_with($name, 'HTTP_')) || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
-                $headers[str_replace(
-                    [' ', 'Http'],
-                    ['-', 'HTTP'],
-                    ucwords(strtolower(str_replace('_', ' ', substr($name, 5))))
-                )] = $value;
-            }
-        }
-
-        return $headers;
-    }
-
-    /**
-     * Get the request method used, taking overrides into account.
-     *
-     * @return string The Request method to handle
-     */
-    public static function getRequestMethod(): string
-    {
-        return 'COMMAND';
-    }
 
     /**
      * Execute the router: Loop all defined before middleware's and routes, and execute the handling function if a match was found.
@@ -517,16 +446,6 @@ class Console
     }
 
     /**
-     * Set a Default Lookup Namespace for Callable methods.
-     *
-     * @param string $namespace A given namespace
-     */
-    public static function setNamespace(string $namespace): void
-    {
-        self::$namespace = $namespace;
-    }
-
-    /**
      * Triggers 404 response
      */
     public static function trigger404(): void
@@ -658,7 +577,7 @@ class Console
 
             Console::clean();
 
-            self::print("\e[0;33mProcessing\e[m" . str_pad('', $percent % 2 == 0 ? 3 : 1, '.', STR_PAD_LEFT), self::PROGRESS);
+            self::output("\e[0;33mProcessing\e[m" . str_pad('', $percent % 2 == 0 ? 3 : 1, '.', STR_PAD_LEFT), Type::PROGRESS);
 
             $formatedDuration = '';
 
@@ -687,24 +606,24 @@ class Console
             if ($diffEnd->s)
                 $formatEnd .= $diffEnd->s . "s";
 
-            self::print("\e[0;33mCurrent job:\e[m " . self::$currentProgress, self::PROGRESS);
-            self::print("\e[0;33mRunning time:\e[m " . $formatedDuration, self::PROGRESS);
-            self::print("\e[0;35mEstimated time duration:\e[m " . $formatEnd, self::PROGRESS);
-            self::print("\e[0;35mEstimated date end:\e[m " . $estimated->format('d-m-Y H:i:s'), self::PROGRESS);
-            self::print("\e[0;33mItems processed:\e[m " . $current, self::PROGRESS);
-            self::print("\e[0;33mPending Items:\e[m " . $total - $current, self::PROGRESS);
-            self::print("\e[0;33mTotal Items:\e[m " . $total, self::PROGRESS);
-            self::print("\e[0;33mMemory:\e[m " . round(memory_get_usage() / 1048576, 2) . "MB", self::PROGRESS);
-            self::print("\e[0;32mCompleted:\e[m " . $percent . "%", self::PROGRESS);
+            self::output("\e[0;33mCurrent job:\e[m " . self::$currentProgress, Type::PROGRESS);
+            self::output("\e[0;33mRunning time:\e[m " . $formatedDuration, Type::PROGRESS);
+            self::output("\e[0;35mEstimated time duration:\e[m " . $formatEnd, Type::PROGRESS);
+            self::output("\e[0;35mEstimated date end:\e[m " . $estimated->format('d-m-Y H:i:s'), Type::PROGRESS);
+            self::output("\e[0;33mItems processed:\e[m " . $current, Type::PROGRESS);
+            self::output("\e[0;33mPending Items:\e[m " . $total - $current, Type::PROGRESS);
+            self::output("\e[0;33mTotal Items:\e[m " . $total, Type::PROGRESS);
+            self::output("\e[0;33mMemory:\e[m " . round(memory_get_usage() / 1048576, 2) . "MB", Type::PROGRESS);
+            self::output("\e[0;32mCompleted:\e[m " . $percent . "%", Type::PROGRESS);
 
 
             $left = round($percent / 2, self::$percentPrecision) - 1;
             $right = 50 - $left - 1;
 
-            self::print("\e[0;32m[\e[m" . str_pad('', $left, "=", STR_PAD_LEFT) . ">" . "\e[m" . str_pad('', $right, "·", STR_PAD_LEFT) . "\e[0;32m]\e[m", self::PROGRESS);
+            self::output("\e[0;32m[\e[m" . str_pad('', $left, "=", STR_PAD_LEFT) . ">" . "\e[m" . str_pad('', $right, "·", STR_PAD_LEFT) . "\e[0;32m]\e[m", Type::PROGRESS);
 
             foreach (self::$errors as $error) {
-                self::print("\e[0;33m[ERROR]\e[m\t " . $error, self::PROGRESS);
+                self::output("\e[0;33m[ERROR]\e[m\t " . $error, Type::PROGRESS);
             }
 
         }
@@ -727,7 +646,7 @@ class Console
      */
     public static function requestValue($name): string
     {
-        self::show($name, Console::INFO);
+        self::output($name, Type::INFO);
         return trim(fgets(STDIN));
     }
 

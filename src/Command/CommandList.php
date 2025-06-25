@@ -11,7 +11,10 @@ Console::command('doctrine:entity', function () {
     include __DIR__ . '/Doctrine.php';
 }, 'Create entity step by step');
 
+/** @see Console::listRoutesCommand() */
 Console::command('--help', Console::class . '@listRoutesCommand', 'Show all commands');
+
+/** @see Console::listRoutesCommand() */
 Console::command('route:list', Router::class . '@listRoutesCommand', 'List All routes with methods');
 
 /** @see Router::listRoutesCommand() */
