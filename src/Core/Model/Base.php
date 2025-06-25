@@ -65,7 +65,7 @@ abstract class Base
         if (!$className)
             $className = static::typeOfCollection($property);
 
-        if (is_array($value)) {
+        if ($className && is_array($value)) {
             if (empty($value)) {
                 return [];
             }
