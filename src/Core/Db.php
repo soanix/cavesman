@@ -4,12 +4,23 @@ namespace Cavesman;
 
 use Cavesman\Enum\Directory;
 use Cavesman\Exception\ModuleException;
+use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
+class ForceExplicitPersistListener
+{
+    public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
+    {
+        $metadata = $args->getClassMetadata();
+        $metadata->setChangeTrackingPolicy(ClassMetadata::CHANGETRACKING_DEFERRED_EXPLICIT);
+    }
+}
 class Db
 {
     /** @var array $oConnection */
@@ -80,6 +91,13 @@ class Db
         if ($database)
             $connectionParams['dbname'] = $database;
 
+        // Paso 2: EventManager con listener
+        $eventManager = new EventManager();
+        $eventManager->addEventListener(
+            [\Doctrine\ORM\Events::loadClassMetadata],
+            new ForceExplicitPersistListener()
+        );
+
         $connection = DriverManager::getConnection($connectionParams);
         $match = Config::get($file . '.' . $server . '.schema_filter', null);
         $connection->getConfiguration()->setSchemaAssetsFilter(static function (string|AbstractAsset $assetName) use ($match): bool {
@@ -91,7 +109,7 @@ class Db
             return (bool) preg_match($match, $assetName);
         });
 
-        self::$oConnection[$key] = new EntityManager($connection, $config);
+        self::$oConnection[$key] = new EntityManager($connection, $config, $eventManager);
 
         return self::$oConnection[$key];
     }
