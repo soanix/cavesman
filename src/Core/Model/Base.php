@@ -3,6 +3,7 @@
 namespace Cavesman\Model;
 
 
+use Cavesman\Config;
 use DateMalformedStringException;
 use DateTime;
 use ReflectionClass;
@@ -127,18 +128,18 @@ abstract class Base
                     foreach ($type->getTypes() as $unionType) {
                         if ($unionType instanceof ReflectionNamedType && $unionType->getName() === Time::class) {
                             if ($value) {
-                                $time = new Time($value->format('H:i:s'));
+                                $time = new Time($value->format(Config::get('params.core.time.format', 'H:i')));
                                 $this->{$propName} = $time->toString();
                             }
                         } elseif ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
                             if ($value)
-                                $this->{$propName} = $value->format('Y-m-d\TH:i:s');
+                                $this->{$propName} = $value->format(Config::get('params.core.date.format', 'Y-m-d\\TH:i'));
                         }
                     }
                 } elseif ($value instanceof Time) {
                     $this->{$propName} = $value->toString();
                 } elseif ($value instanceof \DateTime) {
-                    $this->{$propName} = $value->format('Y-m-d\TH:i:s');
+                    $this->{$propName} = $value->format(Config::get('params.core.date.format', 'Y-m-d\\TH:i'));
                 } elseif ($value instanceof Base) {
                     $this->{$propName} = $value->json();
                 } elseif (is_array($value) && $value && reset($value) instanceof Base) {
