@@ -38,7 +38,7 @@ abstract class Base
                             }
                         }
                     } elseif ($type instanceof ReflectionNamedType) {
-                        if ($type->getName() === Time::class) {
+                        if ($type->getName() === Time::class && strlen($value) === 5) {
                             if ($value)
                                 $this->{$property} = new Time($value);
                             continue;
