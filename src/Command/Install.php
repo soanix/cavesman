@@ -2,6 +2,7 @@
 
 use Cavesman\Config;
 use Cavesman\Console;
+use Cavesman\Enum\Console\Type;
 use Cavesman\FileSystem;
 use Cavesman\Launcher;
 
@@ -80,15 +81,6 @@ file_put_contents($composerFile, $newComposerContent);
 foreach(glob(FileSystem::getPath(\Cavesman\Enum\Directory::INSTALL ) . '/*.php') as $file)
     include $file;
 
-
-if (Launcher::isCli()) {
-    Console::show('Install successfully', Console::SUCCESS);
-    Console::show('php -S localhost:80 -t public', Console::SUCCESS);
-
-} else {
-    ?>
-    <h1>Instalación correcta</h1>
-    <p>Todos los archivos y directorios creados</p>
-    <?php
-}
+Console::output('Install successfully', Type::SUCCESS);
+Console::output('php -S localhost:80 -t public', Type::SUCCESS);
 exit();
