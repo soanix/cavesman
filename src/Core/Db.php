@@ -112,8 +112,10 @@ class Db
 
         self::$oConnection[$key] = new EntityManager($connection, $config, $eventManager);
 
-        self::$oConnection[$key]->getConfiguration()->addFilter('soft_delete', SoftDeleted::class);
-        self::$oConnection[$key]->getFilters()->enable('soft_delete');
+        if(Config::get('doctrine.filters.deletedOn', false)) {
+            self::$oConnection[$key]->getConfiguration()->addFilter('soft_delete', SoftDeleted::class);
+            self::$oConnection[$key]->getFilters()->enable('soft_delete');
+        }
 
         return self::$oConnection[$key];
     }
