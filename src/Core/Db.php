@@ -9,10 +9,10 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
-use Doctrine\ORM\Mapping\ClassMetadata;
 
 class ForceExplicitPersistListener
 {
@@ -22,6 +22,7 @@ class ForceExplicitPersistListener
         $metadata->setChangeTrackingPolicy(ClassMetadata::CHANGETRACKING_DEFERRED_EXPLICIT);
     }
 }
+
 class Db
 {
     /** @var array $oConnection */
@@ -59,12 +60,12 @@ class Db
 
             $config = json_decode(file_get_contents($path . '/config.json'), true);
 
-            if(!$config)
+            if (!$config)
                 throw new ModuleException('Module config file is empty or corrupt');
 
             $currentConfig = Config::get('modules.' . $config['name'], $config);
 
-            if(!$currentConfig['active'])
+            if (!$currentConfig['active'])
                 continue;
 
         }
@@ -88,6 +89,10 @@ class Db
             isDevMode: Config::get($file . '.' . $server . '.dev_mode', true)
         );
 
+        if (Config::get('doctrine.support.native_lazy_object', false)) {
+            $config->enableNativeLazyObjects(true);
+        }
+
 
         if ($database)
             $connectionParams['dbname'] = $database;
@@ -105,14 +110,14 @@ class Db
             if ($assetName instanceof AbstractAsset) {
                 $assetName = $assetName->getName();
             }
-            if(!$match)
+            if (!$match)
                 return true;
-            return (bool) preg_match($match, $assetName);
+            return (bool)preg_match($match, $assetName);
         });
 
         self::$oConnection[$key] = new EntityManager($connection, $config, $eventManager);
 
-        if(Config::get('doctrine.filters.deletedOn', false)) {
+        if (Config::get('doctrine.filters.deletedOn', false)) {
             self::$oConnection[$key]->getConfiguration()->addFilter('soft_delete', SoftDeleted::class);
             self::$oConnection[$key]->getFilters()->enable('soft_delete');
         }
