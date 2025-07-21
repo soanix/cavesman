@@ -2,12 +2,10 @@
 
 namespace Cavesman\Db\Doctrine\Entity;
 
-use Cavesman\Config;
 use Cavesman\Db;
 use Cavesman\Exception\ModuleException;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
 use ReflectionClass;
 use ReflectionException;
 
@@ -15,6 +13,8 @@ use ReflectionException;
 #[ORM\HasLifecycleCallbacks]
 abstract class Base implements Db\Doctrine\Interface\Entity
 {
+    public static int $depth = 0;
+    public static int $maxDepth = 3;
 
     /**
      * @param array $criteria
@@ -45,6 +45,9 @@ abstract class Base implements Db\Doctrine\Interface\Entity
      */
     public function model(string $modelClass): ?Db\Doctrine\Model\Base
     {
+
+        self::$depth++;
+
         /** @var ?Db\Doctrine\Model\Base $model */
         $model = new $modelClass();
         $entityReflection = new ReflectionClass($this);
@@ -59,23 +62,26 @@ abstract class Base implements Db\Doctrine\Interface\Entity
                 $value = $entityProp->getValue($this);
                 $submodelClassname = $model->typeOfCollection($propName);
                 if ($value instanceof Collection) {
-                    if($submodelClassname) {
+                    if ($submodelClassname) {
                         $items = [];
                         foreach ($value as $item) {
-                            $items[] = method_exists($item, 'model') ? $item->model($submodelClassname) : $item;
+                            if (self::$depth <= self::$maxDepth)
+                                $items[] = method_exists($item, 'model') ? $item->model($submodelClassname) : $item;
                         }
                         $model->{$propName} = $items;
                     }
                 } elseif ($value instanceof Base) {
-                    if($submodelClassname) {
+                    if ($submodelClassname) {
                         $submodelClassname = $model->typeOfCollection($propName);
-                        $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
+                        if (self::$depth <= self::$maxDepth)
+                            $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
                     }
                 } else {
                     $model->{$propName} = $value;
                 }
             }
         }
+        self::$depth--;
 
         return $model;
     }
