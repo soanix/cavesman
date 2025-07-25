@@ -7,6 +7,7 @@ use Cavesman\Db\Doctrine\Interface\Model;
 use Cavesman\Exception\ModuleException;
 use Cavesman\Model\Base as BaseModel;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use ReflectionClass;
@@ -76,6 +77,9 @@ abstract class Base extends BaseModel implements Model
                 } elseif ($value instanceof Base) {
                     $entity->{$propName} = method_exists($value, 'entity') ? $value->entity($em) : $value;
                 } else {
+                    if(!$value && $entity->{$propName} instanceof Collection)
+                        continue;
+
                     $entity->{$propName} = $value;
                 }
             }
