@@ -9,9 +9,12 @@ class Translate
 
     public static string $currentLanguage = 'en';
     public static array $strings = [];
+    public static array $stringsOverride = [];
+    public static ?string $override = null;
 
-    public static function getFile(): string {
-        return FileSystem::getPath(Directory::LOCALE). '/messages.json';
+    public static function getFile(): string
+    {
+        return FileSystem::getPath(Directory::LOCALE) . '/messages.json';
     }
 
     /**
@@ -46,6 +49,7 @@ class Translate
             self::merge();
         }
 
+
         if (!isset(self::$strings[$string]))
             return $string;
 
@@ -60,11 +64,30 @@ class Translate
      */
     private static function getLanguage($lang): array
     {
-        $file = FileSystem::getPath(Directory::LOCALE). "/messages.$lang.json";
-        self::$strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+        $file = FileSystem::getPath(Directory::LOCALE) . '/messages.' . $lang . '.json';
+        $strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
-        return self::$strings;
+        if(self::$override) {
+            $strings = array_merge($strings, self::getLanguageOverride($lang));
+        }
+
+        return $strings;
     }
+
+    /**
+     * Return language array
+     *
+     * @param $lang
+     * @return array
+     */
+    private static function getLanguageOverride($lang): array
+    {
+        $file = FileSystem::getPath(Directory::LOCALE) . '/' . self::$override . '/messages.' . $lang . '.json';
+        self::$stringsOverride = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+
+        return self::$stringsOverride;
+    }
+
 
     /**
      * Create locale file if not exists
@@ -123,7 +146,7 @@ class Translate
 
         foreach (Config::get('locale.languages') as $lang) {
 
-            $file = FileSystem::getPath(Directory::LOCALE). "/messages.$lang.json";
+            $file = FileSystem::getPath(Directory::LOCALE) . "/messages.$lang.json";
 
             $messages_locale = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
@@ -138,5 +161,6 @@ class Translate
         }
 
     }
+
 
 }
