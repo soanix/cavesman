@@ -85,6 +85,9 @@ class Translate
     private static function getLanguageOverride($lang): array
     {
         $file = FileSystem::getPath(Directory::LOCALE) . '/' . self::$override . '/messages.' . $lang . '.json';
+        if(!is_dir(dirname($file)))
+            mkdir(dirname($file), 0777, true);
+
         self::$stringsOverride = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
         return self::$stringsOverride;
