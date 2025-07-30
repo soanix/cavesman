@@ -71,7 +71,9 @@ class Translate
             $strings = array_merge($strings, self::getLanguageOverride($lang));
         }
 
-        return $strings;
+        self::$strings = $strings;
+
+        return self::$strings;
     }
 
     /**
