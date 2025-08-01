@@ -2,6 +2,7 @@
 
 namespace Cavesman\Db\Doctrine\Entity;
 
+use Cavesman\Config;
 use Cavesman\Db;
 use Cavesman\Exception\ModuleException;
 use Doctrine\Common\Collections\Collection;
@@ -65,7 +66,7 @@ abstract class Base implements Db\Doctrine\Interface\Entity
                     if ($submodelClassname) {
                         $items = [];
                         foreach ($value as $item) {
-                            if (self::$depth <= self::$maxDepth)
+                            if (!Config::get('db.settings.entity.depth.enabled', false) || self::$depth <= self::$maxDepth)
                                 $items[] = method_exists($item, 'model') ? $item->model($submodelClassname) : $item;
                         }
                         $model->{$propName} = $items;
@@ -73,7 +74,7 @@ abstract class Base implements Db\Doctrine\Interface\Entity
                 } elseif ($value instanceof Base) {
                     if ($submodelClassname) {
                         $submodelClassname = $model->typeOfCollection($propName);
-                        if (self::$depth <= self::$maxDepth)
+                        if (!Config::get('db.settings.entity.depth.enabled', false) || self::$depth <= self::$maxDepth)
                             $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
                     }
                 } else {
