@@ -47,7 +47,7 @@ class Config
             foreach ($params as $key => $param) {
 
                 if ($key) {
-                    if (isset($array[$param])) {
+                    if (array_key_exists($param, $array)) {
                         $array = $array[$param];
                     } else {
                         return self::getValue($params, $default, $config);
