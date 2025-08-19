@@ -132,8 +132,12 @@ abstract class Base
                                 $this->{$propName} = $time->toString();
                             }
                         } elseif ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
-                            if ($value)
-                                $this->{$propName} = $value->format(Config::get('params.core.date.format', 'Y-m-d\\TH:i'));
+                            if ($value) {
+                                if ($value instanceof \DateTime)
+                                    $this->{$propName} = $value->format(Config::get('params.core.date.format', 'Y-m-d\\TH:i'));
+                                else
+                                    $this->{$propName} = $value;
+                            }
                         }
                     }
                 } elseif ($value instanceof Time) {
