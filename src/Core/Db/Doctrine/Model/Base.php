@@ -58,6 +58,7 @@ abstract class Base extends BaseModel implements Model
                 $value = $modelProp->getValue($this);
                 $classNameChild = static::typeOfCollection($propName);
 
+
                 if ($value && is_array($value) && reset($value) instanceof BaseModel) {
                     $items = [];
                     foreach ($value as $item) {
@@ -65,7 +66,7 @@ abstract class Base extends BaseModel implements Model
                             $items[] = method_exists($item, 'entity') ? $item->entity($em) : $item;
                     }
                     $entity->{$propName} = new ArrayCollection($items);
-                }elseif ($value && is_array($value) && $classNameChild) {
+                } elseif ($value && is_array($value) && $classNameChild) {
 
                     $items = [];
                     foreach ($value as $item) {
@@ -76,7 +77,34 @@ abstract class Base extends BaseModel implements Model
                 } elseif ($value instanceof Base) {
                     $entity->{$propName} = method_exists($value, 'entity') ? $value->entity($em) : $value;
                 } else {
-                    $entity->{$propName} = $value;
+
+                    $isCollection = false;
+
+                    $type = $entityProp->getType();
+
+                    if ($type instanceof \ReflectionNamedType) {
+                        // Caso simple o nullable
+                        if ($type->getName() === \Doctrine\Common\Collections\Collection::class)
+                            $isCollection = true;
+                        elseif ($type->getName() === \Doctrine\Common\Collections\ArrayCollection::class)
+                            $isCollection = true;
+                    }
+
+                    if (!$isCollection && $type instanceof \ReflectionUnionType) {
+                        foreach ($type->getTypes() as $namedType) {
+                            if ($namedType->getName() === \Doctrine\Common\Collections\Collection::class) {
+                                $isCollection = true;
+                            }
+                            if ($namedType->getName() === \Doctrine\Common\Collections\ArrayCollection::class) {
+                                $isCollection = true;
+                            }
+                        }
+                    }
+
+                    if ($isCollection)
+                        $entity->{$propName} = new ArrayCollection($value);
+                    else
+                        $entity->{$propName} = $value;
                 }
             }
         }
