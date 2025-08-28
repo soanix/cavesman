@@ -32,13 +32,21 @@ class Mail
         //Server settings
         if (Config::get("mail.debug"))
             self::$instance->SMTPDebug = SMTP::DEBUG_SERVER;
+
         self::$instance->isSMTP();
+
         // Send using SMTP
         self::$instance->Host = Config::get("mail.host");
+
         self::$instance->SMTPAuth = Config::get("mail.smtp_auth");
-        self::$instance->Username = Config::get("mail.user");
-        self::$instance->Password = Config::get("mail.password");
-        self::$instance->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+
+        if(Config::get("mail.user"))
+            self::$instance->Username = Config::get("mail.user");
+        if(Config::get("mail.password"))
+            self::$instance->Password = Config::get("mail.password");
+
+        if(Config::get("mail.encryption", 'tls'))
+            self::$instance->SMTPSecure = Config::get("mail.encryption", 'tls');
         self::$instance->Port = Config::get("mail.port");
 
         //Recipients
