@@ -33,7 +33,7 @@ abstract class Base
                     if ($type instanceof ReflectionUnionType) {
                         foreach ($type->getTypes() as $unionType) {
                             if ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
-                                if ($value)
+                                if ($value && is_string($value))
                                     $this->{$property} = new DateTime($value);
                                 continue 2;
                             }
