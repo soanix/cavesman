@@ -5,6 +5,7 @@ namespace Cavesman;
 use Cavesman\Enum\Directory;
 use Cavesman\Twig\ConfigExtension;
 use Cavesman\Twig\PathExtension;
+use Cavesman\Twig\TranslateExtension;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -51,6 +52,7 @@ class Twig
             self::$instance->addExtension(new StringLoaderExtension());
             self::$instance->addExtension(new ConfigExtension());
             self::$instance->addExtension(new PathExtension());
+            self::$instance->addExtension(new TranslateExtension());
         }
         return self::$instance;
     }
