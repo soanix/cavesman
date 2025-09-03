@@ -48,7 +48,7 @@ class Aws
      * @param string $file
      * @return string
      */
-    public static function download(string $bucket, string $file): string
+    public static function download(string $file, ?string $bucket = null): string
     {
         $s3 = new S3Client([
             'version' => Config::get('aws.s3.version', 'latest'),
@@ -60,7 +60,7 @@ class Aws
         ]);
 
         $result = $s3->getObject([
-            'Bucket' => $bucket,
+            'Bucket' => $bucket ?? Config::get('aws.s3.bucket', 'bucket-name'),
             'Key' => $file
         ]);
         return $result['Body'] ?? '';
