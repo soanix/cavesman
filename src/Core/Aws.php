@@ -20,7 +20,7 @@ class Aws
      * @param string|null $bucket
      * @return string
      */
-    public static function upload(string $source, string $target, ?string $bucket): string
+    public static function upload(string $source, string $target, ?string $bucket = null): string
     {
         $s3 = new S3Client([
             'version' => Config::get('aws.s3.version', 'latest'),
