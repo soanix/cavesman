@@ -3,14 +3,39 @@
 namespace Cavesman;
 
 use Cavesman\Enum\Directory;
+use Cavesman\Enum\Locale;
 
 class Translate
 {
 
-    public static string $currentLanguage = 'en';
-    public static array $strings = [];
-    public static array $stringsOverride = [];
-    public static ?string $override = null;
+    private static array $strings = [];
+    private static array $stringsOverride = [];
+    private static ?string $override = null;
+    private static Interface\Locale $currentLanguage = Locale::en;
+    private static string|Interface\Locale $class = Locale::class;
+
+    public static function getLocales(): array
+    {
+        return self::$class::cases();
+    }
+
+    public static function setClass(string $class): void {
+        if (!enum_exists($class) || !is_subclass_of($class, Interface\Locale::class)) {
+            throw new \InvalidArgumentException(
+                "$class is not implements " . Interface\Locale::class
+            );
+        }
+
+        self::$class = $class;
+    }
+
+    public static function setLanguage(Interface\Locale $language): void {
+        self::$currentLanguage = $language;
+    }
+
+    public static function setOverride(?string $override): void {
+        self::$override = $override;
+    }
 
     public static function getFile(): string
     {
@@ -25,19 +50,19 @@ class Translate
     public static function list(): array
     {
         $list = [];
-        foreach (Config::get('locale.languages') as $lang) {
-            $list[$lang] = self::getLanguage($lang);
+        foreach (self::$class::cases() as $lang) {
+            $list[$lang->value] = self::getLanguage($lang);
         }
 
         return $list;
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @param array $replace
      * @return string
      */
-    public static function get($string, array $replace = []): string
+    public static function get(string $string, array $replace = []): string
     {
         self::getLanguage(self::$currentLanguage);
 
@@ -59,12 +84,12 @@ class Translate
     /**
      * Return language array
      *
-     * @param $lang
+     * @param Interface\Locale $lang
      * @return array
      */
-    private static function getLanguage($lang): array
+    private static function getLanguage(Interface\Locale $lang): array
     {
-        $file = FileSystem::getPath(Directory::LOCALE) . '/messages.' . $lang . '.json';
+        $file = FileSystem::getPath(Directory::LOCALE) . '/messages.' . $lang->value . '.json';
         $strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
         if(self::$override) {
@@ -82,9 +107,9 @@ class Translate
      * @param $lang
      * @return array
      */
-    private static function getLanguageOverride($lang): array
+    private static function getLanguageOverride(Interface\Locale $lang): array
     {
-        $file = FileSystem::getPath(Directory::LOCALE) . '/' . self::$override . '/messages.' . $lang . '.json';
+        $file = FileSystem::getPath(Directory::LOCALE) . '/' . self::$override . '/messages.' . $lang->value . '.json';
         if(!is_dir(dirname($file)))
             mkdir(dirname($file), 0777, true);
 
@@ -149,7 +174,7 @@ class Translate
     {
         $messages = file_exists(self::getFile()) ? json_decode(file_get_contents(self::getFile()), true) : [];
 
-        foreach (Config::get('locale.languages') as $lang) {
+        foreach (self::$class::cases() as $lang) {
 
             $file = FileSystem::getPath(Directory::LOCALE) . "/messages.$lang.json";
 
