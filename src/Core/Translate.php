@@ -176,7 +176,7 @@ class Translate
 
         foreach (self::$class::cases() as $lang) {
 
-            $file = FileSystem::getPath(Directory::LOCALE) . "/messages.$lang.json";
+            $file = FileSystem::getPath(Directory::LOCALE) . "/messages.{$lang->value}.json";
 
             $messages_locale = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
