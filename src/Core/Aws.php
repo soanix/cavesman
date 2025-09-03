@@ -15,13 +15,12 @@ class Aws
     /**
      * Upload file to S3
      *
-     * @param string $bucket
-     * @param int $id
-     * @param string $file
-     * @param string $type
+     * @param string $source
+     * @param string $target
+     * @param string|null $bucket
      * @return string
      */
-    public static function upload(string $bucket, int $id, string $file, string $type = 'general'): string
+    public static function upload(string $source, string $target, ?string $bucket): string
     {
         $s3 = new S3Client([
             'version' => Config::get('aws.s3.version', 'latest'),
@@ -32,20 +31,12 @@ class Aws
             ]
         ]);
 
-        $target = Config::getEnv() . '/' . $type;
-
-        foreach (str_split($id) as $num) {
-            $target .= '/' . $num;
-        }
-
-        $target .= '/' . $id . '.' . pathinfo($file, PATHINFO_EXTENSION);
-
 
         // Enviamos el archivo a S3
         $s3->putObject([
-            'Bucket' => $bucket,
+            'Bucket' => $bucket ?? Config::get('aws.s3.bucket', 'bucket-name'),
             'Key' => $target,
-            'SourceFile' => $file,
+            'SourceFile' => $source,
         ]);
         return $target;
     }
