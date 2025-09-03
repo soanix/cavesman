@@ -74,7 +74,7 @@ class Aws
      * @param string $file
      * @return string
      */
-    public static function delete(string $bucket, string $file): string
+    public static function delete(string $file, ?string $bucket = null): string
     {
         $s3 = new S3Client([
             'version' => Config::get('aws.s3.version', 'latest'),
@@ -86,7 +86,7 @@ class Aws
         ]);
 
         return $s3->deleteObject([
-            'Bucket' => $bucket,
+            'Bucket' => $bucket ?? Config::get('aws.s3.bucket', 'bucket-name'),
             'Key' => $file
         ]);
 
