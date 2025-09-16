@@ -41,7 +41,7 @@ class Db
      */
     public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db')
     {
-        $key = $server . ':' . $database;
+        $key = $file . '.' . $server . ':' . $database;
 
         if (isset(self::$oConnection[$key]) && self::$oConnection[$key] instanceof EntityManager) {
             return self::$oConnection[$key];
