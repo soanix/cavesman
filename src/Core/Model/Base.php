@@ -128,8 +128,12 @@ abstract class Base
                     foreach ($type->getTypes() as $unionType) {
                         if ($unionType instanceof ReflectionNamedType && $unionType->getName() === Time::class) {
                             if ($value) {
-                                $time = new Time($value->format(Config::get('params.core.time.format', 'H:i')));
-                                $this->{$propName} = $time->toString();
+                                if ($value instanceof \DateTime) {
+                                    $time = new Time($value->format(Config::get('params.core.time.format', 'H:i')));
+                                    $this->{$propName} = $time->toString();
+                                }else{
+                                    $this->{$propName} = $value;
+                                }
                             }
                         } elseif ($unionType instanceof ReflectionNamedType && $unionType->getName() === DateTime::class) {
                             if ($value) {
