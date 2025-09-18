@@ -3,8 +3,6 @@
 namespace Cavesman;
 
 
-use Cavesman\Config;
-use Cavesman\Request;
 use DomainException;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
@@ -19,27 +17,28 @@ class JWT
 
     /**
      * @param array $data
+     * @param string|null $secret
      * @param int|null $expire
      * @return string
      */
-    public static function encode(array $data, int|null $expire = null): string
+    public static function encode(array $data, ?string $secret = null, ?int $expire = null): string
     {
 
         $expire = $expire ?? Config::get('jwt.ttl');
 
         $payload = [
             'iss' => Request::getDomain(),
-            'aud' => 'APP',
+            'aud' => Config::get('jwt.aud', 'App'),
             'iat' => time(),
             'nbf' => time(),
-            'exp' => time() + (60 * 60 * 24 * $expire)
+            'exp' => time() + (60 * 60 * 24 * ($expire ?? Config::get('jwt.ttl')))
         ];
 
         $payload = array_merge($payload, $data);
 
         return \Firebase\JWT\JWT::encode(
             $payload,
-            Config::get('api.key', '{key}'),
+            $secret ?: Config::get('api.key', '{key}'),
             Config::get('api.algorithm', 'HS256')
         );
     }
@@ -58,8 +57,8 @@ class JWT
      *
      * @throws InvalidArgumentException     Provided key/key-array was empty or malformed
      */
-    public static function decode(string $token): stdClass
+    public static function decode(string $token, ?string $secret = null): stdClass
     {
-        return \Firebase\JWT\JWT::decode($token, new Key(Config::get('api.key', '{key}'), Config::get('api.algorithm', 'HS256')));
+        return \Firebase\JWT\JWT::decode($token, new Key($secret ?: Config::get('api.key', '{key}'), Config::get('api.algorithm', 'HS256')));
     }
 }
