@@ -4,6 +4,7 @@ namespace Cavesman;
 
 use Cavesman\Enum\Directory;
 use Cavesman\Enum\Locale;
+use GuzzleHttp\Client;
 
 class Translate
 {
@@ -182,8 +183,17 @@ class Translate
 
             foreach ($messages as $key => $message) {
                 if (!isset($messages_locale[$key]))
-                    if (!empty($message['message']))
-                        $messages_locale[$key] = $message['message'];
+                    if (!empty($message['message'])) {
+
+                        $translate = $message['message'];
+
+                        foreach(glob(FileSystem::getPath(Directory::TOOL) . "/Translate/*.php") as $f) {
+                            $translate = require $f;
+                        }
+
+
+                        $messages_locale[$key] = $translate;
+                    }
             }
             $fp = fopen($file, 'w+');
             fwrite($fp, json_encode($messages_locale, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
