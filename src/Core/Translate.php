@@ -191,13 +191,16 @@ class Translate
                             $translate = require $f;
                         }
 
-                        if($translate)
+                        if($translate) {
                             $messages_locale[$key] = $translate;
+                            $fp = fopen($file, 'w+');
+                            fwrite($fp, json_encode($messages_locale, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                            fclose($fp);
+                        }
+
                     }
 
-                $fp = fopen($file, 'w+');
-                fwrite($fp, json_encode($messages_locale, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-                fclose($fp);
+
             }
 
         }
