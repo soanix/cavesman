@@ -191,8 +191,8 @@ class Translate
                             $translate = require $f;
                         }
 
-
-                        $messages_locale[$key] = $translate;
+                        if($translate)
+                            $messages_locale[$key] = $translate;
                     }
             }
             $fp = fopen($file, 'w+');
