@@ -31,7 +31,7 @@ class Mail
 
         //Server settings
         if (Config::get("mail.debug"))
-            self::$instance->SMTPDebug = SMTP::DEBUG_SERVER;
+            self::$instance->SMTPDebug = 3;
 
         self::$instance->isSMTP();
 
@@ -47,6 +47,10 @@ class Mail
 
         if(Config::get("mail.encryption", 'tls'))
             self::$instance->SMTPSecure = Config::get("mail.encryption", 'tls');
+        else {
+            self::$instance->SMTPAutoTLS  = false;
+            self::$instance->SMTPSecure = false;
+        }
         self::$instance->Port = Config::get("mail.port");
 
         //Recipients
