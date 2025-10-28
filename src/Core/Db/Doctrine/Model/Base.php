@@ -102,7 +102,7 @@ abstract class Base extends BaseModel implements Model
                     }
 
                     if ($isCollection)
-                        $entity->{$propName} = new ArrayCollection($value);
+                        $entity->{$propName} = $value ? new ArrayCollection($value) : new ArrayCollection();
                     else
                         $entity->{$propName} = $value;
                 }
