@@ -18,7 +18,7 @@ enum Directory: string
     case CONTROLLER = '/src/Controller'; // Path to the controllers directory
     case ROUTES = '/src/Routes';   // Path to the routes directory
     case ENTITY = '/src/Entity';   // Path to the entities directory
-    case MODELS = '/src/Models';   // Path to the models directory
+    case MODELS = '/src/Model';   // Path to the models directory
     case ENUM = '/src/Enum';       // Path to the enums directory
     case COMMANDS = '/src/Commands'; // Path to the commands directory
     case EXCEPTION = '/src/Exception'; // Path to the exceptions directory
