@@ -10,6 +10,9 @@ foreach(\Cavesman\Enum\Directory::cases() as $dir)
     if(!is_dir(FileSystem::documentRoot() . $dir->value))
         mkdir(FileSystem::documentRoot() . $dir->value, 0777, true);
 
+if(!is_dir(FileSystem::getPath('views') . "/public"))
+    mkdir(FileSystem::getPath('views') . "/public", 0777, true);
+
 if (!file_exists(FileSystem::getPath(\Cavesman\Enum\Directory::PUBLIC) . "/.htaccess")) {
     $fp = fopen(FileSystem::getPath(\Cavesman\Enum\Directory::PUBLIC) . "/.htaccess", "w+");
     $htaccess = 'RewriteEngine On' . PHP_EOL
