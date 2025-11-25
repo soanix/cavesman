@@ -25,12 +25,46 @@ abstract class Entity extends Base
     public ?DateTime $deletedOn = null;
 
 
+    /**
+     * Marks the entity as deleted by assigning the current date to `deletedOn`.
+     *
+     * Important:
+     *  - This method does **not** physically delete the entity from the database.
+     *  - To complete the soft delete process, you must persist and flush the entity:
+     *
+     *    $entity->delete();
+     *    $em->persist($entity);
+     *    $em->flush();
+     *
+     * Extending:
+     *  If the class is extended, this method can be overridden to add additional
+     *  logic before or after the base soft-delete behavior. Example:
+     *
+     *    public function delete(): self
+     *    {
+     *        parent::delete();                 // Execute the base delete logic
+     *        $this->buildings = new ArrayCollection(); // Additional logic
+     *        return $this;
+     *    }
+     *
+     * @return self
+     */
+    public function delete(): self
+    {
+        $this->deletedOn = new DateTime();
+        return $this;
+    }
+
+
     #[ORM\PrePersist]
-    public function onCreate(): void {
+    public function onCreate(): void
+    {
         $this->createdOn = new \DateTime();
     }
+
     #[ORM\PreUpdate]
-    public function onUpdate(): void {
+    public function onUpdate(): void
+    {
         $this->updatedOn = new \DateTime();
     }
 
