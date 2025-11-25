@@ -2,6 +2,7 @@
 
 namespace Cavesman\Db\Doctrine\Entity;
 
+use Cassandra\Date;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -47,11 +48,12 @@ abstract class Entity extends Base
      *        return $this;
      *    }
      *
+     * @param DateTime $date Deleted datetime object
      * @return self
      */
-    public function delete(): self
+    public function delete(DateTime $date = new DateTime()): self
     {
-        $this->deletedOn = new DateTime();
+        $this->deletedOn = $date;
         return $this;
     }
 
