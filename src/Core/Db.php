@@ -121,7 +121,8 @@ class Db
             self::$oConnection[$key]->getConfiguration()->addFilter('soft_delete', SoftDeleted::class);
             self::$oConnection[$key]->getFilters()->enable('soft_delete');
         }
-
+        if(!is_dir(FileSystem::documentRoot() . '/var/Doctrine/Proxy'))
+            mkdir(FileSystem::documentRoot() . '/var/Doctrine/Proxy', 0777, true);
         self::$oConnection[$key]->getConfiguration()->setProxyDir(FileSystem::documentRoot() . '/var/Doctrine/Proxy');
 
         return self::$oConnection[$key];
