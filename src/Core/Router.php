@@ -3,6 +3,8 @@
 namespace Cavesman;
 
 
+use Cavesman\Enum\Console\Type;
+
 class Router extends \Soanix\Router\Router
 {
     public static function listRoutesCommand($type = false): void
@@ -45,7 +47,7 @@ class Router extends \Soanix\Router\Router
             foreach ($list as $route) {
                 if ($currentRoute != $route['url']) {
                     $currentRoute = $route['url'];
-                    Console::show($route['url'], Console::PROGRESS);
+                    Console::output($route['url'], Type::PROGRESS);
                 }
             }
         } elseif (!$type || $type === 'complete') {
@@ -54,12 +56,12 @@ class Router extends \Soanix\Router\Router
             foreach ($list as $route) {
                 if ($currentRoute != $route['url']) {
                     $currentRoute = $route['url'];
-                    Console::show(PHP_EOL . self::blackyMethod($route['url']), Console::PROGRESS);
+                    Console::output(PHP_EOL . self::blackyMethod($route['url']), Type::PROGRESS);
                 }
-                Console::show(
+                Console::output(
                     self::colorizeMethod($route['method'], str_pad($route['method'] . '' . ($route['middleware'] ? ' (M)' : ''), $longestMethod)) . "  " .
                     (is_string($route['fn']) ? $route['fn'] : 'function'),
-                    Console::PROGRESS
+                    Type::PROGRESS
                 );
             }
         }
