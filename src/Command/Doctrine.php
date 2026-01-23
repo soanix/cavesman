@@ -4,7 +4,7 @@ use Cavesman\Console;
 use Cavesman\FileSystem;
 use Cavesman\Tool\Parser\ClassName;
 
-Console::show('Entity Value', Console::INFO);
+Console::output('Entity Value', \Cavesman\Enum\Console\Type::INFO);
 $entityName = ucfirst(Console::requestValue('Entity name in CammleCase (Upper):'));
 
 $extends = strtolower(Console::requestValue('Class Extends (optional)'));
