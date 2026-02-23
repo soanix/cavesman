@@ -30,8 +30,12 @@ class Translate
         self::$class = $class;
     }
 
-    public static function setLanguage(Interface\Locale $language): void {
+    public static function setLocale(Interface\Locale $language): void {
         self::$currentLanguage = $language;
+    }
+
+    public static function getLocale(): Interface\Locale {
+        return self::$currentLanguage;
     }
 
     public static function setOverride(?string $override): void {
@@ -52,7 +56,7 @@ class Translate
     {
         $list = [];
         foreach (self::$class::cases() as $lang) {
-            $list[$lang->value] = self::getLanguage($lang);
+            $list[$lang->value] = self::getTranslate($lang);
         }
 
         return $list;
@@ -65,13 +69,13 @@ class Translate
      */
     public static function get(string $string, array $replace = []): string
     {
-        self::getLanguage(self::$currentLanguage);
+        self::getTranslate(self::$currentLanguage);
 
 
         $check = self::check(['string' => $string, 'replace' => $replace]);
 
         if (!$check) {
-            self::getLanguage(self::$currentLanguage);
+            self::getTranslate(self::$currentLanguage);
             self::merge();
         }
 
@@ -88,13 +92,13 @@ class Translate
      * @param Interface\Locale $lang
      * @return array
      */
-    private static function getLanguage(Interface\Locale $lang): array
+    private static function getTranslate(Interface\Locale $lang): array
     {
         $file = FileSystem::getPath(Directory::LOCALE) . '/messages.' . $lang->value . '.json';
         $strings = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
 
         if(self::$override) {
-            $strings = array_merge($strings, self::getLanguageOverride($lang));
+            $strings = array_merge($strings, self::getTranslateOverride($lang));
         }
 
         self::$strings = $strings;
@@ -108,7 +112,7 @@ class Translate
      * @param $lang
      * @return array
      */
-    private static function getLanguageOverride(Interface\Locale $lang): array
+    private static function getTranslateOverride(Interface\Locale $lang): array
     {
         $file = FileSystem::getPath(Directory::LOCALE) . '/' . self::$override . '/messages.' . $lang->value . '.json';
         if(!is_dir(dirname($file)))
