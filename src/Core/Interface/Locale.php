@@ -2,6 +2,6 @@
 
 namespace Cavesman\Interface;
 
-interface Locale extends \StringBackedEnum
+interface Locale extends \BackedEnum
 {
 }
