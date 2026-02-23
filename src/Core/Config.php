@@ -89,7 +89,7 @@ class Config
         $default_array = self::getDefaultArray($params, $default);
         $config = array_replace_recursive($config, $default_array);
         $fp = fopen(FileSystem::getPath(Directory::CONFIG). "/" . $params[0] . ".json", "w+");
-        fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        fwrite($fp, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         fclose($fp);
         return $default;
     }
