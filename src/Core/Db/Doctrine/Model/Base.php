@@ -35,15 +35,21 @@ abstract class Base extends BaseModel implements Model
         $entity = null;
 
         $metadata = $em->getClassMetadata($className);
-
         // Obtener las propiedades que son clave primaria
         $identifierFields = $metadata->getIdentifierFieldNames();
+        $ids = [];
+        foreach ($identifierFields as $field) {
+            if (!isset($this->{$field})) {
+                throw new \LogicException("Missing identifier value for $field");
+            }
 
-        if ($em && $identifierFields && $this->{$identifierFields[0]})
-            $entity = $em->getReference($className, $this->{$identifierFields[0]});
+            if($this->{$field} instanceof Base)
+                $ids[$field] = $this->{$field}->id;
+            else
+                $ids[$field] = $this->{$field};
+        }
 
-        if (!$entity)
-            $entity = new $className();
+        $entity = $em->getReference($className, $ids);
 
 
         $modelReflection = new ReflectionClass($this);
