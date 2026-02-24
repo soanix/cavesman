@@ -45,11 +45,16 @@ abstract class Base extends BaseModel implements Model
 
             if($this->{$field} instanceof Base)
                 $ids[$field] = $this->{$field}->id;
-            else
+            elseif ($this->{$field})
                 $ids[$field] = $this->{$field};
         }
+        $entity = null;
 
-        $entity = $em->getReference($className, $ids);
+        if($ids)
+            $entity = $em->getReference($className, $ids);
+
+        if(!$entity)
+            $entity = new $className();
 
 
         $modelReflection = new ReflectionClass($this);
