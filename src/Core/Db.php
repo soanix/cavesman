@@ -12,6 +12,7 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
 class ForceExplicitPersistListener
@@ -58,7 +59,7 @@ class Db
         foreach (glob(FileSystem::getPath(Directory::MODULE) . '/*', GLOB_ONLYDIR) as $path) {
 
 
-            $config = json_decode(file_get_contents($path . '/config.json'), true);
+            $config = json_decode(file_get_contents($path . '/config.json'), true, 512, JSON_THROW_ON_ERROR);
 
             if (!$config)
                 throw new ModuleException('Module config file is empty or corrupt');

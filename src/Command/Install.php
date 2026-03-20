@@ -15,6 +15,7 @@ if(!is_dir(FileSystem::getPath('views') . "/public"))
 
 if (!file_exists(FileSystem::getPath(\Cavesman\Enum\Directory::PUBLIC) . "/.htaccess")) {
     $fp = fopen(FileSystem::getPath(\Cavesman\Enum\Directory::PUBLIC) . "/.htaccess", "w+");
+    if ($fp === false) throw new \RuntimeException('Could not create .htaccess');
     $htaccess = 'RewriteEngine On' . PHP_EOL
         . 'RewriteCond %{REQUEST_FILENAME} !-f' . PHP_EOL
         . 'RewriteCond %{REQUEST_FILENAME} !-d' . PHP_EOL
@@ -24,6 +25,7 @@ if (!file_exists(FileSystem::getPath(\Cavesman\Enum\Directory::PUBLIC) . "/.htac
 }
 if (!file_exists(FileSystem::getPath('routes') . "/Base.php")) {
     $fp = fopen(FileSystem::getPath('routes') . "/Base.php", "w+");
+    if ($fp === false) throw new \RuntimeException('Could not create routes/Base.php');
     $htaccess = '<?php' . PHP_EOL . PHP_EOL;
     $htaccess .= 'Cavesman\\Router::get(\'/\', fn() => new Cavesman\Http\JsonResponse([\'message\' => \'Welcome to Cavesman Framework!\']));';
     fwrite($fp, $htaccess);
@@ -31,6 +33,7 @@ if (!file_exists(FileSystem::getPath('routes') . "/Base.php")) {
 }
 if (!file_exists(FileSystem::getPath('config'). "/main.json")) {
     $fp = fopen(FileSystem::getPath('config'). "/main.json", "w+");
+    if ($fp === false) throw new \RuntimeException('Could not create config/main.json');
     fwrite($fp, json_encode(["env" => "dev"], JSON_PRETTY_PRINT));
     fclose($fp);
 } else {
@@ -39,12 +42,14 @@ if (!file_exists(FileSystem::getPath('config'). "/main.json")) {
 
 if (!file_exists(FileSystem::getPath('config'). "/params.json")) {
     $fp = fopen(FileSystem::getPath('config'). "/params.json", "w+");
+    if ($fp === false) throw new \RuntimeException('Could not create config/params.json');
     fwrite($fp, json_encode(["debug" => true, "theme" => "public"], JSON_PRETTY_PRINT));
     fclose($fp);
 }
 
 if (!file_exists(FileSystem::getPath('views') . "/public/index.php")) {
     $fp = fopen(FileSystem::getPath('views') . "/public/index.php", "w+");
+    if ($fp === false) throw new \RuntimeException('Could not create views/public/index.php');
     $indexphp = '<?php' . PHP_EOL . PHP_EOL
         . 'Cavesman\Router::run();';
     fwrite($fp, $indexphp);
@@ -53,6 +58,7 @@ if (!file_exists(FileSystem::getPath('views') . "/public/index.php")) {
 
 if (!file_exists(FileSystem::getPath('public') . "/index.php")) {
     $fp = fopen(FileSystem::getPath('public') . "/index.php", "w+");
+    if ($fp === false) throw new \RuntimeException('Could not create public/index.php');
     $routesphp = '<?php' . PHP_EOL . PHP_EOL
         . 'require __DIR__ . \'/../vendor/autoload.php\';' . PHP_EOL . PHP_EOL
         . 'Cavesman\Launcher::run();';

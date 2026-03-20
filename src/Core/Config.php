@@ -27,14 +27,14 @@ class Config
                 mkdir(dirname($file), 0777, true);
 
             if (file_exists($file)) {
-                $config = json_decode(file_get_contents($file), true);
+                $config = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
             }
 
             // Env config
             $file = FileSystem::getPath(Directory::CONFIG). "/" . $params[0] . "." . self::getEnv() . ".json";
 
             if (file_exists($file)) {
-                $config = array_replace_recursive($config, json_decode(file_get_contents($file), true));
+                $config = array_replace_recursive($config, json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR));
             }
 
             self::$data[$params[0]] = $config;
@@ -71,7 +71,7 @@ class Config
     {
         $file = FileSystem::getPath(Directory::CONFIG). "/main.json";
         if (file_exists($file)) {
-            $main = json_decode(file_get_contents($file), true);
+            $main = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
         }
         if (isset($main['env']))
             return $main['env'];

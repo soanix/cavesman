@@ -2,7 +2,6 @@
 
 namespace Cavesman\Db\Doctrine\Entity;
 
-use Cassandra\Date;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 

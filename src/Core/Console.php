@@ -205,9 +205,11 @@ class Console
         if (!is_dir(FileSystem::getPath(Directory::LOG)))
             mkdir(FileSystem::getPath(Directory::LOG), 0777, true);
 
-        $fp = @fopen(FileSystem::getPath(Directory::LOG) . '/' . date('d-m-Y') . '.log', 'a+');
-        @fwrite($fp, $text);
-        @fclose($fp);
+        $fp = fopen(FileSystem::getPath(Directory::LOG) . '/' . date('d-m-Y') . '.log', 'a+');
+        if ($fp !== false) {
+            fwrite($fp, $text);
+            fclose($fp);
+        }
     }
 
     /**
@@ -339,7 +341,7 @@ class Console
                         }
                     } // We have no following parameters: return the whole lot
 
-                    return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], ':') : null;
+                    return isset($match[0][0]) && $match[0][1] !== -1 ? trim($match[0][0], ':') : null;
                 }, $matches, array_keys($matches));
 
 
@@ -481,7 +483,7 @@ class Console
                             }
                         } // We have no following parameters: return the lot
 
-                        return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], ':') : null;
+                        return isset($match[0][0]) && $match[0][1] !== -1 ? trim($match[0][0], ':') : null;
                     }, $matches, array_keys($matches));
 
                     self::invoke($route_callable);
@@ -489,9 +491,9 @@ class Console
                     ++$numHandled;
                 }
             }
-            if ($numHandled == 0 and self::$notFoundCallback[':']) {
+            if ($numHandled === 0 and self::$notFoundCallback[':']) {
                 self::invoke(self::$notFoundCallback[':']);
-            } elseif ($numHandled == 0) {
+            } elseif ($numHandled === 0) {
                 header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             }
         }
