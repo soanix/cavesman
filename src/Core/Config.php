@@ -9,12 +9,7 @@ class Config
 
     private static array $data = [];
 
-    /**
-     * @param string $config
-     * @param $default
-     * @return mixed
-     */
-    public static function get(string $config = '', $default = NULL): mixed
+    public static function get(string $config = '', mixed $default = null): mixed
     {
         $params = explode(".", $config);
 
@@ -61,12 +56,6 @@ class Config
         return $array;
     }
 
-    /**
-     * Returns current environment
-     *
-     * @return string
-     * @example dev, prod
-     */
     public static function getEnv(): string
     {
         $file = FileSystem::getPath(Directory::CONFIG). "/main.json";
@@ -78,12 +67,6 @@ class Config
         return 'dev';
     }
 
-    /**
-     * @param array $params
-     * @param mixed $default
-     * @param mixed $config
-     * @return mixed
-     */
     public static function getValue(array $params, mixed $default, mixed $config): mixed
     {
         $default_array = self::getDefaultArray($params, $default);
@@ -94,13 +77,7 @@ class Config
         return $default;
     }
 
-    /**
-     * Retrieve default config
-     *
-     * @param array $params
-     * @param $value
-     * @return array
-     */
+
     private static function getDefaultArray(array $params = [], $value = null): array
     {
         $str = '';
@@ -131,14 +108,6 @@ class Config
         return $arr;
     }
 
-    /**
-     * Walk through all array config keys
-     *
-     * @param $keys
-     * @param $i
-     * @param $value
-     * @return array
-     */
     private static function walk_keys($keys, $i, $value): array
     {
         $a = [];

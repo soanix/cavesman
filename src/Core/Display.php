@@ -3,6 +3,7 @@
 namespace Cavesman;
 
 use Cavesman\Enum\Directory;
+use FilesystemIterator;
 
 class Display
 {
@@ -14,25 +15,29 @@ class Display
     {
         Module::autoload();
 
-        if (is_dir(FileSystem::getPath(Directory::ROUTES)))
-            foreach (glob(FileSystem::getPath(Directory::ROUTES) . "/*.php") as $routeFile)
-                require_once $routeFile;
-
-
+        self::requirePhpFilesRecursively(FileSystem::getPath(Directory::ROUTES));
     }
 
     public static function initCli(): void
     {
         Module::autoload();
 
-        if (is_dir(FileSystem::getPath(Directory::ROUTES)))
-            foreach (glob(FileSystem::getPath(Directory::ROUTES) . "/*.php") as $routeFile)
-                require_once $routeFile;
+        self::requirePhpFilesRecursively(FileSystem::getPath(Directory::ROUTES));
+        self::requirePhpFilesRecursively(FileSystem::getPath(Directory::COMMANDS));
+    }
 
-        if (is_dir(FileSystem::getPath(Directory::COMMANDS)))
-            foreach (glob(FileSystem::getPath(Directory::COMMANDS) . "/*.php") as $routeFile)
-                require_once $routeFile;
+    private static function requirePhpFilesRecursively(string $dir): void
+    {
+        if (!is_dir($dir))
+            return;
 
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)
+        );
 
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php')
+                require_once $file->getPathname();
+        }
     }
 }

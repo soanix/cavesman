@@ -2,9 +2,15 @@
 
 namespace Cavesman;
 
+use Soanix\Router\RouterException;
+
 class Launcher
 {
 
+    /**
+     * @throws RouterException
+     * @throws \JsonException
+     */
     public static function run(): void
     {
 
