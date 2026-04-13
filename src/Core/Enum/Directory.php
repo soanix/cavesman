@@ -27,6 +27,7 @@ enum Directory: string
     case TEST = '/src/Test';       // Path to the tests directory
     case TOOL = '/src/Tool';       // Path to the tools directory
     case VIEWS = '/src/Views';     // Path to the views directory
+    case STORAGE = '/data/storage';     // Path to the views directory
 
     /**
      * Attempts to find an enum case by its name.
