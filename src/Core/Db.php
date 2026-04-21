@@ -29,15 +29,15 @@ class Db
     /** @var array $oConnection */
     protected static array $oConnection = [];
 
-    public static function getCli($server = 'cli', ?string $database = null, ?string $file = 'db'): void
+    public static function getCli($server = 'cli', ?string $database = null, ?string $file = 'db', array $extraDirectories = []): void
     {
 
         ConsoleRunner::run(
-            new SingleManagerProvider(self::getManager($server, $database, $file))
+            new SingleManagerProvider(self::getManager($server, $database, $file, $extraDirectories))
         );
     }
 
-    public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db')
+    public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db', array $extraDirectories = [])
     {
         $key = $file . '.' . $server . ':' . $database;
 
@@ -47,7 +47,7 @@ class Db
 
         $directories = Config::get($file . '.' . $server . '.entities', ['Entity']);
 
-        $directories = array_merge($directories, $directoryOverride);
+        $directories = array_merge($directories, $extraDirectories);
 
         $paths = [];
 
