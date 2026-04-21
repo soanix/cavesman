@@ -9,7 +9,7 @@ class Config
 
     private static array $data = [];
 
-    public static function get(string $config = '', mixed $default = null): mixed
+    public static function get(string $config = '', mixed $default = null, bool $generate = true): mixed
     {
         $params = explode(".", $config);
 
@@ -45,11 +45,15 @@ class Config
                     if (array_key_exists($param, $array)) {
                         $array = $array[$param];
                     } else {
+                        if(!$generate)
+                            return $default;
                         return self::getValue($params, $default, $config);
                     }
                 }
             }
         } else {
+            if(!$generate)
+                return $default;
             return self::getValue($params, $default, $config);
         }
 
