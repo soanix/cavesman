@@ -37,7 +37,7 @@ class Db
         );
     }
 
-    public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db', array $extraDirectories = [])
+    public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db', array $extraDirectories = []): EntityManager
     {
         $key = $file . '.' . $server . ':' . $database;
 
