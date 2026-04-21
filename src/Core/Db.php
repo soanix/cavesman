@@ -37,9 +37,6 @@ class Db
         );
     }
 
-    /**
-     * @throws ModuleException
-     */
     public static function getManager($server = 'local', ?string $database = null, ?string $file = 'db')
     {
         $key = $file . '.' . $server . ':' . $database;
@@ -49,6 +46,8 @@ class Db
         }
 
         $directories = Config::get($file . '.' . $server . '.entities', ['Entity']);
+
+        $directories = array_merge($directories, $directoryOverride);
 
         $paths = [];
 
