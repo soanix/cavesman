@@ -61,4 +61,23 @@ class JWT
     {
         return \Firebase\JWT\JWT::decode($token, new Key($secret ?: Config::get('api.key', '{key}'), Config::get('api.algorithm', 'HS256')));
     }
+
+    public static function parse($jwt): \Cavesman\Interface\JWT {
+        $parts = explode('.', $jwt);
+        if (count($parts) !== 3) {
+            throw new Exception('Token JWT inválido');
+        }
+
+        return new class(
+            json_decode(base64_decode(strtr($parts[0], '-_', '+/')), true),
+            json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true),
+            $parts[2],
+        ) implements \Cavesman\Interface\JWT {
+            public function __construct(
+                public array $headers,
+                public array $payload,
+                public string $signature,
+            ) {}
+        };
+    }
 }
