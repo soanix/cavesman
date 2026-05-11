@@ -54,7 +54,6 @@ abstract class Base extends BaseModel implements Model
 
             if ($modelReflection->hasProperty($propName)) {
                 $modelProp = $modelReflection->getProperty($propName);
-                $modelProp->setAccessible(true);
                 $value = $modelProp->getValue($this);
                 $classNameChild = static::typeOfCollection($propName);
 

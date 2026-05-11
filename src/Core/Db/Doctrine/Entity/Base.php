@@ -59,7 +59,6 @@ abstract class Base implements Db\Doctrine\Interface\Entity
 
             if ($entityReflection->hasProperty($propName)) {
                 $entityProp = $entityReflection->getProperty($propName);
-                $entityProp->setAccessible(true);
                 $value = $entityProp->getValue($this);
                 $submodelClassname = $model->typeOfCollection($propName);
                 if ($value instanceof Collection) {
