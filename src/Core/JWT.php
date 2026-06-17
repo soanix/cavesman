@@ -31,7 +31,7 @@ class JWT
             'aud' => Config::get('jwt.aud', 'App'),
             'iat' => time(),
             'nbf' => time(),
-            'exp' => time() + (60 * 60 * 24 * ($expire ?? Config::get('jwt.ttl')))
+            'exp' => time() + $expire ?? Config::get('jwt.ttl')
         ];
 
         $payload = array_merge($payload, $data);
