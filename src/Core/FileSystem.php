@@ -48,9 +48,9 @@ class FileSystem
     public static function documentRoot(): string
     {
         // Check for the vendor directory in various common locations.
-        if (is_dir($_SERVER['DOCUMENT_ROOT'] . "/../vendor")) {
+        if (!empty($_SERVER['DOCUMENT_ROOT']) && is_dir($_SERVER['DOCUMENT_ROOT'] . "/../vendor")) {
             return $_SERVER['DOCUMENT_ROOT'] . "/..";
-        } elseif (is_dir($_SERVER['DOCUMENT_ROOT'] . "/vendor")) {
+        } elseif (!empty($_SERVER['DOCUMENT_ROOT']) && is_dir($_SERVER['DOCUMENT_ROOT'] . "/vendor")) {
             return $_SERVER['DOCUMENT_ROOT'] . "/vendor";
         } elseif (!empty($_SERVER['PWD']) && is_dir($_SERVER['PWD'] . "/../vendor")) {
             return $_SERVER['PWD'] . "/..";
