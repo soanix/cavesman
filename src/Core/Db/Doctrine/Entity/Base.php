@@ -72,9 +72,19 @@ abstract class Base implements Db\Doctrine\Interface\Entity
                     }
                 } elseif ($value instanceof Base) {
                     if ($submodelClassname) {
-                        $submodelClassname = $model->typeOfCollection($propName);
-                        if (!Config::get('db.settings.entity.depth.enabled', false) || self::$depth <= self::$maxDepth)
-                            $model->{$propName} = method_exists($value, 'model') ? $value->model($submodelClassname) : $value;
+                        if (!Config::get('db.settings.entity.depth.enabled', false) || self::$depth <= self::$maxDepth) {
+                            $depthBefore = self::$depth;
+                            try {
+                                $model->{$propName} = method_exists($value, 'model')
+                                    ? $value->model($submodelClassname)
+                                    : $value;
+                            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+                                // La entidad referenciada está soft-deleted (oculta por el filtro
+                                // SoftDeleted) → se expone como null, sin filtrar datos del borrado.
+                                self::$depth = $depthBefore;
+                                $model->{$propName} = null;
+                            }
+                        }
                     }
                 } else {
                     $model->{$propName} = $value;
