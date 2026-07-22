@@ -12,7 +12,7 @@ use PHPMailer\PHPMailer\SMTP;
  */
 class Mail
 {
-    public static $instance;
+    public static PHPMailer $instance;
 
     public static function getInstance(): PHPMailer
     {
@@ -65,7 +65,7 @@ class Mail
      * @param string|array $body Body or {html: HtmlBody, message: Plaintext}
      * @param array $files
      * @param array $embedImages
-     * @param bool $send
+     * @param bool $send If it is false, the email is not sent. It's useful for creating overrides
      * @return bool
      * @throws \JsonException
      */
@@ -123,7 +123,10 @@ class Mail
         foreach ($embedImages as $image) {
             self::$instance->addEmbeddedImage($image['source'], $image['name']);
         }
-        return self::$instance->send();
+
+        if($send)
+            return self::$instance->send();
+        return true;
     }
 
 }
