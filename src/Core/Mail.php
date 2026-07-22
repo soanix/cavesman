@@ -12,7 +12,7 @@ use PHPMailer\PHPMailer\SMTP;
  */
 class Mail
 {
-    public static PHPMailer $instance;
+    public static ?PHPMailer $instance = null;
 
     public static function getInstance(): PHPMailer
     {
