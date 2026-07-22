@@ -65,10 +65,11 @@ class Mail
      * @param string|array $body Body or {html: HtmlBody, message: Plaintext}
      * @param array $files
      * @param array $embedImages
+     * @param bool $send
      * @return bool
-     * @throws Exception
+     * @throws \JsonException
      */
-    public static function send(string|array $to, string $subject = '', string|array $body = '', array $files = [], array $embedImages = []): bool
+    public static function send(string|array $to, string $subject = '', string|array $body = '', array $files = [], array $embedImages = [], bool $send = true): bool
     {
         // Instantiation and passing `true` enables exceptions
         if (!self::$instance instanceof PHPMailer) {
